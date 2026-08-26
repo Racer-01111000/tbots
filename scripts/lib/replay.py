@@ -25,12 +25,22 @@ import bisect
 import csv
 import io
 import json
+import re
 from pathlib import Path
 
 from hashing import sha256_bytes
 
 ALLOWED_ASSET_FIELDS = ("open", "high", "low", "close", "adjusted_close", "volume", "corporate_action")
 REQUIRED_NONEMPTY_FIELDS = ("timestamp", "open", "high", "low", "close", "volume")
+ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _is_float(s: str) -> bool:
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
 def canonical_json(obj) -> str:
@@ -119,6 +129,23 @@ def load_and_verify_dataset(dataset_root, expected_dataset_revision: str) -> Dat
                     raise DatasetVerificationError(
                         f"malformed observation in {symbol} at {r.get('timestamp')}: empty {field}"
                     )
+            if not ISO_DATE_RE.match(r["timestamp"]):
+                raise DatasetVerificationError(
+                    f"malformed observation in {symbol}: timestamp {r['timestamp']!r} is not YYYY-MM-DD"
+                )
+            for field in ("open", "high", "low", "close", "volume"):
+                try:
+                    float(r[field])
+                except ValueError:
+                    raise DatasetVerificationError(
+                        f"malformed observation in {symbol} at {r['timestamp']}: "
+                        f"non-numeric {field}={r[field]!r}"
+                    )
+            if r["adjusted_close"] and not _is_float(r["adjusted_close"]):
+                raise DatasetVerificationError(
+                    f"malformed observation in {symbol} at {r['timestamp']}: "
+                    f"non-numeric adjusted_close={r['adjusted_close']!r}"
+                )
             rows.append({
                 "timestamp": r["timestamp"],
                 "open": r["open"], "high": r["high"], "low": r["low"],
@@ -212,6 +239,8 @@ class ReplayEngine:
         self._require_active()
         if symbol not in self.bundle.asset_set:
             raise ValueError(f"unknown symbol: {symbol}")
+        if not isinstance(bars, int) or isinstance(bars, bool):
+            raise TypeError(f"bars must be an int, got {type(bars).__name__}")
         if bars <= 0:
             return []
         clock = self.current_timestamp
