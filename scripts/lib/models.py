@@ -1,0 +1,96 @@
+"""Thin record-creation helpers over the experiment-model schema.
+Each function inserts one row and returns its id; callers own the
+sqlite3.Connection and its commit/rollback."""
+import sqlite3
+from datetime import datetime, timezone
+
+from .ids import canonical_json, genome_id, new_id
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def create_genome(conn: sqlite3.Connection, genome: dict) -> str:
+    gid = genome_id(genome)
+    conn.execute(
+        "INSERT OR IGNORE INTO genomes (genome_id, genome_json, created_at) VALUES (?, ?, ?)",
+        (gid, canonical_json(genome), _now()),
+    )
+    return gid
+
+
+def create_agent(conn: sqlite3.Connection, genome_id_: str, generation: int,
+                  parent_agent_id: str | None = None) -> str:
+    aid = new_id("agt")
+    conn.execute(
+        "INSERT INTO agents (agent_id, genome_id, parent_agent_id, generation, created_at) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (aid, genome_id_, parent_agent_id, generation, _now()),
+    )
+    return aid
+
+
+def create_experiment(conn: sqlite3.Connection, *, code_revision: str, code_dirty: bool,
+                       dataset_revision: str, random_seed: int, agent_id: str, genome_id_: str,
+                       start_state: dict, replay_window_start: str, replay_window_end: str,
+                       execution_assumptions: dict) -> str:
+    eid = new_id("exp")
+    conn.execute(
+        "INSERT INTO experiments (experiment_id, code_revision, code_dirty, dataset_revision, "
+        "random_seed, agent_id, genome_id, start_state_json, replay_window_start, "
+        "replay_window_end, execution_assumptions_json, status, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)",
+        (eid, code_revision, int(code_dirty), dataset_revision, random_seed, agent_id, genome_id_,
+         canonical_json(start_state), replay_window_start, replay_window_end,
+         canonical_json(execution_assumptions), _now()),
+    )
+    return eid
+
+
+def create_episode(conn: sqlite3.Connection, experiment_id: str, agent_id: str,
+                    start_ts: str, label: str | None = None) -> str:
+    epid = new_id("epi")
+    conn.execute(
+        "INSERT INTO episodes (episode_id, experiment_id, agent_id, label, start_ts, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (epid, experiment_id, agent_id, label, start_ts, _now()),
+    )
+    return epid
+
+
+def create_decision(conn: sqlite3.Connection, episode_id: str, agent_id: str,
+                     simulated_ts: str, payload: dict) -> str:
+    did = new_id("dec")
+    conn.execute(
+        "INSERT INTO decisions (decision_id, episode_id, agent_id, simulated_ts, payload_json, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (did, episode_id, agent_id, simulated_ts, canonical_json(payload), _now()),
+    )
+    return did
+
+
+def create_order(conn: sqlite3.Connection, decision_id: str, episode_id: str, *, symbol: str,
+                  side: str, quantity: int, order_type: str, submitted_ts: str,
+                  limit_price_cents: int | None = None) -> str:
+    oid = new_id("ord")
+    conn.execute(
+        "INSERT INTO orders (order_id, decision_id, episode_id, symbol, side, quantity, "
+        "order_type, limit_price_cents, submitted_ts, status, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)",
+        (oid, decision_id, episode_id, symbol, side, quantity, order_type,
+         limit_price_cents, submitted_ts, _now()),
+    )
+    return oid
+
+
+def create_fill(conn: sqlite3.Connection, order_id: str, *, fill_ts: str, fill_price_cents: int,
+                 fill_quantity: int, commission_cents: int = 0, slippage_cents: int = 0) -> str:
+    fid = new_id("fil")
+    conn.execute(
+        "INSERT INTO fills (fill_id, order_id, fill_ts, fill_price_cents, fill_quantity, "
+        "commission_cents, slippage_cents, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (fid, order_id, fill_ts, fill_price_cents, fill_quantity,
+         commission_cents, slippage_cents, _now()),
+    )
+    return fid
