@@ -89,7 +89,8 @@ class SchemaTestCase(unittest.TestCase):
             execution_assumptions={"commission_bps": 5, "slippage_bps": 2},
         )
         episode_id = models.create_episode(
-            conn, experiment_id, agent_id, start_ts="2020-01-02T16:00:00+00:00", label="DAY 001"
+            conn, experiment_id, agent_id, dataset_revision="sha256:testdataset",
+            start_ts="2020-01-02T16:00:00+00:00", end_ts="2020-01-03T16:00:00+00:00", label="DAY 001"
         )
         decision_id = models.create_decision(
             conn, episode_id, agent_id, simulated_ts="2020-01-02T16:00:00+00:00",

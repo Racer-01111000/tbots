@@ -48,15 +48,41 @@ def create_experiment(conn: sqlite3.Connection, *, code_revision: str, code_dirt
     return eid
 
 
-def create_episode(conn: sqlite3.Connection, experiment_id: str, agent_id: str,
-                    start_ts: str, label: str | None = None) -> str:
+def create_episode(conn: sqlite3.Connection, experiment_id: str, agent_id: str, *,
+                    dataset_revision: str, start_ts: str, end_ts: str,
+                    masked_time: bool = False, random_seed: int = 0,
+                    label: str | None = None) -> str:
     epid = new_id("epi")
     conn.execute(
-        "INSERT INTO episodes (episode_id, experiment_id, agent_id, label, start_ts, created_at) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        (epid, experiment_id, agent_id, label, start_ts, _now()),
+        "INSERT INTO episodes (episode_id, experiment_id, agent_id, dataset_revision, label, "
+        "start_ts, end_ts, current_ts, masked_time, random_seed, status, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CREATED', ?)",
+        (epid, experiment_id, agent_id, dataset_revision, label, start_ts, end_ts, start_ts,
+         int(masked_time), random_seed, _now()),
     )
     return epid
+
+
+def update_episode_progress(conn: sqlite3.Connection, episode_id: str, *,
+                             current_ts: str, status: str) -> None:
+    conn.execute(
+        "UPDATE episodes SET current_ts = ?, status = ? WHERE episode_id = ?",
+        (current_ts, status, episode_id),
+    )
+
+
+def create_replay_audit(conn: sqlite3.Connection, episode_id: str, *, step_index: int,
+                         true_ts: str, masked_day: int | None, symbols_visible: list[str],
+                         observation_hash: str, dataset_revision: str) -> str:
+    aid = new_id("aud")
+    conn.execute(
+        "INSERT INTO replay_audit (audit_id, episode_id, step_index, true_ts, masked_day, "
+        "symbols_visible_json, observation_hash, dataset_revision, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (aid, episode_id, step_index, true_ts, masked_day, canonical_json(sorted(symbols_visible)),
+         observation_hash, dataset_revision, _now()),
+    )
+    return aid
 
 
 def create_decision(conn: sqlite3.Connection, episode_id: str, agent_id: str,

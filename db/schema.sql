@@ -39,13 +39,35 @@ CREATE TABLE IF NOT EXISTS experiments (
 );
 
 CREATE TABLE IF NOT EXISTS episodes (
-    episode_id     TEXT PRIMARY KEY,
-    experiment_id  TEXT NOT NULL REFERENCES experiments(experiment_id),
-    agent_id       TEXT NOT NULL REFERENCES agents(agent_id),
-    label          TEXT,
-    start_ts       TEXT NOT NULL,
-    end_ts         TEXT,
-    created_at     TEXT NOT NULL
+    episode_id       TEXT PRIMARY KEY,
+    experiment_id    TEXT NOT NULL REFERENCES experiments(experiment_id),
+    agent_id         TEXT NOT NULL REFERENCES agents(agent_id),
+    dataset_revision TEXT NOT NULL,
+    label            TEXT,
+    start_ts         TEXT NOT NULL,
+    end_ts           TEXT,
+    current_ts       TEXT,
+    masked_time      INTEGER NOT NULL DEFAULT 0,
+    random_seed      INTEGER NOT NULL DEFAULT 0,
+    status           TEXT NOT NULL DEFAULT 'CREATED'
+                         CHECK (status IN ('CREATED', 'RUNNING', 'COMPLETED', 'FAILED')),
+    created_at       TEXT NOT NULL
+);
+
+-- One row per delivered observation. Deliberately does not duplicate the
+-- market dataset: observation_hash + dataset_revision + true_ts is
+-- enough to regenerate and re-verify the exact observation on demand
+-- from the frozen, hash-verified normalized artifacts.
+CREATE TABLE IF NOT EXISTS replay_audit (
+    audit_id         TEXT PRIMARY KEY,
+    episode_id       TEXT NOT NULL REFERENCES episodes(episode_id),
+    step_index       INTEGER NOT NULL,
+    true_ts          TEXT NOT NULL,
+    masked_day       INTEGER,
+    symbols_visible_json TEXT NOT NULL,
+    observation_hash TEXT NOT NULL,
+    dataset_revision TEXT NOT NULL,
+    created_at       TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS decisions (
@@ -87,6 +109,7 @@ CREATE INDEX IF NOT EXISTS idx_agents_genome ON agents(genome_id);
 CREATE INDEX IF NOT EXISTS idx_agents_parent ON agents(parent_agent_id);
 CREATE INDEX IF NOT EXISTS idx_experiments_agent ON experiments(agent_id);
 CREATE INDEX IF NOT EXISTS idx_episodes_experiment ON episodes(experiment_id);
+CREATE INDEX IF NOT EXISTS idx_replay_audit_episode ON replay_audit(episode_id);
 CREATE INDEX IF NOT EXISTS idx_decisions_episode ON decisions(episode_id);
 CREATE INDEX IF NOT EXISTS idx_orders_episode ON orders(episode_id);
 CREATE INDEX IF NOT EXISTS idx_fills_order ON fills(order_id);
