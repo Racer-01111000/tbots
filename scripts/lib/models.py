@@ -7,6 +7,10 @@ from datetime import datetime, timezone
 from .ids import canonical_json, genome_id, new_id
 
 
+class InvalidExperimentTransition(RuntimeError):
+    """Raised when an experiment lifecycle compare-and-set does not match."""
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -46,6 +50,58 @@ def create_experiment(conn: sqlite3.Connection, *, code_revision: str, code_dirt
          canonical_json(execution_assumptions), _now()),
     )
     return eid
+
+
+def mark_experiment_running(conn: sqlite3.Connection, experiment_id: str) -> None:
+    """Atomically transition exactly pending -> running."""
+    result = conn.execute(
+        "UPDATE experiments SET status = 'running' "
+        "WHERE experiment_id = ? AND status = 'pending'",
+        (experiment_id,),
+    )
+    if result.rowcount != 1:
+        raise InvalidExperimentTransition(
+            f"experiment {experiment_id} is not pending; cannot mark running"
+        )
+
+
+def complete_experiment(conn: sqlite3.Connection, experiment_id: str, final_result: dict) -> None:
+    """Atomically transition running -> completed only after all episodes complete."""
+    result = conn.execute(
+        "UPDATE experiments SET status = 'completed', final_result_json = ?, completed_at = ? "
+        "WHERE experiment_id = ? AND status = 'running' "
+        "AND EXISTS (SELECT 1 FROM episodes WHERE experiment_id = ?) "
+        "AND NOT EXISTS ("
+        "  SELECT 1 FROM episodes WHERE experiment_id = ? AND status != 'COMPLETED'"
+        ")",
+        (canonical_json(final_result), _now(), experiment_id, experiment_id, experiment_id),
+    )
+    if result.rowcount != 1:
+        raise InvalidExperimentTransition(
+            f"experiment {experiment_id} is not running with only completed episodes"
+        )
+
+
+def fail_experiment(conn: sqlite3.Connection, experiment_id: str, failure_result: dict) -> None:
+    """Atomically transition pending/running -> failed with auditable details."""
+    result = conn.execute(
+        "UPDATE experiments SET status = 'failed', final_result_json = ?, completed_at = ? "
+        "WHERE experiment_id = ? AND status IN ('pending', 'running')",
+        (canonical_json(failure_result), _now(), experiment_id),
+    )
+    if result.rowcount != 1:
+        raise InvalidExperimentTransition(
+            f"experiment {experiment_id} is not pending/running; cannot mark failed"
+        )
+
+
+def fail_incomplete_episode(conn: sqlite3.Connection, episode_id: str) -> None:
+    """Mark an episode failed without rewriting an already terminal episode."""
+    conn.execute(
+        "UPDATE episodes SET status = 'FAILED' "
+        "WHERE episode_id = ? AND status IN ('CREATED', 'RUNNING')",
+        (episode_id,),
+    )
 
 
 def create_episode(conn: sqlite3.Connection, experiment_id: str, agent_id: str, *,

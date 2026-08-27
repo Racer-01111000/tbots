@@ -151,9 +151,21 @@ class FillTimingAndTransactionCostTestCase(unittest.TestCase):
         self.assertGreater(buy_price, 10_000)
         self.assertEqual(buy_price, round(10_000 * (1 + execution.SLIPPAGE_BPS / 10_000)))
 
+    def test_buy_fill_reports_total_actual_slippage_cents(self):
+        fill = execution.Portfolio(1_000_000_00).apply_fill("A", "buy", 100, 10_000)
+        self.assertEqual(fill["slippage_cents"],
+                         (fill["fill_price_cents"] - 10_000) * fill["shares"])
+
     def test_sell_fill_includes_adverse_slippage(self):
         sell_price = execution.sell_fill_price_cents(10_000)
         self.assertLess(sell_price, 10_000)
+
+    def test_sell_fill_reports_total_actual_slippage_cents(self):
+        portfolio = execution.Portfolio(1_000_000_00)
+        portfolio.apply_fill("A", "buy", 100, 10_000)
+        fill = portfolio.apply_fill("A", "sell", 100, 10_000)
+        self.assertEqual(fill["slippage_cents"],
+                         (10_000 - fill["fill_price_cents"]) * fill["shares"])
 
     def test_commission_charged_on_every_fill(self):
         p = execution.Portfolio(1_000_000_00)

@@ -91,11 +91,13 @@ class Portfolio:
         else:
             raise ValueError(f"unknown side: {side}")
 
+        slippage = abs(fill_price - open_price_cents) * shares
         self.total_commission_cents += fee
         self.total_traded_notional_cents += abs(notional)
         self.fill_count += 1
         return {"symbol": symbol, "side": side, "shares": shares,
-                "fill_price_cents": fill_price, "commission_cents": fee, "notional_cents": notional}
+                "fill_price_cents": fill_price, "commission_cents": fee,
+                "slippage_cents": slippage, "notional_cents": notional}
 
 
 def compute_orders(target_weights: dict, universe: list, equity_cents: int,

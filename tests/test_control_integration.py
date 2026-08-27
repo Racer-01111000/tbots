@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -176,6 +177,84 @@ class DeterministicRerunTestCase(ControlIntegrationBase):
         self.assertEqual(r1["verifier_disagreements"], [])
         self.assertEqual(r2["verifier_disagreements"], [])
         self.assertEqual(r1["equity_curve"], r2["equity_curve"])
+
+    def test_completed_experiment_persists_terminal_result(self):
+        result = self.run_episode(write_equity_curve=False)
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT status, final_result_json, completed_at FROM experiments WHERE experiment_id = ?",
+            (result["experiment_id"],),
+        ).fetchone()
+        episode_status = conn.execute(
+            "SELECT status FROM episodes WHERE episode_id = ?", (result["episode_id"],)
+        ).fetchone()["status"]
+        conn.close()
+        self.assertEqual(episode_status, "COMPLETED")
+        self.assertEqual(row["status"], "completed")
+        self.assertEqual(json.loads(row["final_result_json"])["verifier"]["status"], "agreed")
+        self.assertIsNotNone(row["completed_at"])
+
+
+class FailurePersistenceTestCase(ControlIntegrationBase):
+    def test_runtime_failure_persists_failed_experiment_and_episode(self):
+        with mock.patch.object(rce.control_agent, "decide", side_effect=RuntimeError("injected failure")):
+            with self.assertRaisesRegex(RuntimeError, "injected failure"):
+                self.run_episode(write_equity_curve=False)
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        experiment = conn.execute(
+            "SELECT status, final_result_json, completed_at FROM experiments"
+        ).fetchone()
+        episode = conn.execute("SELECT status FROM episodes").fetchone()
+        conn.close()
+        self.assertEqual(experiment["status"], "failed")
+        self.assertEqual(json.loads(experiment["final_result_json"])["error_type"], "RuntimeError")
+        self.assertIsNotNone(experiment["completed_at"])
+        self.assertEqual(episode["status"], "FAILED")
+
+    def test_injected_verifier_disagreement_fails_closed_and_records_provenance(self):
+        with mock.patch.object(rce, "get_code_revision",
+                               return_value=("runtime-deadbeef", True)):
+            with mock.patch.object(rce.verifier, "compare_decision",
+                                   return_value=["injected verifier mismatch"]):
+                with self.assertRaises(rce.VerifierDisagreement):
+                    self.run_episode(write_equity_curve=False)
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        experiment = conn.execute("SELECT * FROM experiments").fetchone()
+        decision = conn.execute("SELECT payload_json FROM decisions").fetchone()
+        conn.close()
+        final_result = json.loads(experiment["final_result_json"])
+        decision_payload = json.loads(decision["payload_json"])
+        self.assertEqual(experiment["status"], "failed")
+        self.assertEqual(experiment["code_revision"], "runtime-deadbeef")
+        self.assertEqual(experiment["code_dirty"], 1)
+        self.assertEqual(final_result["verifier"]["status"], "disagreed")
+        self.assertIn("injected verifier mismatch",
+                      final_result["verifier"]["outcomes"][0]["disagreements"])
+        self.assertEqual(decision_payload["kind"], "rebalance_blocked")
+        self.assertEqual(decision_payload["verifier"]["status"], "disagreed")
+
+
+class SlippagePersistenceAuditTestCase(ControlIntegrationBase):
+    def test_buy_and_sell_fill_slippage_is_persisted(self):
+        result = self.run_episode(write_equity_curve=False)
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        stored = conn.execute(
+            "SELECT f.order_id, o.side, f.slippage_cents FROM fills f "
+            "JOIN orders o ON o.order_id = f.order_id"
+        ).fetchall()
+        conn.close()
+        expected = {fill["order_db_id"]: fill["slippage_cents"] for fill in result["fill_log"]}
+        self.assertEqual({side for _, side, _ in stored}, {"buy", "sell"})
+        for order_id, _, slippage_cents in stored:
+            self.assertEqual(slippage_cents, expected[order_id])
+            self.assertGreater(slippage_cents, 0)
 
 
 if __name__ == "__main__":

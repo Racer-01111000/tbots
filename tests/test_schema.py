@@ -1,3 +1,4 @@
+import json
 import sqlite3
 import sys
 import tempfile
@@ -132,6 +133,69 @@ class SchemaTestCase(unittest.TestCase):
         ).fetchone()
         self.assertEqual(child["parent_agent_id"], agent_id)
         self.assertEqual(child["generation"], 1)
+
+    def _experiment_with_episode(self):
+        gid = models.create_genome(self.conn, SAMPLE_GENOME)
+        agent_id = models.create_agent(self.conn, gid, generation=0)
+        experiment_id = models.create_experiment(
+            self.conn, code_revision="runtime-revision", code_dirty=True,
+            dataset_revision="sha256:testdataset", random_seed=0, agent_id=agent_id,
+            genome_id_=gid, start_state={"cash_cents": 1_000_000},
+            replay_window_start="2020-01-01", replay_window_end="2020-01-31",
+            execution_assumptions={"commission_bps": 5, "slippage_bps": 5},
+        )
+        episode_id = models.create_episode(
+            self.conn, experiment_id, agent_id, dataset_revision="sha256:testdataset",
+            start_ts="2020-01-01", end_ts="2020-01-31",
+        )
+        self.conn.commit()
+        return experiment_id, episode_id
+
+    def test_atomic_pending_running_completed_lifecycle(self):
+        experiment_id, episode_id = self._experiment_with_episode()
+        models.mark_experiment_running(self.conn, experiment_id)
+        models.update_episode_progress(
+            self.conn, episode_id, current_ts="2020-01-31", status="COMPLETED"
+        )
+        models.complete_experiment(self.conn, experiment_id, {"status": "completed", "value": 7})
+        self.conn.commit()
+
+        row = self.conn.execute(
+            "SELECT status, final_result_json, completed_at FROM experiments WHERE experiment_id = ?",
+            (experiment_id,),
+        ).fetchone()
+        self.assertEqual(row["status"], "completed")
+        self.assertEqual(json.loads(row["final_result_json"]), {"status": "completed", "value": 7})
+        self.assertIsNotNone(row["completed_at"])
+        with self.assertRaises(models.InvalidExperimentTransition):
+            models.fail_experiment(self.conn, experiment_id, {"status": "failed"})
+
+    def test_incomplete_episode_cannot_complete_experiment(self):
+        experiment_id, _ = self._experiment_with_episode()
+        models.mark_experiment_running(self.conn, experiment_id)
+        with self.assertRaises(models.InvalidExperimentTransition):
+            models.complete_experiment(self.conn, experiment_id, {"status": "completed"})
+        row = self.conn.execute(
+            "SELECT status, final_result_json, completed_at FROM experiments WHERE experiment_id = ?",
+            (experiment_id,),
+        ).fetchone()
+        self.assertEqual(row["status"], "running")
+        self.assertIsNone(row["final_result_json"])
+        self.assertIsNone(row["completed_at"])
+
+    def test_pending_or_running_experiment_can_fail_with_result(self):
+        experiment_id, episode_id = self._experiment_with_episode()
+        models.mark_experiment_running(self.conn, experiment_id)
+        models.fail_incomplete_episode(self.conn, episode_id)
+        models.fail_experiment(self.conn, experiment_id, {"status": "failed", "reason": "injected"})
+        self.conn.commit()
+        row = self.conn.execute(
+            "SELECT status, final_result_json, completed_at FROM experiments WHERE experiment_id = ?",
+            (experiment_id,),
+        ).fetchone()
+        self.assertEqual(row["status"], "failed")
+        self.assertEqual(json.loads(row["final_result_json"])["reason"], "injected")
+        self.assertIsNotNone(row["completed_at"])
 
 
 if __name__ == "__main__":

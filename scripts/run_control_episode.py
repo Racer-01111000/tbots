@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 
 from lib import models
 from lib.db import connect
+from lib.gitrev import get_code_revision
 from lib.replay import AgentView, ReplayEngine
 
 import control_agent
@@ -37,6 +38,14 @@ from genome_control import CONTROL_GENOME
 
 ROOT = Path(__file__).resolve().parents[1]
 STARTING_CASH_CENTS = 100_000_000  # $1,000,000.00
+
+
+class VerifierDisagreement(RuntimeError):
+    """A control/verifier mismatch that must fail the experiment closed."""
+
+    def __init__(self, outcome: dict):
+        super().__init__("independent verifier disagreed with control decision")
+        self.outcomes = [outcome]
 
 
 def dollars_to_cents(s: str) -> int:
@@ -55,23 +64,10 @@ def ensure_control_agent(conn) -> tuple[str, str]:
     return agent_id, genome_id
 
 
-def run_control_episode(dataset_root, dataset_revision: str, start_date: str, end_date: str, *,
-                         masked_time: bool = False, db_path=None, write_equity_curve: bool = True,
-                         verify_every_rebalance: bool = True) -> dict:
-    conn = connect(db_path) if db_path else connect()
-    agent_id, genome_id = ensure_control_agent(conn)
-    experiment_id = models.create_experiment(
-        conn, code_revision="s4-control", code_dirty=False, dataset_revision=dataset_revision,
-        random_seed=0, agent_id=agent_id, genome_id_=genome_id,
-        start_state={"starting_cash_cents": STARTING_CASH_CENTS},
-        replay_window_start=start_date, replay_window_end=end_date,
-        execution_assumptions={
-            "sizing_price": "same-session raw close", "fill_price": "next-session raw open",
-            "commission_bps": execution.COMMISSION_BPS, "slippage_bps": execution.SLIPPAGE_BPS,
-        },
-    )
-    conn.commit()
-
+def _execute_control_episode(conn, dataset_root, dataset_revision: str, start_date: str,
+                             end_date: str, *, experiment_id: str, agent_id: str,
+                             genome_id: str, masked_time: bool = False,
+                             write_equity_curve: bool = True) -> dict:
     engine = ReplayEngine(dataset_root, dataset_revision, start_date, end_date, masked_time=masked_time)
     view = AgentView(engine)
     universe = CONTROL_GENOME["universe"]
@@ -111,6 +107,7 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
                     conn, order["order_db_id"], fill_ts=full["_true_timestamp"],
                     fill_price_cents=fill["fill_price_cents"], fill_quantity=fill["shares"],
                     commission_cents=fill["commission_cents"],
+                    slippage_cents=fill["slippage_cents"],
                 )
                 conn.execute("UPDATE orders SET status = 'filled' WHERE order_id = ?",
                              (order["order_db_id"],))
@@ -132,17 +129,29 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
         # 4. scheduled rebalance
         elif not portfolio.halted and step % CONTROL_GENOME["rebalance_every_n_sessions"] == 0:
             control_decision = control_agent.decide(view, CONTROL_GENOME)
-            if verify_every_rebalance:
-                v_evals = verifier.evaluate_universe_v(view, CONTROL_GENOME)
-                v_selected = verifier.rank_and_select_v(v_evals, CONTROL_GENOME["max_positions"])
-                v_weights = verifier.size_positions_v(v_selected, v_evals, CONTROL_GENOME)
-                disagreements = verifier.compare_decision(control_decision, v_evals, v_selected, v_weights)
-                if disagreements:
-                    verifier_disagreements.append({"step": step, "true_ts": full["_true_timestamp"],
-                                                    "disagreements": disagreements})
+            v_evals = verifier.evaluate_universe_v(view, CONTROL_GENOME)
+            v_selected = verifier.rank_and_select_v(v_evals, CONTROL_GENOME["max_positions"])
+            v_weights = verifier.size_positions_v(v_selected, v_evals, CONTROL_GENOME)
+            disagreements = verifier.compare_decision(control_decision, v_evals, v_selected, v_weights)
+            verifier_outcome = {
+                "status": "disagreed" if disagreements else "agreed",
+                "tolerance": verifier.TOLERANCE,
+                "step": step,
+                "true_ts": full["_true_timestamp"],
+                "disagreements": disagreements,
+            }
+            if disagreements:
+                verifier_disagreements.append(verifier_outcome)
+                models.create_decision(
+                    conn, episode_id, agent_id, simulated_ts=full["_true_timestamp"],
+                    payload={"kind": "rebalance_blocked", "selected": control_decision["selected"],
+                             "weights": control_decision["weights"], "verifier": verifier_outcome},
+                )
+                conn.commit()
+                raise VerifierDisagreement(verifier_outcome)
             target_weights = control_decision["weights"]
             decision_record = {"kind": "rebalance", "selected": control_decision["selected"],
-                                "weights": target_weights}
+                                "weights": target_weights, "verifier": verifier_outcome}
 
         # risk gate + order construction for whatever was just decided
         if decision_record is not None:
@@ -193,7 +202,7 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
             break
 
     models.update_episode_progress(conn, episode_id, current_ts=engine.current_timestamp,
-                                    status="COMPLETED")
+                                    status=engine.status)
     conn.commit()
 
     final_equity_cents = equity_curve[-1]["equity_cents"]
@@ -218,7 +227,6 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
                                   row["equity_cents"], f"{row['drawdown']:.8f}", row["halted"],
                                   json.dumps(row["positions"])])
 
-    conn.close()
     return {
         "episode_id": episode_id, "experiment_id": experiment_id, "genome_id": genome_id,
         "step_count": step, "final_status": "COMPLETED",
@@ -233,6 +241,86 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
         "equity_curve": equity_curve, "equity_curve_path": str(equity_curve_path) if equity_curve_path else None,
         "fill_log": fill_log,
     }
+
+
+def _persisted_result(result: dict) -> dict:
+    """Bounded terminal summary; large curves/logs remain in their dedicated records/artifact."""
+    return {
+        "episode_id": result["episode_id"],
+        "status": "completed",
+        "step_count": result["step_count"],
+        "starting_cash_cents": result["starting_cash_cents"],
+        "final_equity_cents": result["final_equity_cents"],
+        "total_return": result["total_return"],
+        "max_drawdown": result["max_drawdown"],
+        "rebalance_count": result["rebalance_count"],
+        "order_count": result["order_count"],
+        "fill_count": result["fill_count"],
+        "total_commission_cents": result["total_commission_cents"],
+        "verifier": {
+            "status": "agreed",
+            "disagreement_count": len(result["verifier_disagreements"]),
+        },
+        "equity_curve_path": result["equity_curve_path"],
+    }
+
+
+def run_control_episode(dataset_root, dataset_revision: str, start_date: str, end_date: str, *,
+                         masked_time: bool = False, db_path=None, write_equity_curve: bool = True,
+                         verify_every_rebalance: bool = True) -> dict:
+    if not verify_every_rebalance:
+        raise ValueError("independent verification cannot be disabled for a control experiment")
+
+    conn = connect(db_path) if db_path else connect()
+    experiment_id = None
+    try:
+        agent_id, genome_id = ensure_control_agent(conn)
+        code_revision, code_dirty = get_code_revision(str(ROOT))
+        experiment_id = models.create_experiment(
+            conn, code_revision=code_revision, code_dirty=code_dirty,
+            dataset_revision=dataset_revision, random_seed=0, agent_id=agent_id,
+            genome_id_=genome_id,
+            start_state={"starting_cash_cents": STARTING_CASH_CENTS},
+            replay_window_start=start_date, replay_window_end=end_date,
+            execution_assumptions={
+                "sizing_price": "same-session raw close",
+                "fill_price": "next-session raw open",
+                "commission_bps": execution.COMMISSION_BPS,
+                "slippage_bps": execution.SLIPPAGE_BPS,
+            },
+        )
+        conn.commit()
+        models.mark_experiment_running(conn, experiment_id)
+        conn.commit()
+
+        result = _execute_control_episode(
+            conn, dataset_root, dataset_revision, start_date, end_date,
+            experiment_id=experiment_id, agent_id=agent_id, genome_id=genome_id,
+            masked_time=masked_time, write_equity_curve=write_equity_curve,
+        )
+        models.complete_experiment(conn, experiment_id, _persisted_result(result))
+        conn.commit()
+        return result
+    except Exception as exc:
+        conn.rollback()
+        if experiment_id is not None:
+            episode = conn.execute(
+                "SELECT episode_id FROM episodes WHERE experiment_id = ? ORDER BY created_at DESC LIMIT 1",
+                (experiment_id,),
+            ).fetchone()
+            if episode is not None:
+                models.fail_incomplete_episode(conn, episode["episode_id"])
+            models.fail_experiment(conn, experiment_id, {
+                "status": "failed", "error_type": type(exc).__name__, "error": str(exc),
+                "verifier": {
+                    "status": "disagreed" if isinstance(exc, VerifierDisagreement) else "unknown",
+                    "outcomes": getattr(exc, "outcomes", []),
+                },
+            })
+            conn.commit()
+        raise
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":
