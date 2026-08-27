@@ -46,9 +46,15 @@ def episode_sharpe(daily_returns: list[float]) -> float:
     )
 
 
-def simulate_episode(bundle, genome: dict, episode: dict, *, verify: bool = False) -> dict:
+def simulate_episode(bundle, genome: dict, episode_index: int, *, verify: bool = False) -> dict:
     """Run one fresh-capital episode; no state is accepted from another episode."""
     validate_genome(genome)
+    if not isinstance(episode_index, int) or isinstance(episode_index, bool):
+        raise TypeError("episode_index must identify the frozen DEVELOPMENT manifest")
+    episodes = EPISODE_PROTOCOL["episodes"]
+    if not 0 <= episode_index < len(episodes):
+        raise ValueError("episode_index is outside the frozen DEVELOPMENT manifest")
+    episode = episodes[episode_index]
     engine = ReplayEngine(
         ROOT,
         DATASET_REVISION,
@@ -234,8 +240,8 @@ def compute_fitness(episode_metrics: list[dict]) -> dict:
 def evaluate_genome(bundle, genome: dict, *, verify: bool = False) -> dict:
     validate_genome(genome)
     episodes = [
-        simulate_episode(bundle, genome, episode, verify=verify)
-        for episode in EPISODE_PROTOCOL["episodes"]
+        simulate_episode(bundle, genome, index, verify=verify)
+        for index in range(len(EPISODE_PROTOCOL["episodes"]))
     ]
     aggregate = compute_fitness(episodes)
     return {

@@ -111,6 +111,8 @@ CREATE TABLE IF NOT EXISTS evolution_runs (
     code_dirty              INTEGER NOT NULL,
     dataset_revision        TEXT NOT NULL,
     lane_manifest_hash      TEXT NOT NULL,
+    development_bundle_revision TEXT NOT NULL,
+    bundle_manifest_hash    TEXT NOT NULL,
     evolution_seed          INTEGER NOT NULL,
     population_size         INTEGER NOT NULL,
     final_generation        INTEGER NOT NULL,
@@ -122,6 +124,7 @@ CREATE TABLE IF NOT EXISTS evolution_runs (
                                 CHECK (status IN ('running', 'completed', 'failed')),
     failure_json            TEXT,
     deterministic_digest    TEXT,
+    isolation_json          TEXT,
     result_json             TEXT,
     created_at              TEXT NOT NULL,
     completed_at            TEXT

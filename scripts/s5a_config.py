@@ -13,6 +13,7 @@ PROTOCOL_DIR = ROOT / "evolution" / "protocol"
 DEVELOPMENT_LANE_HASH = "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2"
 DATASET_REVISION = "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131"
 CONTROL_GENOME_ID = "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251"
+AUTHORIZED_DEVELOPMENT_BUNDLE_REVISION = "s5adev_98e2f764f466b90ee2bbc2532b75188bfc4fd20b4a13523f94bce65e6a1f193a"
 
 EPISODE_HASH = "s5a_episode_c8d3705ee8306daa517fc886808db68d97814fbca0a8fc5113a9c2a70dc15946"
 FITNESS_HASH = "s5a_fitness_3525d7ce8ab1c5e9b716d98ebe975aabb14e60201dc660600e6b0fb69b1b5b40"
@@ -55,6 +56,22 @@ POPULATION_SIZE = POPULATION_PROTOCOL["population_size"]
 FINAL_GENERATION = POPULATION_PROTOCOL["final_generation"]
 MUTABLE = MUTATION_PROTOCOL["mutable"]
 MUTABLE_NAMES = tuple(sorted(MUTABLE))
+MAX_LEGAL_PRICE_BARS = max(
+    MUTABLE["momentum_slow"]["max"] + 1,
+    MUTABLE["trend_filter_window"]["max"],
+    MUTABLE["volatility_window"]["max"] + 1,
+)
+PREDEVELOPMENT_WARMUP_BARS = MAX_LEGAL_PRICE_BARS - 1
+WARMUP_POLICY = {
+    "basis": "per-asset trading bars strictly before DEVELOPMENT start",
+    "maximum_slow_momentum_sessions": MUTABLE["momentum_slow"]["max"],
+    "maximum_trend_filter_price_bars": MUTABLE["trend_filter_window"]["max"],
+    "maximum_volatility_returns": MUTABLE["volatility_window"]["max"],
+    "maximum_required_price_bars_including_current": MAX_LEGAL_PRICE_BARS,
+    "maximum_predevelopment_bars_per_asset": PREDEVELOPMENT_WARMUP_BARS,
+    "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+    "fabrication_backfill_interpolation": "PROHIBITED",
+}
 
 if genome_id(CONTROL_GENOME) != CONTROL_GENOME_ID:
     raise ProtocolError("frozen S4 control genome identity changed")

@@ -18,7 +18,6 @@ from lib import models
 from lib.db import DB_PATH, init_db
 from lib.gitrev import get_code_revision
 from lib.ids import canonical_json, genome_id
-from lib.replay import load_and_verify_dataset
 from s5_boundary import DEVELOPMENT_HASH, load_authorized_manifest
 from s5a_config import (
     CONTROL_GENOME_ID,
@@ -40,6 +39,10 @@ from s5a_config import (
     population_diversity,
     random_genome,
     validate_genome,
+)
+from s5a_development_bundle import (
+    assert_isolated,
+    load_authorized_development_bundle,
 )
 from s5a_evaluator import IndependentVerifierFailure, evaluate_genome
 
@@ -64,13 +67,14 @@ def result_comparison_hash(result: dict) -> str:
     ).hexdigest()
 
 
-def evolution_run_id(code_revision: str) -> str:
+def evolution_run_id(code_revision: str, bundle_revision: str) -> str:
     return deterministic_id(
         "evo",
         "S5A",
         code_revision,
         DATASET_REVISION,
         DEVELOPMENT_LANE_HASH,
+        bundle_revision,
         EVOLUTION_SEED,
         EPISODE_HASH,
         FITNESS_HASH,
@@ -683,9 +687,12 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
     if expected_code_revision is not None and code_revision != expected_code_revision:
         raise RuntimeError("runtime code revision does not match reproduction target")
 
+    bundle = load_authorized_development_bundle()
+    isolation = assert_isolated(bundle)
+
     conn = init_db(db_path=db_path)
     conn.row_factory = sqlite3.Row
-    run_id = evolution_run_id(code_revision)
+    run_id = evolution_run_id(code_revision, bundle.bundle_revision)
     if conn.execute("SELECT 1 FROM evolution_runs WHERE run_id = ?", (run_id,)).fetchone():
         conn.close()
         raise RuntimeError(f"evolution run already exists: {run_id}")
@@ -693,14 +700,17 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
     conn.execute(
         "INSERT INTO evolution_runs "
         "(run_id, code_revision, code_dirty, dataset_revision, lane_manifest_hash, "
+        "development_bundle_revision, bundle_manifest_hash, "
         "evolution_seed, population_size, final_generation, episode_manifest_hash, "
         "fitness_formula_hash, mutation_bounds_hash, population_rules_hash, status, created_at) "
-        "VALUES (?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'running', ?)",
+        "VALUES (?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'running', ?)",
         (
             run_id,
             code_revision,
             DATASET_REVISION,
             DEVELOPMENT_LANE_HASH,
+            bundle.bundle_revision,
+            bundle.bundle_manifest_hash,
             EVOLUTION_SEED,
             POPULATION_SIZE,
             FINAL_GENERATION,
@@ -713,9 +723,6 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
     )
     conn.commit()
     try:
-        bundle = load_and_verify_dataset(
-            ROOT, DATASET_REVISION, retention_end_date=EPISODE_PROTOCOL["lane_end"]
-        )
         population, globally_used = initial_population(conn, run_id)
         generation_reports = []
         control_fitness = None
@@ -756,6 +763,7 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
             verification_outcomes = _verify_generation(
                 conn, bundle, run_id, generation, ranked, survivors, code_revision
             )
+            isolation = assert_isolated(bundle)
             diversity = population_diversity([member["genome"] for member in population])
             if generation < FINAL_GENERATION:
                 survivor_ids = {member["agent_id"] for member in survivors}
@@ -806,6 +814,9 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
             "fitness_formula_hash": FITNESS_HASH,
             "mutation_bounds_hash": MUTATION_HASH,
             "population_rules_hash": POPULATION_HASH,
+            "development_bundle_revision": bundle.bundle_revision,
+            "bundle_manifest_hash": bundle.bundle_manifest_hash,
+            "isolation_instrumentation": isolation,
             "control_anchor_development_fitness": control_fitness,
             "generation_reports": generation_reports,
             "frozen_top10": frozen_top10,
@@ -813,8 +824,8 @@ def run_evolution(db_path: Path = DB_PATH, *, write_report: bool = True,
         }
         conn.execute(
             "UPDATE evolution_runs SET status = 'completed', deterministic_digest = ?, "
-            "result_json = ?, completed_at = ? WHERE run_id = ?",
-            (digest, canonical_json(result), now(), run_id),
+            "isolation_json = ?, result_json = ?, completed_at = ? WHERE run_id = ?",
+            (digest, canonical_json(isolation), canonical_json(result), now(), run_id),
         )
         conn.commit()
         if write_report:
@@ -850,11 +861,16 @@ def reproduce(canonical_result: dict, reproduction_db: Path) -> dict:
         expected_code_revision=canonical_result["code_revision"],
     )
     agreed = reproduced["deterministic_digest"] == canonical_result["deterministic_digest"]
+    isolation_agreed = (
+        reproduced["isolation_instrumentation"]
+        == canonical_result["isolation_instrumentation"]
+    )
     return {
-        "status": "agreed" if agreed else "disagreed",
+        "status": "agreed" if agreed and isolation_agreed else "disagreed",
         "canonical_digest": canonical_result["deterministic_digest"],
         "reproduction_digest": reproduced["deterministic_digest"],
         "reproduction_db": str(reproduction_db),
+        "isolation_agreed": isolation_agreed,
     }
 
 

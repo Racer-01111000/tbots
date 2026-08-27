@@ -16,7 +16,8 @@ sys.path.insert(0, str(SCRIPTS / "lib"))
 from genome_control import CONTROL_GENOME
 from lib.db import init_db
 from lib.ids import canonical_json, genome_id
-from lib.replay import load_and_verify_dataset
+from s5a_build_development_bundle import derive_development_bundle, write_development_bundle
+from s5a_development_bundle import _load_bundle_directory
 import s5a_config as config
 import s5a_evaluator as evaluator
 import s5a_evolution as evolution
@@ -154,14 +155,16 @@ class S5APersistenceTestCase(unittest.TestCase):
         self.run_id = "evo_test"
         self.conn.execute(
             "INSERT INTO evolution_runs (run_id, code_revision, code_dirty, dataset_revision, "
-            "lane_manifest_hash, evolution_seed, population_size, final_generation, "
+            "lane_manifest_hash, development_bundle_revision, bundle_manifest_hash, "
+            "evolution_seed, population_size, final_generation, "
             "episode_manifest_hash, fitness_formula_hash, mutation_bounds_hash, "
             "population_rules_hash, status, created_at) "
-            "VALUES (?, 'revision', 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'running', 'now')",
+            "VALUES (?, 'revision', 0, ?, ?, ?, 'manifest', ?, ?, ?, ?, ?, ?, ?, 'running', 'now')",
             (
                 self.run_id,
                 config.DATASET_REVISION,
                 config.DEVELOPMENT_LANE_HASH,
+                config.AUTHORIZED_DEVELOPMENT_BUNDLE_REVISION,
                 config.EVOLUTION_SEED,
                 config.POPULATION_SIZE,
                 config.FINAL_GENERATION,
@@ -224,11 +227,16 @@ class S5APersistenceTestCase(unittest.TestCase):
 class S5AIsolationIntegrationTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.bundle = load_and_verify_dataset(
-            config.ROOT,
-            config.DATASET_REVISION,
-            retention_end_date=config.EPISODE_PROTOCOL["lane_end"],
+        cls.tmp = tempfile.TemporaryDirectory()
+        derived = derive_development_bundle(config.ROOT, "TEST_CONSTRUCTION_REVISION")
+        path = write_development_bundle(derived, Path(cls.tmp.name))
+        cls.bundle = _load_bundle_directory(
+            path, derived["derived_bundle_revision"]
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
 
     def test_verified_bundle_retains_no_locked_lane_rows(self):
         self.assertLessEqual(self.bundle.calendar[-1], "2018-12-31")
@@ -237,16 +245,15 @@ class S5AIsolationIntegrationTestCase(unittest.TestCase):
 
     def test_episode_state_is_fresh_and_repeatable(self):
         episode = config.EPISODE_PROTOCOL["episodes"][0]
-        first = evaluator.simulate_episode(self.bundle, CONTROL_GENOME, episode)
-        second = evaluator.simulate_episode(self.bundle, CONTROL_GENOME, episode)
+        first = evaluator.simulate_episode(self.bundle, CONTROL_GENOME, 0)
+        second = evaluator.simulate_episode(self.bundle, CONTROL_GENOME, 0)
         self.assertEqual(first, second)
         self.assertEqual(first["starting_cash_cents"], 100_000_000)
 
     def test_independent_verifier_disagreement_fails_closed(self):
-        episode = {"episode_index": 99, "start_date": "2007-02-07", "end_date": "2007-02-07"}
         with mock.patch.object(evaluator.verifier, "compare_decision", return_value=["injected"]):
             with self.assertRaises(evaluator.IndependentVerifierFailure):
-                evaluator.simulate_episode(self.bundle, CONTROL_GENOME, episode, verify=True)
+                evaluator.simulate_episode(self.bundle, CONTROL_GENOME, 0, verify=True)
 
 
 class S5ARunGuardTestCase(unittest.TestCase):

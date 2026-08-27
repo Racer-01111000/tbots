@@ -13,5 +13,6 @@ data/normalized/*
 !data/normalized/manifest_*.json
 data/sealed/*
 !data/sealed/.gitkeep
+data/development_bundles/*
 reports/*
 !reports/.gitkeep

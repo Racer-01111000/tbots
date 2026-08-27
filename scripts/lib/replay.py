@@ -57,13 +57,53 @@ class EpisodeCompletedError(Exception):
     """Raised by observe()/history() once an episode has reached COMPLETED."""
 
 
+class EvaluationExposureAudit:
+    """Counts every market observation crossing the replay boundary."""
+
+    def __init__(self, development_start: str, development_end: str):
+        self.development_start = development_start
+        self.development_end = development_end
+        self.counts = {
+            "warmup_observations_exposed": 0,
+            "development_observations_exposed": 0,
+            "qualification_observations_exposed": 0,
+            "championship_observations_exposed": 0,
+            "final_reserve_observations_exposed": 0,
+            "other_post_development_observations_exposed": 0,
+        }
+
+    def record(self, timestamp: str, count: int = 1) -> None:
+        if timestamp < self.development_start:
+            key = "warmup_observations_exposed"
+        elif timestamp <= self.development_end:
+            key = "development_observations_exposed"
+        elif timestamp <= "2022-12-31":
+            key = "qualification_observations_exposed"
+        elif timestamp <= "2025-12-31":
+            key = "championship_observations_exposed"
+        elif timestamp >= "2026-01-01":
+            key = "final_reserve_observations_exposed"
+        else:
+            key = "other_post_development_observations_exposed"
+        self.counts[key] += count
+
+    def snapshot(self) -> dict:
+        return dict(self.counts)
+
+
 class DatasetBundle:
     def __init__(self, dataset_revision: str, asset_set: list[str],
-                 per_symbol_rows: dict[str, list[dict]], calendar: list[str]):
+                 per_symbol_rows: dict[str, list[dict]], calendar: list[str],
+                 exposure_audit: EvaluationExposureAudit | None = None,
+                 bundle_revision: str | None = None,
+                 bundle_manifest_hash: str | None = None):
         self.dataset_revision = dataset_revision
         self.asset_set = asset_set
         self.per_symbol_rows = per_symbol_rows
         self.calendar = calendar
+        self.exposure_audit = exposure_audit
+        self.bundle_revision = bundle_revision
+        self.bundle_manifest_hash = bundle_manifest_hash
 
 
 def load_and_verify_dataset(dataset_root, expected_dataset_revision: str,
@@ -243,6 +283,8 @@ class ReplayEngine:
             idx = self._symbol_timestamps[symbol]
             pos = bisect.bisect_left(idx, clock)
             row = self.bundle.per_symbol_rows[symbol][pos] if pos < len(idx) and idx[pos] == clock else None
+            if row is not None and self.bundle.exposure_audit is not None:
+                self.bundle.exposure_audit.record(row["timestamp"])
             assets[symbol] = _asset_fields(row)
         return {
             "_true_timestamp": clock,
@@ -266,7 +308,11 @@ class ReplayEngine:
         if cut == 0:
             return []
         start = max(0, cut - bars)
-        return [dict(row) for row in rows[start:cut]]
+        selected = rows[start:cut]
+        if self.bundle.exposure_audit is not None:
+            for row in selected:
+                self.bundle.exposure_audit.record(row["timestamp"])
+        return [dict(row) for row in selected]
 
     def advance(self) -> bool:
         """Moves exactly one step forward. Returns True if the episode is
