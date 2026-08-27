@@ -1,0 +1,35 @@
+{
+  "content": {
+    "child_mutated_gene_count": {"max": 3, "min": 1},
+    "constraints": ["momentum_fast < momentum_medium < momentum_slow"],
+    "duplicate_retry_limit_per_slot": 10000,
+    "immutable": {
+      "commission_bps": 5,
+      "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+      "direction": "long_only",
+      "drawdown_halt_pct": 0.12,
+      "fill_price": "next-session raw open",
+      "lane_manifest_hash": "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2",
+      "leverage": "none",
+      "shorting": "none",
+      "slippage_bps": 5,
+      "strategy_family": "trend",
+      "universe": ["SPY", "EFA", "EEM", "IEF", "TLT", "GLD", "DBC", "VNQ"]
+    },
+    "mutable": {
+      "max_asset_weight": {"max": 0.45, "min": 0.15, "mutation_max_delta": 0.05, "step": 0.01, "type": "decimal"},
+      "max_positions": {"max": 5, "min": 1, "mutation_max_delta": 1, "step": 1, "type": "integer"},
+      "momentum_fast": {"max": 126, "min": 21, "mutation_max_delta": 21, "step": 1, "type": "integer"},
+      "momentum_medium": {"max": 252, "min": 63, "mutation_max_delta": 42, "step": 1, "type": "integer"},
+      "momentum_slow": {"max": 378, "min": 126, "mutation_max_delta": 63, "step": 1, "type": "integer"},
+      "rebalance_every_n_sessions": {"max": 63, "min": 10, "mutation_max_delta": 7, "step": 1, "type": "integer"},
+      "target_max_exposure": {"max": 0.9, "min": 0.5, "mutation_max_delta": 0.1, "step": 0.01, "type": "decimal"},
+      "trend_filter_window": {"max": 300, "min": 100, "mutation_max_delta": 50, "step": 1, "type": "integer"},
+      "volatility_window": {"max": 126, "min": 21, "mutation_max_delta": 21, "step": 1, "type": "integer"}
+    },
+    "mutation_magnitude": "sqrt(sum((delta/(max-min))^2)) over changed genes",
+    "schema_version": 1,
+    "strategy_family": "trend"
+  },
+  "manifest_hash": "s5a_mutation_4df543a239fea6a9bdb680810a171acdd684a29c81a550c0d47048643066ebfe"
+}

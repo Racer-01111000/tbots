@@ -183,12 +183,20 @@ class ReplayEngine:
 
     def __init__(self, dataset_root, expected_dataset_revision: str, start_date: str, end_date: str,
                  masked_time: bool = False, random_seed: int = 0, episode_id: str | None = None,
-                 retention_end_date: str | None = None):
+                 retention_end_date: str | None = None, _verified_bundle: DatasetBundle | None = None):
         if retention_end_date is not None and end_date > retention_end_date:
             raise ValueError("episode end exceeds the authorized data-retention boundary")
-        self.bundle = load_and_verify_dataset(
-            dataset_root, expected_dataset_revision, retention_end_date=retention_end_date
-        )
+        if _verified_bundle is None:
+            self.bundle = load_and_verify_dataset(
+                dataset_root, expected_dataset_revision, retention_end_date=retention_end_date
+            )
+        else:
+            if _verified_bundle.dataset_revision != expected_dataset_revision:
+                raise DatasetVerificationError("verified bundle dataset revision changed")
+            if (retention_end_date is not None and _verified_bundle.calendar
+                    and _verified_bundle.calendar[-1] > retention_end_date):
+                raise DatasetVerificationError("verified bundle exceeds retention boundary")
+            self.bundle = _verified_bundle
         self.dataset_revision = expected_dataset_revision
         self.masked_time = masked_time
         self.random_seed = random_seed

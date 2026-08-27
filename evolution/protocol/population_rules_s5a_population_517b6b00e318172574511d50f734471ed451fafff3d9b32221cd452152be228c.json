@@ -1,0 +1,18 @@
+{
+  "content": {
+    "control_anchor_policy": "same immutable control organism retained in every generation; offspring may be mutated but anchor genome never changes",
+    "elite_policy": "preserve frozen control anchor plus nine highest-fitness non-control genomes",
+    "evolution_seed": 2026082701,
+    "final_freeze": "top ten Generation-10 genomes by frozen fitness ranking",
+    "final_generation": 10,
+    "generation_zero": {"control_anchors": 1, "random_immigrants": 49},
+    "parent_pool": "ten active elites; deterministic seeded selection with replacement",
+    "population_size": 50,
+    "retirement": "all non-survivors become permanent graveyard and may never reproduce",
+    "schema_version": 1,
+    "subsequent_generation": {"elites": 10, "mutated_children": 30, "random_immigrants": 10},
+    "uniqueness": "all 50 membership genome_ids must be unique",
+    "verification_roles": ["generation champion", "worst elite survivor", "one deterministic random non-overlapping organism"]
+  },
+  "manifest_hash": "s5a_population_517b6b00e318172574511d50f734471ed451fafff3d9b32221cd452152be228c"
+}
