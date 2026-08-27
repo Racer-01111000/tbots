@@ -1,0 +1,13 @@
+{
+  "content": {
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "end_date": "2018-12-31",
+    "feedback_policy": "eligible_for_evolutionary_fitness",
+    "lane": "DEVELOPMENT",
+    "purpose": "S5 control-anchor and evolutionary fitness evaluation",
+    "schema_version": 1,
+    "sealed": false,
+    "start_date": "2007-02-07"
+  },
+  "manifest_hash": "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2"
+}

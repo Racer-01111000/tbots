@@ -66,7 +66,8 @@ class DatasetBundle:
         self.calendar = calendar
 
 
-def load_and_verify_dataset(dataset_root, expected_dataset_revision: str) -> DatasetBundle:
+def load_and_verify_dataset(dataset_root, expected_dataset_revision: str,
+                            retention_end_date: str | None = None) -> DatasetBundle:
     """Loads exactly the accepted dataset revision and verifies it two
     ways before trusting a single byte of it:
       1. manifest-level: recompute the revision hash from the manifest's
@@ -153,6 +154,8 @@ def load_and_verify_dataset(dataset_root, expected_dataset_revision: str) -> Dat
                 "volume": r["volume"], "corporate_action": r["corporate_action"],
             })
         rows.sort(key=lambda row: row["timestamp"])
+        if retention_end_date is not None:
+            rows = [row for row in rows if row["timestamp"] <= retention_end_date]
         per_symbol_rows[symbol] = rows
 
     calendar = sorted({row["timestamp"] for rows in per_symbol_rows.values() for row in rows})
@@ -179,8 +182,13 @@ class ReplayEngine:
     class at all."""
 
     def __init__(self, dataset_root, expected_dataset_revision: str, start_date: str, end_date: str,
-                 masked_time: bool = False, random_seed: int = 0, episode_id: str | None = None):
-        self.bundle = load_and_verify_dataset(dataset_root, expected_dataset_revision)
+                 masked_time: bool = False, random_seed: int = 0, episode_id: str | None = None,
+                 retention_end_date: str | None = None):
+        if retention_end_date is not None and end_date > retention_end_date:
+            raise ValueError("episode end exceeds the authorized data-retention boundary")
+        self.bundle = load_and_verify_dataset(
+            dataset_root, expected_dataset_revision, retention_end_date=retention_end_date
+        )
         self.dataset_revision = expected_dataset_revision
         self.masked_time = masked_time
         self.random_seed = random_seed

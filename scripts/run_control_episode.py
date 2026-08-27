@@ -67,8 +67,10 @@ def ensure_control_agent(conn) -> tuple[str, str]:
 def _execute_control_episode(conn, dataset_root, dataset_revision: str, start_date: str,
                              end_date: str, *, experiment_id: str, agent_id: str,
                              genome_id: str, masked_time: bool = False,
-                             write_equity_curve: bool = True) -> dict:
-    engine = ReplayEngine(dataset_root, dataset_revision, start_date, end_date, masked_time=masked_time)
+                             write_equity_curve: bool = True,
+                             data_access_end: str | None = None) -> dict:
+    engine = ReplayEngine(dataset_root, dataset_revision, start_date, end_date,
+                          masked_time=masked_time, retention_end_date=data_access_end)
     view = AgentView(engine)
     universe = CONTROL_GENOME["universe"]
 
@@ -267,7 +269,8 @@ def _persisted_result(result: dict) -> dict:
 
 def run_control_episode(dataset_root, dataset_revision: str, start_date: str, end_date: str, *,
                          masked_time: bool = False, db_path=None, write_equity_curve: bool = True,
-                         verify_every_rebalance: bool = True) -> dict:
+                         verify_every_rebalance: bool = True,
+                         data_access_end: str | None = None) -> dict:
     if not verify_every_rebalance:
         raise ValueError("independent verification cannot be disabled for a control experiment")
 
@@ -297,6 +300,7 @@ def run_control_episode(dataset_root, dataset_revision: str, start_date: str, en
             conn, dataset_root, dataset_revision, start_date, end_date,
             experiment_id=experiment_id, agent_id=agent_id, genome_id=genome_id,
             masked_time=masked_time, write_equity_curve=write_equity_curve,
+            data_access_end=data_access_end,
         )
         models.complete_experiment(conn, experiment_id, _persisted_result(result))
         conn.commit()

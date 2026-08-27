@@ -208,6 +208,18 @@ class ClockAndEpisodeLifecycleTestCase(ReplayTestBase):
             view.advance()
 
 
+class RetentionBoundaryTestCase(ReplayTestBase):
+    def test_bundle_retains_no_rows_after_authorized_lane_end(self):
+        eng = self.engine(end=self.d[5], retention_end_date=self.d[5])
+        for rows in eng.bundle.per_symbol_rows.values():
+            self.assertTrue(all(row["timestamp"] <= self.d[5] for row in rows))
+        self.assertEqual(eng.bundle.calendar[-1], self.d[5])
+
+    def test_episode_end_cannot_exceed_retention_end(self):
+        with self.assertRaisesRegex(ValueError, "retention boundary"):
+            self.engine(end=self.d[8], retention_end_date=self.d[5])
+
+
 class ObservationBoundaryTestCase(ReplayTestBase):
     def test_future_ohlcv_never_appears_in_observation(self):
         eng = self.engine()
