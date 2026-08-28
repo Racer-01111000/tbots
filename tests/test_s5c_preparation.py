@@ -192,6 +192,16 @@ class S5CProtocolTestCase(unittest.TestCase):
             max(item["timestamp"] for item in selected_a), "2025-12-31"
         )
 
+    def test_constructor_never_uses_full_dataset_loader_or_reads_after_final_session(self):
+        source = (SCRIPTS / "s5c_build_championship_bundle.py").read_text()
+        self.assertNotIn("load_and_verify_dataset", source)
+        self.assertIn('path.open("rb", buffering=0)', source)
+        self.assertIn(
+            "while not reached_final_session:",
+            source,
+        )
+        self.assertIn("timestamp == EXPECTED_FINAL_TRADING_SESSION", source)
+
     def test_forged_advancement_and_protocol_identities_are_rejected(self):
         envelope = json.loads(config.ADVANCEMENT_MANIFEST_PATH.read_text())
         forged = copy.deepcopy(envelope)

@@ -12,7 +12,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 
 from lib.gitrev import get_code_revision
 from lib.ids import canonical_json
-from lib.replay import load_and_verify_dataset
 from s5c_config import (
     ADVANCEMENT_MANIFEST_HASH,
     ADVANCEMENT_PROTOCOL_HASH,
@@ -65,6 +64,85 @@ def freeze_protocols_without_data_access() -> dict:
     }
 
 
+def _parse_bounded_source_row(raw: bytes, symbol: str) -> dict:
+    try:
+        values = next(csv.reader([raw.decode("utf-8")]))
+    except (UnicodeDecodeError, csv.Error, StopIteration) as exc:
+        raise RuntimeError(f"invalid bounded canonical row for {symbol}") from exc
+    if len(values) != len(BUNDLE_FIELDS):
+        raise RuntimeError(f"invalid bounded canonical field count for {symbol}")
+    row = dict(zip(BUNDLE_FIELDS, values))
+    timestamp = row["timestamp"]
+    if len(timestamp) != 10 or timestamp[4:5] != "-" or timestamp[7:8] != "-":
+        raise RuntimeError(f"invalid bounded canonical timestamp for {symbol}")
+    for field in ("open", "high", "low", "close", "volume"):
+        try:
+            float(row[field])
+        except ValueError as exc:
+            raise RuntimeError(
+                f"invalid bounded canonical numeric field for {symbol}"
+            ) from exc
+    if row["adjusted_close"]:
+        try:
+            float(row["adjusted_close"])
+        except ValueError as exc:
+            raise RuntimeError(
+                f"invalid bounded adjusted close for {symbol}"
+            ) from exc
+    return row
+
+
+def load_canonical_source_through_final_2025() -> tuple[list[str], dict, bytes]:
+    """Read canonical rows unbuffered and stop on the final 2025 session.
+
+    No read is issued after the accepted final-session row, so FINAL RESERVE
+    observation bytes never cross the trusted construction boundary.
+    """
+    normalized = ROOT / "data" / "normalized"
+    manifest_path = normalized / f"manifest_{DATASET_REVISION}.json"
+    manifest_bytes = manifest_path.read_bytes()
+    try:
+        manifest = json.loads(manifest_bytes)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("canonical source manifest is unreadable") from exc
+    asset_set = manifest.get("asset_set")
+    if (
+        manifest.get("dataset_revision") != DATASET_REVISION
+        or not isinstance(asset_set, list)
+        or asset_set != list(sorted(asset_set))
+        or set(manifest.get("normalized_content_hashes", {})) != set(asset_set)
+    ):
+        raise RuntimeError("canonical source manifest identity changed")
+
+    per_symbol_rows = {}
+    expected_header = ",".join(BUNDLE_FIELDS).encode() + b"\n"
+    for symbol in asset_set:
+        path = normalized / f"{symbol}.csv"
+        rows = []
+        prior_timestamp = ""
+        reached_final_session = False
+        with path.open("rb", buffering=0) as source_file:
+            if source_file.readline() != expected_header:
+                raise RuntimeError(f"canonical source header changed: {symbol}")
+            while not reached_final_session:
+                raw = source_file.readline()
+                if not raw:
+                    raise RuntimeError(
+                        f"canonical source ended before final 2025 session: {symbol}"
+                    )
+                row = _parse_bounded_source_row(raw, symbol)
+                timestamp = row["timestamp"]
+                if timestamp <= prior_timestamp or timestamp > EXPECTED_FINAL_TRADING_SESSION:
+                    raise RuntimeError(
+                        f"canonical source ordering or 2025 boundary changed: {symbol}"
+                    )
+                rows.append(row)
+                prior_timestamp = timestamp
+                reached_final_session = timestamp == EXPECTED_FINAL_TRADING_SESSION
+        per_symbol_rows[symbol] = rows
+    return asset_set, per_symbol_rows, manifest_bytes
+
+
 def csv_bytes(rows: list[dict]) -> bytes:
     output = io.StringIO(newline="")
     writer = csv.DictWriter(output, fieldnames=BUNDLE_FIELDS, lineterminator="\n")
@@ -98,12 +176,9 @@ def derive_championship_bundle(
     if tuple(row.genome_id for row in finalists) != FINALIST_IDS:
         raise RuntimeError("trusted builder requires the accepted frozen finalists")
 
-    # This trusted construction boundary alone may open the complete accepted source.
-    source = load_and_verify_dataset(ROOT, DATASET_REVISION)
-    source_manifest_path = (
-        ROOT / "data" / "normalized" / f"manifest_{DATASET_REVISION}.json"
+    source_asset_set, source_per_symbol_rows, source_manifest_bytes = (
+        load_canonical_source_through_final_2025()
     )
-    source_manifest_bytes = source_manifest_path.read_bytes()
 
     per_genome = {
         row.genome_id: required_price_bars(row.genome) - 1
@@ -123,8 +198,8 @@ def derive_championship_bundle(
     artifacts = {}
     artifact_hashes = {}
     metadata = {}
-    for symbol in source.asset_set:
-        source_rows = source.per_symbol_rows[symbol]
+    for symbol in source_asset_set:
+        source_rows = source_per_symbol_rows[symbol]
         selected, warmup_count = select_authorized_rows(
             source_rows, shared_warmup_bars
         )
@@ -156,7 +231,7 @@ def derive_championship_bundle(
 
     revision_basis = {
         "schema_version": 1,
-        "asset_set": source.asset_set,
+        "asset_set": source_asset_set,
         "dataset_revision": DATASET_REVISION,
         "advancement_manifest_hash": ADVANCEMENT_MANIFEST_HASH,
         "finalist_ids": list(FINALIST_IDS),
