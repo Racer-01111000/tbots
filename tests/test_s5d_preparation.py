@@ -8,6 +8,8 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -27,6 +29,7 @@ from s5d_final_reserve_bundle import (
     assert_isolated,
     load_authorized_final_reserve_bundle,
 )
+import s5d_final_reserve as runner
 import s5d_config as config
 import s5d_evaluator as evaluator
 from s5d_champion import load_frozen_champion
@@ -227,6 +230,62 @@ class S5DProtocolTestCase(unittest.TestCase):
             final_reserve_result_digest(base),
             final_reserve_result_digest(changed),
         )
+
+    def test_fixture_runner_persists_verification_and_deterministic_artifact(self):
+        episode = synthetic_episode()
+        outcome = evaluator.summarize_final_reserve(episode)
+        main = {
+            "agent_id": "agent_fixture",
+            "genome_id": config.ACCEPTED_CHAMPION_ID,
+            "episode_metric": episode,
+            "outcome": outcome,
+            "metrics_hash": "fixture_metrics_hash",
+        }
+        verified = copy.deepcopy(main)
+        verified["episode_metric"]["verifier_checks"] = 9
+        lock = {
+            "final_reserve_bundle_revision": "fixture_bundle",
+            "final_reserve_bundle_manifest_hash": "fixture_manifest",
+            "champion_snapshot_hash": "fixture_snapshot",
+        }
+        champion = SimpleNamespace(
+            agent_id="agent_fixture",
+            genome_id=config.ACCEPTED_CHAMPION_ID,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "fixture.db"
+            report_path = Path(tmp) / "fixture.json"
+            with (
+                mock.patch.object(
+                    runner, "get_code_revision",
+                    return_value=("0" * 40, False),
+                ),
+                mock.patch.object(
+                    runner, "load_preparation_lock", return_value=lock,
+                ),
+                mock.patch.object(
+                    runner, "load_frozen_champion", return_value=champion,
+                ),
+                mock.patch.object(
+                    runner, "load_authorized_final_reserve_bundle",
+                    side_effect=[object(), object()],
+                ),
+                mock.patch.object(runner, "assert_isolated", return_value={}),
+                mock.patch.object(
+                    runner, "evaluate_champion",
+                    side_effect=[main, verified],
+                ),
+            ):
+                report = runner.run_final_reserve(db_path, report_path)
+            self.assertEqual(
+                report["independent_verifier"]["status"], "agreed"
+            )
+            self.assertTrue(db_path.exists())
+            self.assertEqual(json.loads(report_path.read_text()), report)
+            self.assertEqual(
+                report["champion_result"]["genome_id"],
+                config.ACCEPTED_CHAMPION_ID,
+            )
 
     def test_execution_entrypoint_refuses_without_future_token(self):
         completed = subprocess.run(
