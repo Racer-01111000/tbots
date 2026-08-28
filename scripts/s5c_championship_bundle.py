@@ -1,0 +1,237 @@
+"""Fail-closed loader for the single authorized S5C championship bundle."""
+import csv
+import hashlib
+import io
+import json
+import re
+from pathlib import Path
+
+from lib.ids import canonical_json
+from lib.replay import DatasetBundle, DatasetVerificationError
+from s5c_config import (
+    ADVANCEMENT_MANIFEST_HASH,
+    CHAMPIONSHIP_END,
+    CHAMPIONSHIP_START,
+    DATASET_REVISION,
+    EPISODE_HASH,
+    EXPECTED_FINAL_TRADING_SESSION,
+    FINAL_RESERVE_START,
+    FINALIST_IDS,
+    ROOT,
+    SCORE_HASH,
+    load_preparation_lock,
+)
+
+BUNDLE_FIELDS = (
+    "timestamp", "open", "high", "low", "close", "adjusted_close", "volume",
+    "corporate_action",
+)
+ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+class ChampionshipExposureAudit:
+    def __init__(self):
+        self.counts = {
+            "warmup_observations_exposed": 0,
+            "championship_observations_exposed": 0,
+            "final_reserve_observations_exposed": 0,
+            "other_observations_exposed": 0,
+        }
+
+    def record(self, timestamp: str, count: int = 1) -> None:
+        if timestamp < CHAMPIONSHIP_START:
+            key = "warmup_observations_exposed"
+        elif timestamp <= CHAMPIONSHIP_END:
+            key = "championship_observations_exposed"
+        elif timestamp >= FINAL_RESERVE_START:
+            key = "final_reserve_observations_exposed"
+        else:
+            key = "other_observations_exposed"
+        self.counts[key] += count
+
+    def snapshot(self) -> dict:
+        return dict(self.counts)
+
+
+def _sha256(payload: bytes) -> str:
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _load_bundle_directory(
+    bundle_dir: Path, expected_revision: str, expected_manifest_hash: str
+) -> DatasetBundle:
+    bundle_dir = Path(bundle_dir)
+    path = bundle_dir / f"manifest_{expected_revision}.json"
+    try:
+        envelope = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise DatasetVerificationError("authorized championship bundle is unreadable") from exc
+    if set(envelope) != {"content", "manifest_hash"}:
+        raise DatasetVerificationError("invalid championship bundle manifest envelope")
+    content = envelope["content"]
+    actual_manifest = "s5c_champ_manifest_" + _sha256(canonical_json(content).encode())
+    if (envelope["manifest_hash"] != expected_manifest_hash
+            or actual_manifest != expected_manifest_hash):
+        raise DatasetVerificationError("championship bundle manifest hash mismatch")
+    basis = content.get("revision_basis")
+    if not isinstance(basis, dict):
+        raise DatasetVerificationError("championship bundle revision basis missing")
+    actual_revision = "s5cchamp_" + _sha256(canonical_json(basis).encode())
+    if (
+        actual_revision != expected_revision
+        or content.get("derived_bundle_revision") != expected_revision
+        or content.get("source_dataset_revision") != DATASET_REVISION
+        or content.get("advancement_manifest_hash") != ADVANCEMENT_MANIFEST_HASH
+        or content.get("episode_protocol_hash") != EPISODE_HASH
+        or content.get("score_protocol_hash") != SCORE_HASH
+        or basis.get("lane_start") != CHAMPIONSHIP_START
+        or basis.get("lane_end") != CHAMPIONSHIP_END
+        or basis.get("finalist_ids") != list(FINALIST_IDS)
+    ):
+        raise DatasetVerificationError("championship bundle identity or bounds changed")
+    isolation = content.get("isolation_contract", {})
+    if isolation != {
+        "evaluator_has_no_normalized_source_path": True,
+        "only_fixed_bundle_path_is_supported": True,
+        "observations_after_2025_12_31": 0,
+        "final_reserve_observations": 0,
+        "historical_s5a_performance_payloads": 0,
+        "historical_s5b_performance_payloads": 0,
+        "evolutionary_feedback_outputs": 0,
+    }:
+        raise DatasetVerificationError("championship isolation contract changed")
+
+    asset_set = basis.get("asset_set")
+    if not isinstance(asset_set, list) or not asset_set:
+        raise DatasetVerificationError("championship asset set is invalid")
+    warmup_policy = basis.get("warmup_policy", {})
+    shared_warmup = warmup_policy.get("shared_bundle_prechampionship_bars_per_asset")
+    if not isinstance(shared_warmup, int) or shared_warmup < 0:
+        raise DatasetVerificationError("championship warmup policy is invalid")
+
+    per_symbol_rows = {}
+    for symbol in asset_set:
+        artifact_path = bundle_dir / f"{symbol}.csv"
+        try:
+            artifact = artifact_path.read_bytes()
+        except OSError as exc:
+            raise DatasetVerificationError(
+                f"missing championship artifact: {symbol}"
+            ) from exc
+        if _sha256(artifact) != basis["artifact_hashes"].get(symbol):
+            raise DatasetVerificationError(f"changed championship artifact: {symbol}")
+        reader = csv.DictReader(io.StringIO(artifact.decode()))
+        if tuple(reader.fieldnames or ()) != BUNDLE_FIELDS:
+            raise DatasetVerificationError(f"invalid championship fields: {symbol}")
+        rows = []
+        for row in reader:
+            timestamp = row.get("timestamp", "")
+            if not ISO_DATE_RE.match(timestamp) or timestamp > CHAMPIONSHIP_END:
+                raise DatasetVerificationError(
+                    "post-2025 or malformed championship timestamp"
+                )
+            for field in ("open", "high", "low", "close", "volume"):
+                try:
+                    float(row[field])
+                except (KeyError, ValueError):
+                    raise DatasetVerificationError(
+                        "invalid championship numeric field"
+                    )
+            if row["adjusted_close"]:
+                try:
+                    float(row["adjusted_close"])
+                except ValueError:
+                    raise DatasetVerificationError(
+                        "invalid championship adjusted close"
+                    )
+            rows.append({field: row[field] for field in BUNDLE_FIELDS})
+        rows.sort(key=lambda row: row["timestamp"])
+        warmup_count = sum(
+            row["timestamp"] < CHAMPIONSHIP_START for row in rows
+        )
+        if warmup_count > shared_warmup:
+            raise DatasetVerificationError("championship bundle exceeds frozen warmup")
+        metadata = content["asset_metadata"][symbol]
+        if (
+            len(rows) != metadata["total_rows"]
+            or not rows
+            or rows[0]["timestamp"] != metadata["earliest_included"]
+            or rows[-1]["timestamp"] != metadata["latest_included"]
+            or rows[-1]["timestamp"] != EXPECTED_FINAL_TRADING_SESSION
+        ):
+            raise DatasetVerificationError("championship bundle coverage changed")
+        per_symbol_rows[symbol] = rows
+
+    calendar = sorted({
+        row["timestamp"] for rows in per_symbol_rows.values() for row in rows
+    })
+    if not calendar or calendar[-1] != EXPECTED_FINAL_TRADING_SESSION:
+        raise DatasetVerificationError(
+            "championship evaluator maximum is not final 2025 trading session"
+        )
+    return DatasetBundle(
+        DATASET_REVISION,
+        asset_set,
+        per_symbol_rows,
+        calendar,
+        exposure_audit=ChampionshipExposureAudit(),
+        bundle_revision=expected_revision,
+        bundle_manifest_hash=expected_manifest_hash,
+    )
+
+
+def load_authorized_championship_bundle() -> DatasetBundle:
+    """The evaluator accepts no caller-supplied path, dates, or source dataset."""
+    lock = load_preparation_lock()
+    expected_revision = lock["championship_bundle_revision"]
+    expected = (ROOT / lock["championship_bundle_path"]).resolve()
+    fixed = (ROOT / "data" / "championship_bundles" / expected_revision).resolve()
+    if expected != fixed:
+        raise DatasetVerificationError("championship bundle path is not fixed")
+    return _load_bundle_directory(
+        fixed, expected_revision, lock["championship_bundle_manifest_hash"]
+    )
+
+
+def isolation_snapshot(bundle: DatasetBundle) -> dict:
+    if not isinstance(bundle.exposure_audit, ChampionshipExposureAudit):
+        raise DatasetVerificationError("championship exposure instrumentation missing")
+    counts = bundle.exposure_audit.snapshot()
+    counts.update({
+        "evaluator_visible_min_date": bundle.calendar[0],
+        "evaluator_visible_max_date": bundle.calendar[-1],
+        "observations_after_2025_12_31_available_to_evaluator": sum(
+            row["timestamp"] > CHAMPIONSHIP_END
+            for rows in bundle.per_symbol_rows.values() for row in rows
+        ),
+        "final_reserve_observations_available_to_evaluator": sum(
+            row["timestamp"] >= FINAL_RESERVE_START
+            for rows in bundle.per_symbol_rows.values() for row in rows
+        ),
+        "historical_s5a_performance_inputs_accepted": 0,
+        "historical_s5b_performance_inputs_accepted": 0,
+        "bundle_revision": bundle.bundle_revision,
+        "bundle_manifest_hash": bundle.bundle_manifest_hash,
+    })
+    return counts
+
+
+def assert_isolated(bundle: DatasetBundle) -> dict:
+    result = isolation_snapshot(bundle)
+    forbidden = (
+        "final_reserve_observations_exposed",
+        "other_observations_exposed",
+        "observations_after_2025_12_31_available_to_evaluator",
+        "final_reserve_observations_available_to_evaluator",
+        "historical_s5a_performance_inputs_accepted",
+        "historical_s5b_performance_inputs_accepted",
+    )
+    if any(result[name] != 0 for name in forbidden):
+        raise DatasetVerificationError(
+            f"S5C championship isolation failed: {result}"
+        )
+    if result["evaluator_visible_max_date"] != EXPECTED_FINAL_TRADING_SESSION:
+        raise DatasetVerificationError(
+            "S5C evaluator maximum is not the final 2025 trading session"
+        )
+    return result
