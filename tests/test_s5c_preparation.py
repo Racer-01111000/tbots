@@ -16,7 +16,9 @@ sys.path.insert(0, str(SCRIPTS / "lib"))
 
 from lib.ids import canonical_json
 from lib.replay import DatasetVerificationError
-from s5c_build_championship_bundle import csv_bytes, select_authorized_rows
+from s5c_build_championship_bundle import (
+    _parse_bounded_source_row, csv_bytes, select_authorized_rows,
+)
 from s5c_championship_bundle import (
     _load_bundle_directory,
     assert_isolated,
@@ -201,6 +203,18 @@ class S5CProtocolTestCase(unittest.TestCase):
             source,
         )
         self.assertIn("timestamp == EXPECTED_FINAL_TRADING_SESSION", source)
+
+    def test_bounded_constructor_projects_canonical_provenance_schema(self):
+        raw = (
+            b"SPY,2025-12-31,100,101,99,100,100,1000,,"
+            b"yahoo,2025-12-31,2026-08-26T00:00:00Z\n"
+        )
+        projected = _parse_bounded_source_row(raw, "SPY")
+        self.assertEqual(projected["timestamp"], "2025-12-31")
+        self.assertEqual(set(projected), {
+            "timestamp", "open", "high", "low", "close",
+            "adjusted_close", "volume", "corporate_action",
+        })
 
     def test_forged_advancement_and_protocol_identities_are_rejected(self):
         envelope = json.loads(config.ADVANCEMENT_MANIFEST_PATH.read_text())

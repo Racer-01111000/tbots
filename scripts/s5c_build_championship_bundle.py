@@ -41,6 +41,9 @@ BUNDLE_FIELDS = (
     "timestamp", "open", "high", "low", "close", "adjusted_close", "volume",
     "corporate_action",
 )
+SOURCE_FIELDS = (
+    "asset", *BUNDLE_FIELDS, "source", "source_timestamp", "ingested_at",
+)
 
 
 def sha256_bytes(payload: bytes) -> str:
@@ -69,9 +72,12 @@ def _parse_bounded_source_row(raw: bytes, symbol: str) -> dict:
         values = next(csv.reader([raw.decode("utf-8")]))
     except (UnicodeDecodeError, csv.Error, StopIteration) as exc:
         raise RuntimeError(f"invalid bounded canonical row for {symbol}") from exc
-    if len(values) != len(BUNDLE_FIELDS):
+    if len(values) != len(SOURCE_FIELDS):
         raise RuntimeError(f"invalid bounded canonical field count for {symbol}")
-    row = dict(zip(BUNDLE_FIELDS, values))
+    source_row = dict(zip(SOURCE_FIELDS, values))
+    if source_row["asset"] != symbol:
+        raise RuntimeError(f"canonical source asset identity changed: {symbol}")
+    row = {field: source_row[field] for field in BUNDLE_FIELDS}
     timestamp = row["timestamp"]
     if len(timestamp) != 10 or timestamp[4:5] != "-" or timestamp[7:8] != "-":
         raise RuntimeError(f"invalid bounded canonical timestamp for {symbol}")
@@ -115,7 +121,7 @@ def load_canonical_source_through_final_2025() -> tuple[list[str], dict, bytes]:
         raise RuntimeError("canonical source manifest identity changed")
 
     per_symbol_rows = {}
-    expected_header = ",".join(BUNDLE_FIELDS).encode() + b"\n"
+    expected_header = ",".join(SOURCE_FIELDS).encode() + b"\n"
     for symbol in asset_set:
         path = normalized / f"{symbol}.csv"
         rows = []
