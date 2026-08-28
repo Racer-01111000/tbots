@@ -1,0 +1,61 @@
+{
+  "content": {
+    "accepted_s5b": {
+      "deterministic_digest": "fb1b8284d4d9cd5f584af14047784ab1cdd27c85c33ae7575c9e685874053b91",
+      "prepared_revision": "f2f2c16441e1bf4345845ff3a75d8cea101174e9",
+      "result_sha256": "a50c71208bac5e774cb277845c41d5aa9bc46d46a7ddb2077f8edf3a1dad4fb6",
+      "run_id": "s5b_126c5fd6855e59e7db4a588580bd63b5fd401cd4a3a4ce09fa54373ee9504928"
+    },
+    "advancement_count": 3,
+    "algorithm": [
+      "verify accepted S5B result, frozen-top-ten, ranking, and verifier identities",
+      "scan organisms in qualification-rank order",
+      "select the first organism",
+      "skip later organisms matching any selected behavioral identity",
+      "select each next behaviorally distinct organism until three are selected"
+    ],
+    "behavioral_identity": {
+      "algorithm": "sha256",
+      "canonicalization": "JSON sort_keys=True separators=(',', ':')",
+      "excluded_identity_fields": [
+        "agent_id",
+        "genome_id",
+        "development_rank",
+        "qualification_rank"
+      ],
+      "must_equal_recorded_s5b_metrics_hash": true,
+      "not_score_only": true,
+      "payload": {
+        "aggregate": "exact complete S5B aggregate result object",
+        "episodes": "exact complete S5B episode_metrics array"
+      }
+    },
+    "breeding_or_retraining_allowed": false,
+    "championship_or_final_reserve_information_allowed": false,
+    "data_inputs_allowed": [
+      "accepted S5B qualification result",
+      "accepted S5B preparation lock",
+      "accepted frozen S5A top-ten snapshot"
+    ],
+    "discretionary_substitution_allowed": false,
+    "evolutionary_feedback_allowed": false,
+    "genome_mutation_allowed": false,
+    "name": "s5c_frozen_championship_advancement_v1",
+    "ranking_source": "accepted completed S5B qualification ranking",
+    "schema_version": 1,
+    "sealed_lanes": {
+      "championship": {
+        "end": "2025-12-31",
+        "start": "2023-01-01",
+        "status": "LOCKED"
+      },
+      "final_reserve": {
+        "end": null,
+        "start": "2026-01-01",
+        "status": "LOCKED"
+      }
+    },
+    "tie_break": "genome_id ascending"
+  },
+  "manifest_hash": "s5c_advancement_protocol_7ee46de082b7529832e10bc147192c4edacd5fca37dd31316e4dceee742df3f3"
+}
