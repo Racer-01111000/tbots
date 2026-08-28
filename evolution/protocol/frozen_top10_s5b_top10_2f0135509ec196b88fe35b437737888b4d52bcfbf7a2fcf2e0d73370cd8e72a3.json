@@ -1,0 +1,364 @@
+{
+  "content": {
+    "genomes": [
+      {
+        "agent_id": "agt_c17395bd6671750fec79300d2cc4e485e8dae88640f6afe53369c8ac5aaa519a",
+        "development_rank": 1,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.18,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            110,
+            295
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.89,
+          "trend_filter_window": 153,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 68
+        },
+        "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "required_prequalification_bars": 295,
+        "required_price_bars_including_current": 296
+      },
+      {
+        "agent_id": "agt_47bfb5ef79628fded6a10545fc20e91ba2d9ff922264807a129b3a1b037ce8e3",
+        "development_rank": 2,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.18,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            110,
+            295
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.81,
+          "trend_filter_window": 153,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 68
+        },
+        "genome_id": "gen_2a6d4d628da2ecb2b3aa84faf53d8fc19ad257d016087f1400c31a68dee9b23f",
+        "required_prequalification_bars": 295,
+        "required_price_bars_including_current": 296
+      },
+      {
+        "agent_id": "agt_b1fde4614787ccaaffc3b52c34812efa95f326b2909e503b3ceb69c707ac4537",
+        "development_rank": 3,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.15,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            111,
+            305
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.85,
+          "trend_filter_window": 174,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 69
+        },
+        "genome_id": "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+        "required_prequalification_bars": 305,
+        "required_price_bars_including_current": 306
+      },
+      {
+        "agent_id": "agt_e5c75ee9cde3243fd330ae25b4cb011b7111b1bfce2eaaaa79f0a588cb5a5254",
+        "development_rank": 4,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.15,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            111,
+            305
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.79,
+          "trend_filter_window": 174,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 69
+        },
+        "genome_id": "gen_bbe33d2b6208f6a28660b5a3750bf52863379e28c51d3b8301cf6a235854a1be",
+        "required_prequalification_bars": 305,
+        "required_price_bars_including_current": 306
+      },
+      {
+        "agent_id": "agt_6e78b6c1edef0ae3bf5739a3168ef40aeb490573cb255ae45887ade15cfd460f",
+        "development_rank": 5,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.78,
+          "trend_filter_window": 184,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 85
+        },
+        "genome_id": "gen_6452b74749c53e80b7bb6d0a5506e41760c4d17ead60b80c0c9b09c4bbddb422",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      },
+      {
+        "agent_id": "agt_3e81a4b73951527a6f18d28458d457badce767c5069c680771cc35027b3457db",
+        "development_rank": 6,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.89,
+          "trend_filter_window": 184,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 91
+        },
+        "genome_id": "gen_908f66b505b9965160443a410c4538d81a7cb54ddf10c2c6cbe04e2ef5e8bd1c",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      },
+      {
+        "agent_id": "agt_ea2f8929aea721e9d9919777fb5ab56539ea2f50ffa2d633c484c21f7182b761",
+        "development_rank": 7,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.89,
+          "trend_filter_window": 184,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 88
+        },
+        "genome_id": "gen_9f8874becbe730e95d4dc2fa02333999f6dad00a87b85514305feae3aeb64137",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      },
+      {
+        "agent_id": "agt_b5c0bb9852026303156919951fe007ece94b4372f9487f89eaf39102edb47fca",
+        "development_rank": 8,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.89,
+          "trend_filter_window": 163,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 67
+        },
+        "genome_id": "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      },
+      {
+        "agent_id": "agt_67e443c32bc595a67bac211f83eb929059d4e7dcdc1f4ba788351ec327556cda",
+        "development_rank": 9,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.89,
+          "trend_filter_window": 184,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 67
+        },
+        "genome_id": "gen_c139ea058d3691b6385b21be93a644ed2e28223fb09125f589378de4e23fc891",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      },
+      {
+        "agent_id": "agt_e5e99538546d72064a57f8c8c0312a0ac7b9bb602c53d4819855df39ef481b93",
+        "development_rank": 10,
+        "genome": {
+          "direction": "long_only",
+          "drawdown_halt_pct": 0.12,
+          "leverage": "none",
+          "max_asset_weight": 0.16,
+          "max_positions": 1,
+          "momentum_lookbacks": [
+            34,
+            99,
+            317
+          ],
+          "rebalance_every_n_sessions": 50,
+          "shorting": "none",
+          "strategy_family": "trend",
+          "target_max_exposure": 0.78,
+          "trend_filter_window": 184,
+          "universe": [
+            "SPY",
+            "EFA",
+            "EEM",
+            "IEF",
+            "TLT",
+            "GLD",
+            "DBC",
+            "VNQ"
+          ],
+          "volatility_window": 84
+        },
+        "genome_id": "gen_cb089956d968ecaa7b5e7f8c0e113af28b00b042e13c23028cd72159e27cfe57",
+        "required_prequalification_bars": 317,
+        "required_price_bars_including_current": 318
+      }
+    ],
+    "kind": "S5B_ACCEPTED_FROZEN_TOP10_WITHOUT_DEVELOPMENT_PERFORMANCE",
+    "performance_fields_included": [],
+    "schema_version": 1,
+    "source_code_revision": "45dccd8f0259268dddc74b3bcd461261ad85d668",
+    "source_reproduction_db_sha256": "a7fcfd9cd99e37a3124929e54422afef1dae18b6d8026b10ef77c3e9dcb33f78",
+    "source_result_sha256": "c9856a03d22352ef4dc53bc33f859096130e4e0121407c4c9027cb74ca7d62c2",
+    "source_run_id": "evo_cddf2362ef0d5f2844f3c747eb40454358301269c4789c752aa7c4d825f11971"
+  },
+  "manifest_hash": "s5b_top10_2f0135509ec196b88fe35b437737888b4d52bcfbf7a2fcf2e0d73370cd8e72a3"
+}
