@@ -1,0 +1,46 @@
+{
+  "content": {
+    "champion": {
+      "agent_id": "agt_c17395bd6671750fec79300d2cc4e485e8dae88640f6afe53369c8ac5aaa519a",
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          34,
+          110,
+          295
+        ],
+        "rebalance_every_n_sessions": 50,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.89,
+        "trend_filter_window": 153,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 68
+      },
+      "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "required_pre_reserve_bars": 295,
+      "required_price_bars_including_current": 296
+    },
+    "kind": "S5D_PERFORMANCE_FREE_FROZEN_CHAMPION",
+    "performance_fields_included": [],
+    "schema_version": 1,
+    "source_s5c_deterministic_digest": "ecada3c0a7430515fe01e262d08d7c69454364b141826137d14d659fca50835e",
+    "source_s5c_result_sha256": "974b911afcd8eed6d981ddf4179eac3244a8eed68f881f5deb529684ae5346c0",
+    "source_s5c_run_id": "s5c_c4f43cb6bad29918631189eadd456b1cd1ee8149437b55c432221ac4f18bde1d",
+    "winner_rule_verified": "championship_rank_1"
+  },
+  "manifest_hash": "s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672"
+}
