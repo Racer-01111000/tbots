@@ -1,0 +1,11 @@
+{
+  "content": {
+    "cross_lineage_comparison": false,
+    "episodes": "complete frozen lane episodes",
+    "formula": "3.0*median_episode_return + 0.20*median_episode_sharpe - 2.0*abs(worst_drawdown) + 0.50*consistency_score - 0.25*halt_rate - 0.02*median_episode_turnover - 5.0*median_transaction_cost_rate - 0.25*performance_concentration",
+    "round_places": 12,
+    "schema_version": 2,
+    "tie_break": "fitness descending then genome_id ascending"
+  },
+  "manifest_hash": "s6a_fitness_0c428673a0f037b0045f9cced6aaec9e5452a6acf590fc2ffe769d801948a3f6"
+}

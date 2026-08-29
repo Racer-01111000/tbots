@@ -1,0 +1,91 @@
+{
+  "content": {
+    "B": {
+      "cash": "no eligible asset",
+      "entry": "z_i <= -entry_z",
+      "exit": "z_i >= -exit_z or holding_sessions >= max_holding_sessions",
+      "formulae": [
+        "r_i=P_i[t]/P_i[t-L]-1",
+        "m=median(r_i)",
+        "MAD=median(abs(r_i-m))",
+        "scale=1.4826*MAD",
+        "z_i=0 if scale=0 else (r_i-m)/scale"
+      ],
+      "maximum_warmup": 61,
+      "rank": "z ascending then ticker ascending",
+      "schedule": "every eligible session",
+      "sizing": "inverse sample volatility ddof=1 over L daily returns; zero vol ineligible; cap once; residual cash",
+      "warmup": "lookback_sessions+1"
+    },
+    "C": {
+      "cash": "no valid active signal",
+      "ema": "alpha=2/(n+1); seed SMA first n closes; recursive thereafter",
+      "entry": "fast_EMA > slow_EMA and close > max(previous breakout_sessions closes)",
+      "exit": "close < min(previous exit_channel_sessions closes) or fast_EMA <= slow_EMA",
+      "maximum_warmup": 100,
+      "rank": "breakout strength descending then ticker ascending",
+      "schedule": "every session",
+      "sizing": "inverse sample volatility ddof=1; cap once; residual cash",
+      "warmup": "max(slow_ema_sessions,breakout_sessions+1,exit_channel_sessions+1,volatility_window+1)"
+    },
+    "D": {
+      "basket": "daily-rebalanced equal-weight risk-asset return index; initialize 1.0 before first window return",
+      "breadth": "fraction risk assets close > regime_window SMA",
+      "cash": "no eligible asset",
+      "drawdown": "current basket index / maximum index over regime_window+1 index levels - 1",
+      "maximum_warmup": 251,
+      "risk_off": "breadth < threshold or basket_drawdown <= -risk_off_drawdown",
+      "risk_off_selection": "defensive assets with positive regime-window return; rank descending then ticker",
+      "risk_on": "eligible risk assets above SMA; rank regime-window return descending then ticker",
+      "schedule": "episode session 0 then every rebalance_sessions",
+      "sizing": "equal weight selected; cap once; residual cash",
+      "warmup": "regime_window+1"
+    },
+    "E": {
+      "basket": "daily-rebalanced equal-weight returns of D risk assets",
+      "cash": "no eligible asset",
+      "eligibility": {
+        "neutral": "all positive slow return",
+        "risk_off": "IEF,TLT,GLD with positive slow return",
+        "risk_on": "all positive trend"
+      },
+      "maximum_warmup": 361,
+      "multipliers": {
+        "neutral": 0.5,
+        "risk_off": 0.25,
+        "risk_on": 1.0
+      },
+      "rank": "trend descending then ticker",
+      "ratio": "sample vol last n returns / sample vol last 4n returns; both zero=>1; long only zero=>risk_off",
+      "schedule": "episode session 0 then every rebalance_sessions",
+      "sizing": "inverse sample volatility over n; cap once; residual cash",
+      "states": "risk_on if ratio < on; risk_off if ratio >= off; neutral otherwise",
+      "trend": "mean(fast-horizon total return,slow-horizon total return)",
+      "warmup": "max(slow_trend_sessions+1,4*regime_volatility_window+1)"
+    },
+    "F": {
+      "breadth": "fraction assets with positive arithmetic mean raw horizon return",
+      "cash": "breadth < threshold or no eligible asset",
+      "maximum_warmup": 273,
+      "rank": "average ranks for ties; normalize rank to [0,1]; mean across horizons",
+      "return": "R_i(L,S)=P_i[t-S]/P_i[t-S-L]-1",
+      "schedule": "episode session 0 then every rebalance_sessions",
+      "selection": "score descending then ticker; top_k",
+      "sizing": "rank points k..1; cap once; residual cash",
+      "warmup": "max(lookbacks)+skip_recent_sessions+1"
+    },
+    "G": {
+      "actual_weight_price": "session t raw close",
+      "budget": "maximum gross desired notional per review/current equity; no carry",
+      "drift": "actual_weight-target_weight",
+      "eligible": "abs(drift)>=band and minimum hold met; initial allocation exempt",
+      "execution": "sells before buys; proportionally reduce buys for cash/costs; halt overrides",
+      "forecast": "none",
+      "maximum_warmup": 0,
+      "scaling": "scale all desired trades proportionally if over budget",
+      "schedule": "episode session 0 then every review_interval_sessions",
+      "warmup": "0 pre-episode bars"
+    }
+  },
+  "manifest_hash": "s6a_operators_b5a9245b23520cec85028d7f2730af9f26ee874394350753e80bb1c8d2b2543b"
+}

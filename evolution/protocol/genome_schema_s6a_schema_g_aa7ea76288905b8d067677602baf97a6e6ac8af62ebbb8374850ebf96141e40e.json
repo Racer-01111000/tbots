@@ -1,0 +1,100 @@
+{
+  "content": {
+    "additional_properties": false,
+    "constraints": [
+      "sum(target_weights_bps) == 10000",
+      "count(nonzero target_weights_bps) >= 3"
+    ],
+    "cross_lineage_parent_allowed": false,
+    "external_drawdown_halt_pct": 0.12,
+    "genome_id_rule": "gen_ + sha256(canonical_json(genome))",
+    "lineage": "G",
+    "name": "Low-Turnover Allocation",
+    "phase": "S6A_EXECUTABLE_PREPARATION",
+    "properties": {
+      "allocation_rule": {
+        "const": "budgeted_banded_rebalance"
+      },
+      "direction": {
+        "const": "long_only"
+      },
+      "drift_band_bps": {
+        "max": 1500,
+        "min": 100,
+        "step": 50,
+        "type": "integer"
+      },
+      "leverage": {
+        "const": "none"
+      },
+      "minimum_hold_sessions": {
+        "max": 180,
+        "min": 20,
+        "step": 5,
+        "type": "integer"
+      },
+      "review_interval_sessions": {
+        "max": 130,
+        "min": 20,
+        "step": 5,
+        "type": "integer"
+      },
+      "shorting": {
+        "const": "none"
+      },
+      "signal_model": {
+        "const": "strategic_weight_drift_band"
+      },
+      "strategy_family": {
+        "const": "low_turnover_allocation"
+      },
+      "target_weights_bps": {
+        "items": {
+          "max": 4000,
+          "min": 0,
+          "step": 100,
+          "type": "integer"
+        },
+        "max_items": 8,
+        "min_items": 8,
+        "type": "array",
+        "unique": false
+      },
+      "turnover_budget_bps": {
+        "max": 3000,
+        "min": 100,
+        "step": 50,
+        "type": "integer"
+      },
+      "universe": {
+        "const": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      }
+    },
+    "required": [
+      "strategy_family",
+      "signal_model",
+      "allocation_rule",
+      "universe",
+      "direction",
+      "leverage",
+      "shorting",
+      "target_weights_bps",
+      "drift_band_bps",
+      "minimum_hold_sessions",
+      "review_interval_sessions",
+      "turnover_budget_bps"
+    ],
+    "schema_version": 2,
+    "trader_A_allowed": false
+  },
+  "manifest_hash": "s6a_schema_g_aa7ea76288905b8d067677602baf97a6e6ac8af62ebbb8374850ebf96141e40e"
+}

@@ -1,0 +1,115 @@
+{
+  "content": {
+    "additional_properties": false,
+    "constraints": [
+      "fast_ema_sessions < slow_ema_sessions",
+      "exit_channel_sessions < breakout_sessions"
+    ],
+    "cross_lineage_parent_allowed": false,
+    "external_drawdown_halt_pct": 0.12,
+    "genome_id_rule": "gen_ + sha256(canonical_json(genome))",
+    "lineage": "C",
+    "name": "Faster Trend",
+    "phase": "S6A_EXECUTABLE_PREPARATION",
+    "properties": {
+      "allocation_rule": {
+        "const": "inverse_volatility_breakout"
+      },
+      "breakout_sessions": {
+        "max": 90,
+        "min": 10,
+        "step": 1,
+        "type": "integer"
+      },
+      "direction": {
+        "const": "long_only"
+      },
+      "exit_channel_sessions": {
+        "max": 45,
+        "min": 5,
+        "step": 1,
+        "type": "integer"
+      },
+      "fast_ema_sessions": {
+        "max": 20,
+        "min": 3,
+        "step": 1,
+        "type": "integer"
+      },
+      "gross_exposure_cap": {
+        "max": 1,
+        "min": 0.3,
+        "step": 0.01,
+        "type": "number"
+      },
+      "leverage": {
+        "const": "none"
+      },
+      "max_asset_weight": {
+        "max": 0.4,
+        "min": 0.1,
+        "step": 0.01,
+        "type": "number"
+      },
+      "max_positions": {
+        "max": 4,
+        "min": 1,
+        "step": 1,
+        "type": "integer"
+      },
+      "shorting": {
+        "const": "none"
+      },
+      "signal_model": {
+        "const": "dual_ema_channel_breakout"
+      },
+      "slow_ema_sessions": {
+        "max": 100,
+        "min": 21,
+        "step": 1,
+        "type": "integer"
+      },
+      "strategy_family": {
+        "const": "fast_trend_breakout"
+      },
+      "universe": {
+        "const": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "volatility_window": {
+        "max": 40,
+        "min": 10,
+        "step": 1,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "strategy_family",
+      "signal_model",
+      "allocation_rule",
+      "universe",
+      "direction",
+      "leverage",
+      "shorting",
+      "fast_ema_sessions",
+      "slow_ema_sessions",
+      "breakout_sessions",
+      "exit_channel_sessions",
+      "volatility_window",
+      "max_positions",
+      "max_asset_weight",
+      "gross_exposure_cap"
+    ],
+    "schema_version": 2,
+    "trader_A_allowed": false
+  },
+  "manifest_hash": "s6a_schema_c_2c736dc756cd874815695858fb1489517c780fa847c14258c6f0451640d6447d"
+}

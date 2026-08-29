@@ -1,0 +1,52 @@
+{
+  "content": {
+    "caller_supplied_source_or_range": false,
+    "comparative": {
+      "end": "2025-12-31",
+      "label": "PREVIOUSLY_OBSERVED_HISTORICAL_COMPARATIVE_REPORTING",
+      "may_change": [],
+      "requires_future_GO": true,
+      "start": "2023-01-01"
+    },
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "development": {
+      "end": "2018-12-31",
+      "episodes": 12,
+      "start": "2007-02-07"
+    },
+    "prohibited": {
+      "end": "OPEN",
+      "start": "2026-01-01",
+      "uses": [
+        "evolution",
+        "qualification",
+        "similarity",
+        "comparative_reporting"
+      ]
+    },
+    "prospective_clean_evidence": "only after winners and forward protocol frozen",
+    "qualification": {
+      "episodes": [
+        [
+          "2019-01-01",
+          "2019-12-31"
+        ],
+        [
+          "2020-01-01",
+          "2020-12-31"
+        ],
+        [
+          "2021-01-01",
+          "2021-12-31"
+        ],
+        [
+          "2022-01-01",
+          "2022-12-31"
+        ]
+      ],
+      "feedback": false
+    },
+    "schema_version": 2
+  },
+  "manifest_hash": "s6a_history_47a5b532b597f95e87171b232c93193e17c729c288dbda7f83e75b7e42f47ad8"
+}

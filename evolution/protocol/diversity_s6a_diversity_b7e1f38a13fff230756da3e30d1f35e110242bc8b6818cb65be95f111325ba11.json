@@ -1,0 +1,35 @@
+{
+  "content": {
+    "A_max": 0.75,
+    "active_similarity": "per-session Jaccard positive targets then mean sessions",
+    "breach": "strictly greater",
+    "composite": "round12(0.60*round12(weight)+0.25*round12(active)+0.15*round12(turnover))",
+    "equality_permitted": true,
+    "historical_rows": false,
+    "pairwise_max": 0.8,
+    "probe_ids": [
+      "shock_then_reversal",
+      "persistent_uptrend",
+      "broad_risk_off",
+      "regime_transition",
+      "cross_sectional_dispersion",
+      "quiet_allocation_drift"
+    ],
+    "rounding": "IEEE-754 round-to-nearest ties-to-even at 12 decimal places",
+    "schema_version": 2,
+    "selection_order": [
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G"
+    ],
+    "sessions_per_probe": 420,
+    "signature": "per eligible post-warmup session target-weight vector over universe+CASH; align comparisons at later candidate warmup",
+    "synthetic_A_signature": "permitted reference computation, not historical Trader A execution",
+    "turnover_similarity": "1-min(1,abs(total_probe_turnover_a-total_probe_turnover_b))",
+    "weight_similarity": "per-session 1-0.5*L1 then mean sessions"
+  },
+  "manifest_hash": "s6a_diversity_b7e1f38a13fff230756da3e30d1f35e110242bc8b6818cb65be95f111325ba11"
+}

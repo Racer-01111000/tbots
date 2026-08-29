@@ -1,0 +1,40 @@
+{
+  "content": {
+    "adverse_slippage_bps_per_fill": 5,
+    "asset_tie_break": "ticker ascending",
+    "commission_bps_per_fill": 5,
+    "decision_time": "after session t close",
+    "direction": "long_only",
+    "drawdown": {
+      "actions": [
+        "cancel pending entries",
+        "liquidate at next permitted open",
+        "remain cash for episode",
+        "no episode reset"
+      ],
+      "comparison": "drawdown <= -0.12",
+      "mark_price": "session raw close",
+      "mutable": false,
+      "threshold": 0.12
+    },
+    "fill_time": "session t+1 raw open",
+    "final_session_pending_orders": "cancel_unfilled",
+    "leverage": "none",
+    "phase": "S6A_EXECUTABLE_PREPARATION",
+    "schema_version": 2,
+    "shorting": "none",
+    "signal_price": "adjusted close through session t",
+    "starting_cash_cents": 100000000,
+    "universe": [
+      "SPY",
+      "EFA",
+      "EEM",
+      "IEF",
+      "TLT",
+      "GLD",
+      "DBC",
+      "VNQ"
+    ]
+  },
+  "manifest_hash": "s6a_execution_972ceb538d8020eb461c700a89f756c35b75a3e70b530b968f14590e509f52c3"
+}

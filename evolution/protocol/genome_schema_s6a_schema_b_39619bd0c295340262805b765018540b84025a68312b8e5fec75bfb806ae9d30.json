@@ -1,0 +1,107 @@
+{
+  "content": {
+    "additional_properties": false,
+    "constraints": [
+      "exit_z < entry_z"
+    ],
+    "cross_lineage_parent_allowed": false,
+    "external_drawdown_halt_pct": 0.12,
+    "genome_id_rule": "gen_ + sha256(canonical_json(genome))",
+    "lineage": "B",
+    "name": "Mean Reversion",
+    "phase": "S6A_EXECUTABLE_PREPARATION",
+    "properties": {
+      "allocation_rule": {
+        "const": "inverse_volatility_contrarian"
+      },
+      "direction": {
+        "const": "long_only"
+      },
+      "entry_z": {
+        "max": 3,
+        "min": 0.75,
+        "step": 0.05,
+        "type": "number"
+      },
+      "exit_z": {
+        "max": 1,
+        "min": 0,
+        "step": 0.05,
+        "type": "number"
+      },
+      "gross_exposure_cap": {
+        "max": 1,
+        "min": 0.25,
+        "step": 0.01,
+        "type": "number"
+      },
+      "leverage": {
+        "const": "none"
+      },
+      "lookback_sessions": {
+        "max": 60,
+        "min": 5,
+        "step": 1,
+        "type": "integer"
+      },
+      "max_asset_weight": {
+        "max": 0.35,
+        "min": 0.1,
+        "step": 0.01,
+        "type": "number"
+      },
+      "max_holding_sessions": {
+        "max": 40,
+        "min": 2,
+        "step": 1,
+        "type": "integer"
+      },
+      "max_positions": {
+        "max": 4,
+        "min": 1,
+        "step": 1,
+        "type": "integer"
+      },
+      "shorting": {
+        "const": "none"
+      },
+      "signal_model": {
+        "const": "cross_asset_robust_zscore"
+      },
+      "strategy_family": {
+        "const": "mean_reversion"
+      },
+      "universe": {
+        "const": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      }
+    },
+    "required": [
+      "strategy_family",
+      "signal_model",
+      "allocation_rule",
+      "universe",
+      "direction",
+      "leverage",
+      "shorting",
+      "lookback_sessions",
+      "entry_z",
+      "exit_z",
+      "max_holding_sessions",
+      "max_positions",
+      "max_asset_weight",
+      "gross_exposure_cap"
+    ],
+    "schema_version": 2,
+    "trader_A_allowed": false
+  },
+  "manifest_hash": "s6a_schema_b_39619bd0c295340262805b765018540b84025a68312b8e5fec75bfb806ae9d30"
+}
