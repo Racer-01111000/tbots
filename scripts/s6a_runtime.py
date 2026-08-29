@@ -74,7 +74,7 @@ def load_historical_bundle(name):
         last="2022-12-31"
     else:
         raise BoundaryError("historical bundle is not execution-authorized")
-    if bundle.dataset_revision!=p.DATASET or list(bundle.asset_set)!=p.UNIVERSE:
+    if bundle.dataset_revision!=p.DATASET or sorted(bundle.asset_set)!=sorted(p.UNIVERSE):
         raise BoundaryError("immutable bundle identity/universe mismatch")
     if any(row["timestamp"]>last for rows in bundle.per_symbol_rows.values() for row in rows):
         raise BoundaryError("post-lane observation in immutable bundle")
