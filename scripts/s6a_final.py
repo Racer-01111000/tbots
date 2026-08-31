@@ -148,6 +148,18 @@ FITNESS={"schema_version":2,"episodes":"complete frozen lane episodes",
  "formula":"3.0*median_episode_return + 0.20*median_episode_sharpe - 2.0*abs(worst_drawdown) + 0.50*consistency_score - 0.25*halt_rate - 0.02*median_episode_turnover - 5.0*median_transaction_cost_rate - 0.25*performance_concentration",
  "round_places":12,"tie_break":"fitness descending then genome_id ascending",
  "cross_lineage_comparison":False}
+DEVELOPMENT_FEASIBILITY={"schema_version":1,
+ "scope":["founder","mutated_child","immigrant"],
+ "required_price_bars":"frozen lineage warmup(code, genome), including the episode's first trading session",
+ "availability":"for every frozen DEVELOPMENT episode and every frozen-universe asset, count only physically present immutable-bundle price rows at or before that episode's first trading session",
+ "acceptance":"required_price_bars <= available_price_bars for every DEVELOPMENT episode and every frozen-universe asset",
+ "enforcement_before":["persistence","fitness","episode_execution"],
+ "rejection":{"fitness":None,"episodes_executed":0,"population_slot_consumed":False,
+   "action":"deterministically reject and resample","resampling_bound":128,
+   "audit_counts_may_affect_fitness":False},
+ "prohibited":["fabrication","interpolation","backfill","shortened_indicators",
+   "asset_omission","development_date_change","2019_or_later_observation"],
+ "latest_permitted_observation":"2018-12-31"}
 EVOLUTION={"schema_version":2,"gen0_founders":64,"transitions":12,"last_generation":12,
  "per_transition":{"elites":8,"children":48,"immigrants":8},"slots_per_lineage":832,
  "slots_total":4992,"crossover":False,"tournament":{"size":4,"replacement":False,
@@ -161,7 +173,8 @@ EVOLUTION={"schema_version":2,"gen0_founders":64,"transitions":12,"last_generati
  "G_vector":{"donor":"uniform among positive targets","recipient":"uniform distinct asset below cap",
  "amount":"uniform legal positive multiple of 100 bps","constraints":"sum 10000, each<=4000, >=3 nonzero"},
  "immigrants":"uniform step-index draws; F length uniform 2..4 then unused horizons; G sequential uniform legal 100-bps unit composition; reject invalid; 128 retries",
- "seed_streams":"lineage-specific SHA-256 derivation","cross_lineage":False}
+ "seed_streams":"lineage-specific SHA-256 derivation","cross_lineage":False,
+ "development_feasibility":DEVELOPMENT_FEASIBILITY}
 ADVANCEMENT={"schema_version":2,"development_source":"Gen12 only",
  "independent_verification":"all Gen12 slots before ranking",
  "development_advance":{"count":8,"unique_genomes":True,"threshold":None,

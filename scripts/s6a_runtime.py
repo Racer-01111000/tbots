@@ -1,6 +1,6 @@
 """Fail-closed S6A runtime primitives. No population execution entrypoint exists."""
 from __future__ import annotations
-import hashlib, json, math, random, statistics
+import bisect, hashlib, json, math, random, statistics
 from dataclasses import dataclass
 from pathlib import Path
 from lib.ids import canonical_json, genome_id
@@ -9,8 +9,8 @@ import s6a_final as p
 class S6Error(ValueError): pass
 class BoundaryError(S6Error): pass
 class IsolationError(S6Error): pass
+class FeasibilityError(S6Error): pass
 
-LOCK_ID="s6a_completion_lock_cb06a06a2d638deb67a94c5aba1e398530ae37092ec6b188d5c52724188b7d8b"
 PROBE_MANIFEST_ID="s6a_probe_manifest_7a412d00a1023bfd8233c2842939a1c9b475d6b722711ab242d936c7efb1cc1e"
 
 def _step_ok(v,r):
@@ -79,6 +79,142 @@ def load_historical_bundle(name):
     if any(row["timestamp"]>last for rows in bundle.per_symbol_rows.values() for row in rows):
         raise BoundaryError("post-lane observation in immutable bundle")
     return bundle
+
+RESAMPLING_BOUND=128
+
+@dataclass(frozen=True)
+class CandidateAdmission:
+    code:str
+    genome_id:str
+    required_price_bars:int
+    minimum_available_price_bars:int
+    dataset_revision:str
+    episode_count:int
+
+def development_history_availability(bundle=None):
+    """Mechanically derive physical price-bar availability for every frozen
+    DEVELOPMENT episode/asset. Counts include the episode's first trading
+    session because each frozen warmup formula is expressed in price bars
+    including the current decision session."""
+    from s5a_config import EPISODE_PROTOCOL
+    bundle=bundle or load_historical_bundle("development")
+    lane=p.HISTORY["development"]
+    if (bundle.dataset_revision!=p.DATASET or sorted(bundle.asset_set)!=sorted(p.UNIVERSE)
+      or not bundle.calendar or bundle.calendar[-1]>lane["end"]
+      or any(row["timestamp"]>lane["end"]
+        for rows in bundle.per_symbol_rows.values() for row in rows)):
+        raise BoundaryError("development feasibility source escaped immutable lane")
+    episodes=EPISODE_PROTOCOL.get("episodes",[])
+    if len(episodes)!=lane["episodes"]:
+        raise BoundaryError("frozen development episode count changed")
+    timestamps={symbol:[row["timestamp"] for row in bundle.per_symbol_rows[symbol]]
+      for symbol in p.UNIVERSE}
+    physical=[]
+    for episode in episodes:
+        start,end=episode["start_date"],episode["end_date"]
+        if start<lane["start"] or end>lane["end"]:
+            raise BoundaryError("development episode escaped frozen lane")
+        sessions=[d for d in bundle.calendar if start<=d<=end]
+        if not sessions:raise BoundaryError("development episode has no physical session")
+        first=sessions[0]
+        counts={symbol:bisect.bisect_right(timestamps[symbol],first)
+          for symbol in p.UNIVERSE}
+        physical.append({"episode_index":episode["episode_index"],
+          "first_session":first,"available_price_bars":counts})
+    minimums={symbol:min(row["available_price_bars"][symbol] for row in physical)
+      for symbol in p.UNIVERSE}
+    minimum=min(minimums.values())
+    return {"schema_version":1,"dataset_revision":bundle.dataset_revision,
+      "development_start":lane["start"],"development_end":lane["end"],
+      "source_bundle_latest":bundle.calendar[-1],"episode_count":len(physical),
+      "availability_basis":"physical immutable-bundle rows at or before each episode first trading session",
+      "episodes":physical,"minimum_price_bars_by_asset":minimums,
+      "minimum_price_bars":minimum,
+      "latest_observation_used_for_feasibility":max(row["first_session"] for row in physical)}
+
+def development_feasibility_summary(availability):
+    binding=[]
+    minimum=availability["minimum_price_bars"]
+    for episode in availability["episodes"]:
+        for symbol,count in episode["available_price_bars"].items():
+            if count==minimum:
+                binding.append({"episode_index":episode["episode_index"],
+                  "first_session":episode["first_session"],"asset":symbol,
+                  "available_price_bars":count})
+    return {"schema_version":1,"dataset_revision":availability["dataset_revision"],
+      "development_start":availability["development_start"],
+      "development_end":availability["development_end"],
+      "source_bundle_latest":availability["source_bundle_latest"],
+      "episode_count":availability["episode_count"],
+      "episode_first_sessions":[row["first_session"] for row in availability["episodes"]],
+      "episode_minimum_price_bars":[min(row["available_price_bars"].values())
+        for row in availability["episodes"]],
+      "minimum_price_bars_by_asset":availability["minimum_price_bars_by_asset"],
+      "minimum_price_bars_including_episode_start":minimum,
+      "minimum_pre_episode_price_bars":minimum-1,
+      "binding_points":binding,
+      "latest_observation_used_for_feasibility":
+        availability["latest_observation_used_for_feasibility"]}
+
+def _resolve_availability(*,bundle=None,availability=None):
+    if bundle is not None and availability is not None:
+        raise BoundaryError("supply bundle or derived availability, not both")
+    return availability or development_history_availability(bundle)
+
+def new_feasibility_audit():
+    return {"schema_version":1,"rejected_total":0,
+      "rejected_by_role":{"founder":0,"mutated_child":0,"immigrant":0},
+      "fitness_effect":None,"episodes_executed":0,"population_slots_consumed":0}
+
+def _record_rejection(audit,role):
+    if audit is None:return
+    if role not in audit["rejected_by_role"]:
+        raise S6Error("unknown feasibility rejection role")
+    audit["rejected_total"]+=1
+    audit["rejected_by_role"][role]+=1
+
+def require_development_feasible(code,g,*,bundle=None,availability=None):
+    available=_resolve_availability(bundle=bundle,availability=availability)
+    gid=validate_genome(code,g);required=warmup(code,g)
+    violations=[]
+    for episode in available["episodes"]:
+        for symbol,count in episode["available_price_bars"].items():
+            if required>count:
+                violations.append((episode["episode_index"],symbol,count))
+    if violations:
+        first=violations[0]
+        raise FeasibilityError(
+          f"{code} genome requires {required} price bars; physical DEVELOPMENT "
+          f"availability first fails at episode {first[0]} asset {first[1]} "
+          f"with {first[2]}")
+    return CandidateAdmission(code,gid,required,available["minimum_price_bars"],
+      available["dataset_revision"],available["episode_count"])
+
+def with_development_feasible_candidate(code,g,action,*,bundle=None,availability=None):
+    """Invoke a persistence/evaluation action only after feasibility admission."""
+    admission=require_development_feasible(code,g,bundle=bundle,availability=availability)
+    return action(admission)
+
+def _candidate_is_feasible(code,g,availability,audit,role):
+    try:require_development_feasible(code,g,availability=availability)
+    except FeasibilityError:
+        _record_rejection(audit,role)
+        return False
+    return True
+
+def completion_lock_content(availability=None):
+    available=availability or development_history_availability()
+    return {"schema_version":2,"phase":"S6A_EXECUTABLE_PREPARATION",
+      "baseline":p.BASELINE,"schema_hashes":p.SCHEMA_HASHES,"run_ids":p.RUN_IDS,
+      "protocol_hashes":p.HASHES,"plan_hash":p.PLAN_HASH,
+      "probe_manifest_hash":PROBE_MANIFEST_ID,
+      "development_feasibility":development_feasibility_summary(available),
+      "population_execution_authorized":False,"real_populations":0,
+      "persisted_real_genomes":0,"historical_organism_executions":0,
+      "historical_qualification_executions":0,"real_mutations":0,
+      "trader_A_executions":0,"broker_connections":0,"paper_orders":0,
+      "real_orders":0,"live_feeds":0,"alpaca_access":0,"kestrel_access":0,
+      "feasibility_rejections":0}
 
 def assert_parent(code,parent_code,parent_gid):
     if code!=parent_code or parent_gid==p.TRADER_A: raise IsolationError("same-lineage parent required")
@@ -264,29 +400,41 @@ def tournament(rows,seed):
     if len(rows)<4:raise S6Error("tournament needs four")
     sample=random.Random(seed).sample(rows,4)
     return sorted(sample,key=lambda r:(-r["fitness"],r["genome_id"]))[0]
-def build_generation(code,current,generation):
+def build_generation(code,current,generation,*,bundle=None,availability=None,audit=None):
+    available=_resolve_availability(bundle=bundle,availability=availability)
     if not 1<=generation<=12 or len(current)!=64:raise S6Error("invalid generation input")
     for row in current:
         if row.get("lineage",code)!=code or validate_genome(code,row["genome"])!=row["genome_id"]:
             raise IsolationError("current population is not exact same-lineage input")
+        require_development_feasible(code,row["genome"],availability=available)
     ranked=sorted(current,key=lambda r:(-r["fitness"],r["genome_id"]))
     elites=[{"role":"elite","lineage":code,"genome":row["genome"],"genome_id":row["genome_id"],
       "parent_genome_id":row["genome_id"]} for row in ranked[:8]]
     children=[]
     for slot in range(48):
-        seed=derive_seed(code,"child",generation,slot);parent=tournament(current,seed)
+        parent_seed=derive_seed(code,"child",generation,slot)
+        parent=tournament(current,parent_seed)
         assert_parent(code,parent.get("lineage",code),parent["genome_id"])
-        child=mutate(code,parent["genome"],seed)
+        for attempt in range(RESAMPLING_BOUND):
+            seed=derive_seed(code,"child",generation,slot,"feasibility",attempt)
+            child=mutate(code,parent["genome"],seed)
+            if _candidate_is_feasible(code,child,available,audit,"mutated_child"):break
+        else:raise S6Error("feasible child generation failed closed after 128 attempts")
         children.append({"role":"child","lineage":code,"genome":child,"genome_id":genome_id(child),
           "parent_genome_id":parent["genome_id"]})
     immigrants=[]
     for slot in range(8):
-        seed=derive_seed(code,"immigrant",generation,slot);g=founder(code,seed)
+        for attempt in range(RESAMPLING_BOUND):
+            seed=derive_seed(code,"immigrant",generation,slot,"feasibility",attempt)
+            g=founder(code,seed)
+            if _candidate_is_feasible(code,g,available,audit,"immigrant"):break
+        else:raise S6Error("feasible immigrant generation failed closed after 128 attempts")
         immigrants.append({"role":"immigrant","lineage":code,"genome":g,"genome_id":genome_id(g),
           "parent_genome_id":None})
     result=elites+children+immigrants
     if any(validate_genome(code,row["genome"])!=row["genome_id"] for row in result):
         raise S6Error("generation validation failed")
+    for row in result:require_development_feasible(code,row["genome"],availability=available)
     return result
 def rank_development(rows):
     if len(rows)!=64 or any(row.get("generation")!=12 or not row.get("verified") for row in rows):
@@ -351,17 +499,20 @@ def founder(code,seed):
         return g
     raise S6Error("founder generation failed closed after 128 attempts")
 
-def build_gen0(code):
+def build_gen0(code,*,bundle=None,availability=None,audit=None):
+    available=_resolve_availability(bundle=bundle,availability=availability)
     result=[];seen=set()
     for slot in range(64):
-        for attempt in range(128):
+        for attempt in range(RESAMPLING_BOUND):
             g=founder(code,derive_seed(code,"founder",slot,attempt));gid=genome_id(g)
-            if gid not in seen:break
-        else:raise S6Error("unique Gen0 founder generation failed closed")
+            if gid in seen:continue
+            if not _candidate_is_feasible(code,g,available,audit,"founder"):continue
+            break
+        else:raise S6Error("unique feasible Gen0 founder generation failed closed")
         seen.add(gid)
         result.append({"role":"founder","lineage":code,"genome":g,"genome_id":gid,
           "parent_genome_id":None})
-    if len(result)!=64 or len(seen)!=64:raise S6Error("Gen0 must contain 64 unique founders")
+    if len(result)!=64 or len(seen)!=64:raise S6Error("Gen0 must contain 64 unique feasible founders")
     return result
 
 def validate_envelope(path,identity):
@@ -376,8 +527,10 @@ def validate_envelope(path,identity):
 def load_synthetic_probes():
     lock_path=p.PROTOCOL_DIR/"s6a_executable_preparation_lock.json"
     lock=json.loads(lock_path.read_text())
-    if (set(lock)!={"content","manifest_hash"} or lock["manifest_hash"]!=LOCK_ID or
-      p.h("s6a_completion_lock_",lock["content"])!=LOCK_ID or
+    expected=completion_lock_content()
+    lock_id=p.h("s6a_completion_lock_",expected)
+    if (set(lock)!={"content","manifest_hash"} or lock["manifest_hash"]!=lock_id or
+      lock["content"]!=expected or
       lock["content"].get("probe_manifest_hash")!=PROBE_MANIFEST_ID or
       lock["content"].get("population_execution_authorized") is not False):
         raise S6Error("preparation lock mismatch")
@@ -404,7 +557,9 @@ def load_synthetic_probes():
         probes[name]=content
     return probes
 
-def compute_fitness(rows,expected_count,*,s5_performance=None,qualification_feedback=None):
+def compute_fitness(rows,expected_count,*,admission,s5_performance=None,qualification_feedback=None):
+    if not isinstance(admission,CandidateAdmission):
+        raise FeasibilityError("fitness requires prior development-feasibility admission")
     assert_no_feedback(s5_performance=s5_performance,
       qualification_feedback=qualification_feedback)
     if len(rows)!=expected_count:raise S6Error("complete frozen episode set required")

@@ -3,6 +3,10 @@
 import hashlib,json,math,subprocess
 from pathlib import Path
 import s6a_final as p
+import s6a_runtime as r
+
+PREPARATION_PARENT="a02b4f6b2b110a6b99da65b9e7fe4cc0350df2ae"
+REPLACED_LOCK_ID="s6a_completion_lock_cb06a06a2d638deb67a94c5aba1e398530ae37092ec6b188d5c52724188b7d8b"
 
 def factor(probe,t):
     if probe=="shock_then_reversal":
@@ -39,9 +43,18 @@ def write_immutable(path,payload):
         return
     with path.open("xb") as f:f.write(payload)
 
+def replace_preparation_lock(path,payload,new_id):
+    if path.exists():
+        current=json.loads(path.read_text())
+        old_id=current.get("manifest_hash")
+        if old_id==new_id and path.read_bytes()==payload:return
+        if old_id!=REPLACED_LOCK_ID:
+            raise SystemExit(f"unexpected preparation lock identity: {old_id}")
+    path.write_bytes(payload)
+
 def main():
     head=subprocess.check_output(["git","rev-parse","HEAD"],cwd=p.ROOT,text=True).strip()
-    if head!=p.BASELINE:raise SystemExit("accepted baseline HEAD changed")
+    if head!=PREPARATION_PARENT:raise SystemExit("authorized repair parent HEAD changed")
     probe_manifest={"schema_version":1,"sessions_per_probe":420,"historical_rows":0,"probes":{}}
     for probe in p.DIVERSITY["probe_ids"]:
         content=probe_content(probe);identity=p.h(f"s6a_probe_{probe}_",content)
@@ -52,17 +65,13 @@ def main():
     artifacts=p.artifact_map(probe_manifest)
     for path,(content,identity) in artifacts.items():write_immutable(path,p.envelope(content,identity))
     probe_manifest_hash=p.h("s6a_probe_manifest_",probe_manifest)
-    lock={"schema_version":2,"phase":"S6A_EXECUTABLE_PREPARATION",
-      "baseline":p.BASELINE,"schema_hashes":p.SCHEMA_HASHES,"run_ids":p.RUN_IDS,
-      "protocol_hashes":p.HASHES,"plan_hash":p.PLAN_HASH,
-      "probe_manifest_hash":probe_manifest_hash,
-      "population_execution_authorized":False,"real_populations":0,
-      "persisted_real_genomes":0,"historical_organism_executions":0,
-      "historical_qualification_executions":0,"real_mutations":0,
-      "trader_A_executions":0,"broker_connections":0,"paper_orders":0,
-      "real_orders":0,"live_feeds":0,"alpaca_access":0,"kestrel_access":0}
+    if probe_manifest_hash!=r.PROBE_MANIFEST_ID:
+        raise SystemExit("unchanged synthetic probe identity moved")
+    availability=r.development_history_availability()
+    lock=r.completion_lock_content(availability)
     lock_id=p.h("s6a_completion_lock_",lock)
-    write_immutable(p.PROTOCOL_DIR/"s6a_executable_preparation_lock.json",p.envelope(lock,lock_id))
+    replace_preparation_lock(p.PROTOCOL_DIR/"s6a_executable_preparation_lock.json",
+      p.envelope(lock,lock_id),lock_id)
     print(json.dumps({"plan_hash":p.PLAN_HASH,"lock_hash":lock_id,
       "schema_hashes":p.SCHEMA_HASHES,"run_ids":p.RUN_IDS,
       "protocol_hashes":p.HASHES,"probe_manifest_hash":probe_manifest_hash,

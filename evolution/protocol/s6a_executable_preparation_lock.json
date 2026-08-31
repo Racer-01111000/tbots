@@ -3,6 +3,64 @@
     "alpaca_access": 0,
     "baseline": "657bbd7c0cc00adb5b479bafa0af2e1b130201fa",
     "broker_connections": 0,
+    "development_feasibility": {
+      "binding_points": [
+        {
+          "asset": "DBC",
+          "available_price_bars": 253,
+          "episode_index": 0,
+          "first_session": "2007-02-07"
+        }
+      ],
+      "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+      "development_end": "2018-12-31",
+      "development_start": "2007-02-07",
+      "episode_count": 12,
+      "episode_first_sessions": [
+        "2007-02-07",
+        "2008-02-07",
+        "2009-02-09",
+        "2010-02-08",
+        "2011-02-07",
+        "2012-02-07",
+        "2013-02-07",
+        "2014-02-07",
+        "2015-02-09",
+        "2016-02-08",
+        "2017-02-07",
+        "2018-02-07"
+      ],
+      "episode_minimum_price_bars": [
+        253,
+        505,
+        758,
+        1009,
+        1261,
+        1513,
+        1764,
+        2016,
+        2268,
+        2519,
+        2771,
+        3023
+      ],
+      "latest_observation_used_for_feasibility": "2018-02-07",
+      "minimum_pre_episode_price_bars": 252,
+      "minimum_price_bars_by_asset": {
+        "DBC": 253,
+        "EEM": 379,
+        "EFA": 379,
+        "GLD": 379,
+        "IEF": 379,
+        "SPY": 379,
+        "TLT": 379,
+        "VNQ": 379
+      },
+      "minimum_price_bars_including_episode_start": 253,
+      "schema_version": 1,
+      "source_bundle_latest": "2018-12-31"
+    },
+    "feasibility_rejections": 0,
     "historical_organism_executions": 0,
     "historical_qualification_executions": 0,
     "kestrel_access": 0,
@@ -10,13 +68,13 @@
     "paper_orders": 0,
     "persisted_real_genomes": 0,
     "phase": "S6A_EXECUTABLE_PREPARATION",
-    "plan_hash": "s6a_plan_8d27783627c109962f28cb2163a441bc499e58ed5bc930e027ada57493b3b7f7",
+    "plan_hash": "s6a_plan_f575e2b8617f8cad4d454d72079320744bb7b9514de0ab124e3b4e52ef26714d",
     "population_execution_authorized": false,
     "probe_manifest_hash": "s6a_probe_manifest_7a412d00a1023bfd8233c2842939a1c9b475d6b722711ab242d936c7efb1cc1e",
     "protocol_hashes": {
       "advancement": "s6a_advancement_e07c320e6099f877ac487155649ebf7bde056e5801f1718a28b83dd97125a7f9",
       "diversity": "s6a_diversity_b7e1f38a13fff230756da3e30d1f35e110242bc8b6818cb65be95f111325ba11",
-      "evolution": "s6a_evolution_6799f464e383cd593966bcc7ababd73cd084e1bec0640f1170ce750e97f4518f",
+      "evolution": "s6a_evolution_f11988439d95eeb66c8b7ab11e625a5441e22e8eb2f5dd9d0087d5f9bddd5088",
       "execution": "s6a_execution_972ceb538d8020eb461c700a89f756c35b75a3e70b530b968f14590e509f52c3",
       "fitness": "s6a_fitness_0c428673a0f037b0045f9cced6aaec9e5452a6acf590fc2ffe769d801948a3f6",
       "history": "s6a_history_47a5b532b597f95e87171b232c93193e17c729c288dbda7f83e75b7e42f47ad8",
@@ -26,12 +84,12 @@
     "real_orders": 0,
     "real_populations": 0,
     "run_ids": {
-      "B": "s6a_b_75eb0adaf0181a151cb3277d4e37f95dda920c52461224fc01933cfc2b8c6c43",
-      "C": "s6a_c_fe5f21e307930995e7cd91d2113a71693ff7b6d33cb14fd97c6b4ea878c0844f",
-      "D": "s6a_d_d9490cd5ad9cd17a556845e167e823e1874067fade2154281d501b66a376519f",
-      "E": "s6a_e_1b6eb2cc31c709cde81f1ff827bd0608ebfdd9a2c00563e6043398a582efd21e",
-      "F": "s6a_f_c3c22edc5505eb4a0c8371d5395fa1645f22af97717b2bdaae243f2681ac9be8",
-      "G": "s6a_g_5f9ae15de076503221679a7556c89bbe063af7197bfc8cd11d7a7a05525a92e6"
+      "B": "s6a_b_11cf933f3df42f14f360338c1a834fda684eb2d58705abfd90b73ca8afe75d79",
+      "C": "s6a_c_99e51f2f688620f2bf46c8cc1d06cfefc5ea608d19aa378ebcb65d9ef8ac9c5a",
+      "D": "s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca",
+      "E": "s6a_e_569e97ec37fda9b1363d8bea6297a6134af160c37b03c94f5a0882ed40c9e91f",
+      "F": "s6a_f_69e8deca71456bde6a661f59e91088c8a17cf7921e1b4ea59ffb5602776bdff9",
+      "G": "s6a_g_1c923c4e2ec758e504723253be1dd482826832691de94f5a7045225411c969d5"
     },
     "schema_hashes": {
       "B": "s6a_schema_b_39619bd0c295340262805b765018540b84025a68312b8e5fec75bfb806ae9d30",
@@ -44,5 +102,5 @@
     "schema_version": 2,
     "trader_A_executions": 0
   },
-  "manifest_hash": "s6a_completion_lock_cb06a06a2d638deb67a94c5aba1e398530ae37092ec6b188d5c52724188b7d8b"
+  "manifest_hash": "s6a_completion_lock_4af53c577a4520b7cfd48f1ea3553fe2c0393273b85272ed4f43d50c187aaf83"
 }
