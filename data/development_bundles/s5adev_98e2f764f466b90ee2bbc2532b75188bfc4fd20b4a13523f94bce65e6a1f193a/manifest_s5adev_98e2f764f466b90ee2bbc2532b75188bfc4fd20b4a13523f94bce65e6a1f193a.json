@@ -1,0 +1,172 @@
+{
+  "content": {
+    "asset_metadata": {
+      "DBC": {
+        "artifact": "DBC.csv",
+        "artifact_sha256": "83f9eab5a91f274dd9735e4f9eb1a7070d8d7a43c0e329709f8ed9abe3020da7",
+        "development_rows_included": 2996,
+        "earliest_included": "2006-02-06",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2006-02-06",
+        "source_latest": "2026-08-25",
+        "total_rows": 3248,
+        "warmup_rows_included": 252,
+        "warmup_rows_requested": 378
+      },
+      "EEM": {
+        "artifact": "EEM.csv",
+        "artifact_sha256": "68cbdbb352de216905c3e1ebb739c653da9f19177ef4a1b384a9ca18cda29c44",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2003-04-14",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "EFA": {
+        "artifact": "EFA.csv",
+        "artifact_sha256": "189ab0910f911f60867ce25483c981878d6811d3772f6eab07bc658754d7afe4",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2001-08-27",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "GLD": {
+        "artifact": "GLD.csv",
+        "artifact_sha256": "0972e1a8780f80f736cea746ce45a86e3f38f7339dfd3399d3842bfa8b3541cd",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2004-11-18",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "IEF": {
+        "artifact": "IEF.csv",
+        "artifact_sha256": "5be5f331055389e1bf0c8f3e26b6fa9e8951c070c7adb7f0b6e8ee1f1ecf9f19",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2002-07-30",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "SPY": {
+        "artifact": "SPY.csv",
+        "artifact_sha256": "2c28982c84e531d9bd95a52339efc8bdb6e39a3b91d76e46abbc4fcb738bd380",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "1993-01-29",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "TLT": {
+        "artifact": "TLT.csv",
+        "artifact_sha256": "3aecd092fa32379ea576cb004df7365e2d730789f1af356da651b22f0beab52e",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2002-07-30",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      },
+      "VNQ": {
+        "artifact": "VNQ.csv",
+        "artifact_sha256": "50ea7a74e6da86d1370a9a6089333ce13e15bef413b8ab8ba65c8b7a8a1f9ee3",
+        "development_rows_included": 2996,
+        "earliest_included": "2005-08-05",
+        "latest_included": "2018-12-31",
+        "source_earliest": "2004-09-29",
+        "source_latest": "2026-08-25",
+        "total_rows": 3374,
+        "warmup_rows_included": 378,
+        "warmup_rows_requested": 378
+      }
+    },
+    "authorized_lane_manifest_hash": "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2",
+    "authorized_lane_manifest_sha256": "8cb575ef12f45fdf1392ce7661b90f55c77ce0cec794d6e734bffc3159e7936e",
+    "bundle_kind": "S5A_AUTHORIZED_DEVELOPMENT",
+    "construction_code_revision": "45dccd8f0259268dddc74b3bcd461261ad85d668",
+    "derived_bundle_revision": "s5adev_98e2f764f466b90ee2bbc2532b75188bfc4fd20b4a13523f94bce65e6a1f193a",
+    "isolation_contract": {
+      "historical_performance_payloads": 0,
+      "observations_after_development_end": 0,
+      "only_fixed_bundle_path_is_supported_by_evaluator": true
+    },
+    "revision_basis": {
+      "artifact_hashes": {
+        "DBC": "83f9eab5a91f274dd9735e4f9eb1a7070d8d7a43c0e329709f8ed9abe3020da7",
+        "EEM": "68cbdbb352de216905c3e1ebb739c653da9f19177ef4a1b384a9ca18cda29c44",
+        "EFA": "189ab0910f911f60867ce25483c981878d6811d3772f6eab07bc658754d7afe4",
+        "GLD": "0972e1a8780f80f736cea746ce45a86e3f38f7339dfd3399d3842bfa8b3541cd",
+        "IEF": "5be5f331055389e1bf0c8f3e26b6fa9e8951c070c7adb7f0b6e8ee1f1ecf9f19",
+        "SPY": "2c28982c84e531d9bd95a52339efc8bdb6e39a3b91d76e46abbc4fcb738bd380",
+        "TLT": "3aecd092fa32379ea576cb004df7365e2d730789f1af356da651b22f0beab52e",
+        "VNQ": "50ea7a74e6da86d1370a9a6089333ce13e15bef413b8ab8ba65c8b7a8a1f9ee3"
+      },
+      "asset_set": [
+        "DBC",
+        "EEM",
+        "EFA",
+        "GLD",
+        "IEF",
+        "SPY",
+        "TLT",
+        "VNQ"
+      ],
+      "authorized_lane_manifest_hash": "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2",
+      "lane_end": "2018-12-31",
+      "lane_start": "2007-02-07",
+      "schema_version": 1,
+      "warmup_policy": {
+        "basis": "per-asset trading bars strictly before DEVELOPMENT start",
+        "fabrication_backfill_interpolation": "PROHIBITED",
+        "maximum_predevelopment_bars_per_asset": 378,
+        "maximum_required_price_bars_including_current": 379,
+        "maximum_slow_momentum_sessions": 378,
+        "maximum_trend_filter_price_bars": 300,
+        "maximum_volatility_returns": 126,
+        "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE"
+      }
+    },
+    "schema_version": 1,
+    "source_dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "source_manifest_sha256": "b57cea3ec75ec1317488ee8cb888b6a90895d0f4b24da5b5e3a382d8222617bf",
+    "source_normalized_content_hashes": {
+      "DBC": "a815b74c6ecaf1807b6e6b8dd283c95c736707a242ab5ac048205e0f97001334",
+      "EEM": "09eb69da68774ec1e2ab83af87a0c1636fc276b54d1f809e8205bc8ad6c556cb",
+      "EFA": "df886ea25a63b6048b3fcacbcd56c46375e3ff589143212322acee22df9d8884",
+      "GLD": "3d1159fa54d38d7cf27f026cf2041baca367d70c4d50b16611280fcd63342b8d",
+      "IEF": "024b21295ed53eabcc18f99da6045b54665419f0edf6032d7bf3b95996cf9f4e",
+      "SPY": "c2853530b644bdcc9c9e4f5aa59c54d3cbaae7b1bd9d13d75f10c4a61af53734",
+      "TLT": "0721bb9ac7e19f9583f47aba88345dc3adaa26cb7f31102fa18447bd14f082f2",
+      "VNQ": "0d83875ad240152936f0f90a88ee16bde83d340751ee011670ccec732b5a15f0"
+    },
+    "warmup_policy": {
+      "basis": "per-asset trading bars strictly before DEVELOPMENT start",
+      "fabrication_backfill_interpolation": "PROHIBITED",
+      "maximum_predevelopment_bars_per_asset": 378,
+      "maximum_required_price_bars_including_current": 379,
+      "maximum_slow_momentum_sessions": 378,
+      "maximum_trend_filter_price_bars": 300,
+      "maximum_volatility_returns": 126,
+      "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE"
+    }
+  },
+  "manifest_hash": "s5a_dev_manifest_9b10b502bb2fb83b5bf833bc0983e4f421afdbff78fd7f1093130ce88bffc2a3"
+}

@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import re
 import sys
@@ -130,6 +131,19 @@ class DatasetVerificationTestCase(ReplayTestBase):
         csv_path = self.norm_dir / "AAA.csv"
         original = csv_path.read_text()
         csv_path.write_text(original + "\n")  # append a byte -> hash no longer matches
+        with self.assertRaises(DatasetVerificationError):
+            self.engine()
+
+    def test_test_fixture_cannot_masquerade_as_accepted_historical_data(self):
+        csv_path = self.norm_dir / "AAA.csv"
+        fixture_bytes = csv_path.read_bytes() + b"TEST_FIXTURE_ONLY\n"
+        csv_path.write_bytes(fixture_bytes)
+        manifest_path = next(self.norm_dir.glob("manifest_*.json"))
+        manifest = json.loads(manifest_path.read_text())
+        manifest["normalized_content_hashes"]["AAA"] = hashlib.sha256(
+            fixture_bytes
+        ).hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
         with self.assertRaises(DatasetVerificationError):
             self.engine()
 
