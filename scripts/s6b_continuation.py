@@ -68,6 +68,25 @@ STATUS_INTERRUPTED = "interrupted"
 STATUS_COMPLETE = "complete"
 STATUS_FAILED = "failed"
 
+PROFILE_CURRENT_TBOTS = "CURRENT_TBOTS"
+PROFILE_LEGACY_NODE = "LEGACY_NODE_74ACB366"
+
+# The historical NODE S6B runs (source repository HEAD 74acb3666b046dd...)
+# were produced before the KESTREL-name sanitization pass that created the
+# public tbots repository renamed one zero-value telemetry field inside
+# s6a_runtime.completion_lock_content(). That rename is the ONE documented,
+# provable difference between the two completion-lock identities below.
+# Compatibility is a proven transform, never an equality claim: the two
+# hashes are, and remain, different values.
+_LEGACY_TELEMETRY_FIELD = "kestrel_access"
+_CURRENT_TELEMETRY_FIELD = "external_system_access"
+KNOWN_LEGACY_COMPLETION_LOCK = (
+    "s6a_completion_lock_4af53c577a4520b7cfd48f1ea3553fe2c0393273b85272ed4f43d50c187aaf83"
+)
+KNOWN_CURRENT_COMPLETION_LOCK = (
+    "s6a_completion_lock_0bd22a5df27a9f48141cb50b59df92ac88925a2b65c5dea77adb07c4ba1c7e81"
+)
+
 _REQUIRED_MEMBER_KEYS = {
     "slot_index", "generation", "lineage", "role", "genome_id", "genome",
     "parent_genome_id", "admission", "episode_metrics", "aggregate",
@@ -86,6 +105,79 @@ class CheckpointState:
     last_generation_members: list | None
     run_id: str | None
     frozen_identities: dict | None
+    identity_profile: str | None
+
+
+def _completion_lock_id(content: dict) -> str:
+    return p.h("s6a_completion_lock_", content)
+
+
+def _legacy_shape(current_content: dict) -> dict:
+    """Apply the ONE documented rename transform to a completion-lock
+    content dict, changing nothing else. Fails closed if the field being
+    renamed is missing or is not exactly zero."""
+    if _CURRENT_TELEMETRY_FIELD not in current_content:
+        raise ContinuationError(
+            f"current completion-lock content is missing {_CURRENT_TELEMETRY_FIELD!r}"
+        )
+    value = current_content[_CURRENT_TELEMETRY_FIELD]
+    if value != 0 or isinstance(value, bool):
+        raise ContinuationError(
+            f"{_CURRENT_TELEMETRY_FIELD!r} must be exactly zero to be legacy-compatible"
+        )
+    legacy = dict(current_content)
+    del legacy[_CURRENT_TELEMETRY_FIELD]
+    legacy[_LEGACY_TELEMETRY_FIELD] = value
+    return legacy
+
+
+def verify_legacy_compatibility() -> dict:
+    """Mechanically prove that the known legacy NODE completion-lock
+    identity and the current tbots completion-lock identity are related by
+    exactly the one documented field rename, and nothing else.
+
+    This is a compatibility proof, not an equality claim: the two hashes
+    are computed independently and are never asserted equal to each other.
+    Raises IdentityMismatch the instant more than that one rename differs.
+    """
+    current_content = r.completion_lock_content()
+    current_hash = _completion_lock_id(current_content)
+    if current_hash != KNOWN_CURRENT_COMPLETION_LOCK:
+        raise runner.IdentityMismatch(
+            "current tbots completion-lock content does not match its known identity"
+        )
+    legacy_content = _legacy_shape(current_content)
+    legacy_hash = _completion_lock_id(legacy_content)
+    if legacy_hash != KNOWN_LEGACY_COMPLETION_LOCK:
+        raise runner.IdentityMismatch(
+            "reconstructed legacy completion-lock content does not reproduce "
+            "the known historical NODE identity; more than the documented "
+            f"{_LEGACY_TELEMETRY_FIELD!r} -> {_CURRENT_TELEMETRY_FIELD!r} rename differs"
+        )
+    return {
+        "legacy_completion_lock": legacy_hash,
+        "current_completion_lock": current_hash,
+        "transform": f"{_LEGACY_TELEMETRY_FIELD}: 0  ->  {_CURRENT_TELEMETRY_FIELD}: 0",
+    }
+
+
+def _classify_identity_envelope(stored: dict) -> tuple[str, dict]:
+    """Classify a checkpoint's stored frozen-identity envelope as exactly
+    the current tbots profile, exactly the proven legacy NODE profile, or
+    neither (fail closed). Never treats an arbitrary mismatch as legacy --
+    only the one known, proven historical identity qualifies."""
+    live = runner.assert_frozen_identities()
+    if stored == live:
+        return PROFILE_CURRENT_TBOTS, live
+    if stored.get("completion_lock") == KNOWN_LEGACY_COMPLETION_LOCK:
+        expected_legacy = {**live, "completion_lock": KNOWN_LEGACY_COMPLETION_LOCK}
+        if stored == expected_legacy:
+            verify_legacy_compatibility()
+            return PROFILE_LEGACY_NODE, live
+    raise runner.IdentityMismatch(
+        "checkpoint frozen identities match neither the current tbots profile "
+        "nor the proven legacy NODE profile"
+    )
 
 
 def _target_path(output_root, output_kind: str, code: str) -> Path:
@@ -166,7 +258,7 @@ def inspect_checkpoint(output_root, output_kind: str, code: str,
             code=code, output_kind=output_kind, target=target,
             status=STATUS_NO_EXISTING_RUN, highest_generation=None,
             next_generation=None, last_generation_members=None,
-            run_id=None, frozen_identities=None,
+            run_id=None, frozen_identities=None, identity_profile=None,
         )
 
     metadata = _read_json(target / "run_metadata.json")
@@ -181,12 +273,10 @@ def inspect_checkpoint(output_root, output_kind: str, code: str,
     ):
         raise CorruptedCheckpoint(f"checkpoint metadata shape mismatch at {target}")
 
-    live_identities = runner.assert_frozen_identities()
-    if metadata.get("frozen_identities") != live_identities:
-        raise runner.IdentityMismatch(
-            "checkpoint was produced under different frozen S6A identities "
-            "than the currently committed protocol"
-        )
+    stored_identities = metadata.get("frozen_identities")
+    if not isinstance(stored_identities, dict):
+        raise CorruptedCheckpoint(f"checkpoint metadata has no frozen_identities at {target}")
+    identity_profile, live_identities = _classify_identity_envelope(stored_identities)
 
     generations_dir = target / "generations"
     highest = -1
@@ -220,6 +310,7 @@ def inspect_checkpoint(output_root, output_kind: str, code: str,
             status=STATUS_FAILED, highest_generation=highest if highest >= 0 else None,
             next_generation=None, last_generation_members=last_members,
             run_id=metadata.get("run_id"), frozen_identities=live_identities,
+            identity_profile=identity_profile,
         )
 
     if highest == 12:
@@ -238,6 +329,7 @@ def inspect_checkpoint(output_root, output_kind: str, code: str,
             status=STATUS_COMPLETE, highest_generation=12,
             next_generation=None, last_generation_members=last_members,
             run_id=metadata.get("run_id"), frozen_identities=live_identities,
+            identity_profile=identity_profile,
         )
 
     if completion_path.is_file():
@@ -252,6 +344,7 @@ def inspect_checkpoint(output_root, output_kind: str, code: str,
         next_generation=(highest + 1) if highest >= 0 else 0,
         last_generation_members=last_members,
         run_id=metadata.get("run_id"), frozen_identities=live_identities,
+        identity_profile=identity_profile,
     )
 
 

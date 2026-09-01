@@ -386,5 +386,158 @@ class S6BContinuationFailClosedTests(ContinuationFixtureBase):
             cont.inspect_checkpoint(root, "primary", self.code, self.availability)
 
 
+class S6BLegacyCompatibilityProofTests(unittest.TestCase):
+    """Tests on the compatibility-proof mechanism itself, independent of any
+    checkpoint fixture: it must prove exactly one documented field rename
+    relates the two identities, and fail closed on anything else."""
+
+    def setUp(self):
+        self.current_content = r.completion_lock_content()
+
+    def test_current_content_hashes_to_known_current_identity(self):
+        self.assertEqual(
+            cont._completion_lock_id(self.current_content), cont.KNOWN_CURRENT_COMPLETION_LOCK,
+        )
+
+    def test_legacy_transform_changes_only_the_one_documented_field(self):
+        legacy = cont._legacy_shape(self.current_content)
+        common_keys = set(self.current_content) - {cont._CURRENT_TELEMETRY_FIELD}
+        self.assertEqual(common_keys, set(legacy) - {cont._LEGACY_TELEMETRY_FIELD})
+        for key in common_keys:
+            self.assertEqual(self.current_content[key], legacy[key])
+        self.assertNotIn(cont._CURRENT_TELEMETRY_FIELD, legacy)
+        self.assertEqual(legacy[cont._LEGACY_TELEMETRY_FIELD], 0)
+
+    def test_legacy_transform_reproduces_known_legacy_identity(self):
+        legacy = cont._legacy_shape(self.current_content)
+        self.assertEqual(cont._completion_lock_id(legacy), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+    def test_verify_legacy_compatibility_proof_never_claims_equality(self):
+        proof = cont.verify_legacy_compatibility()
+        self.assertEqual(proof["legacy_completion_lock"], cont.KNOWN_LEGACY_COMPLETION_LOCK)
+        self.assertEqual(proof["current_completion_lock"], cont.KNOWN_CURRENT_COMPLETION_LOCK)
+        self.assertNotEqual(proof["legacy_completion_lock"], proof["current_completion_lock"])
+        self.assertIn(cont._LEGACY_TELEMETRY_FIELD, proof["transform"])
+        self.assertIn(cont._CURRENT_TELEMETRY_FIELD, proof["transform"])
+
+    def test_nonzero_current_field_is_rejected(self):
+        tampered = {**self.current_content, cont._CURRENT_TELEMETRY_FIELD: 1}
+        with self.assertRaises(cont.ContinuationError):
+            cont._legacy_shape(tampered)
+
+    def test_nonzero_legacy_field_breaks_the_known_identity(self):
+        corrupted = dict(self.current_content)
+        del corrupted[cont._CURRENT_TELEMETRY_FIELD]
+        corrupted[cont._LEGACY_TELEMETRY_FIELD] = 1
+        self.assertNotEqual(cont._completion_lock_id(corrupted), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+    def test_second_renamed_field_breaks_the_known_identity(self):
+        legacy = cont._legacy_shape(self.current_content)
+        tampered = dict(legacy)
+        tampered["phase"] = "RENAMED_PHASE"
+        self.assertNotEqual(cont._completion_lock_id(tampered), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+    def test_changed_unrelated_value_breaks_the_known_identity(self):
+        legacy = cont._legacy_shape(self.current_content)
+        tampered = dict(legacy)
+        tampered["plan_hash"] = "s6a_plan_" + "0" * 64
+        self.assertNotEqual(cont._completion_lock_id(tampered), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+    def test_missing_field_breaks_the_known_identity(self):
+        legacy = cont._legacy_shape(self.current_content)
+        tampered = dict(legacy)
+        del tampered["probe_manifest_hash"]
+        self.assertNotEqual(cont._completion_lock_id(tampered), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+    def test_additional_field_breaks_the_known_identity(self):
+        legacy = cont._legacy_shape(self.current_content)
+        tampered = dict(legacy)
+        tampered["extra_field"] = 0
+        self.assertNotEqual(cont._completion_lock_id(tampered), cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+
+class S6BLegacyProfileCheckpointTests(ContinuationFixtureBase):
+    """Checkpoint-level classification: CURRENT_TBOTS vs LEGACY_NODE_74ACB366
+    vs fail closed, exercised against synthetic fixtures whose stored
+    frozen_identities are edited to simulate a legacy-produced checkpoint --
+    never against real preserved evidence, and never mutating anything but
+    the synthetic fixture's own run_metadata.json."""
+
+    def stamp_completion_lock(self, target: Path, completion_lock: str,
+                              extra: dict | None = None) -> None:
+        metadata_path = target / "run_metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["frozen_identities"]["completion_lock"] = completion_lock
+        if extra:
+            metadata["frozen_identities"].update(extra)
+        metadata_path.write_text(json.dumps(metadata))
+
+    def test_current_tbots_envelope_is_classified_current(self):
+        root = self.working_copy(keep_through=3)
+        state = cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+        self.assertEqual(state.identity_profile, cont.PROFILE_CURRENT_TBOTS)
+
+    def test_legacy_envelope_is_classified_legacy_only_through_compatibility_proof(self):
+        root = self.working_copy(keep_through=3)
+        target = checkpoint_target(root, "primary", self.code)
+        self.stamp_completion_lock(target, cont.KNOWN_LEGACY_COMPLETION_LOCK)
+        state = cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+        self.assertEqual(state.status, cont.STATUS_INTERRUPTED)
+        self.assertEqual(state.identity_profile, cont.PROFILE_LEGACY_NODE)
+        self.assertEqual(state.next_generation, 4)
+
+    def test_unknown_completion_lock_hash_is_rejected(self):
+        root = self.working_copy(keep_through=3)
+        target = checkpoint_target(root, "primary", self.code)
+        self.stamp_completion_lock(target, "s6a_completion_lock_" + "9" * 64)
+        with self.assertRaises(runner.IdentityMismatch):
+            cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+
+    def test_legacy_completion_lock_with_unrelated_field_changed_is_rejected(self):
+        root = self.working_copy(keep_through=3)
+        target = checkpoint_target(root, "primary", self.code)
+        self.stamp_completion_lock(
+            target, cont.KNOWN_LEGACY_COMPLETION_LOCK,
+            extra={"plan": "s6a_plan_" + "0" * 64},
+        )
+        with self.assertRaises(runner.IdentityMismatch):
+            cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+
+    def test_legacy_checkpoint_bytes_remain_untouched(self):
+        root = self.working_copy(keep_through=5)
+        target = checkpoint_target(root, "primary", self.code)
+        self.stamp_completion_lock(target, cont.KNOWN_LEGACY_COMPLETION_LOCK)
+        before = tree_hashes(target)
+        state = cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+        cont.preview_next_generation(state, self.availability)
+        after = tree_hashes(target)
+        self.assertEqual(before, after)
+
+    def test_no_evaluator_or_decision_function_runs_for_legacy_profile(self):
+        root = self.working_copy(keep_through=5)
+        target = checkpoint_target(root, "primary", self.code)
+        self.stamp_completion_lock(target, cont.KNOWN_LEGACY_COMPLETION_LOCK)
+
+        def poison(*_args, **_kwargs):
+            raise AssertionError("a trading decision function executed during legacy inspection")
+
+        with mock.patch.object(r, "decide_E", side_effect=poison), \
+             mock.patch.object(r, "compute_fitness", side_effect=poison):
+            state = cont.inspect_checkpoint(root, "primary", self.code, self.availability)
+            preview = cont.preview_next_generation(state, self.availability)
+        self.assertEqual(state.identity_profile, cont.PROFILE_LEGACY_NODE)
+        self.assertEqual(len(preview), 64)
+
+    def test_current_synthetic_continuation_behavior_is_still_deterministic(self):
+        root_a = self.working_copy(keep_through=6)
+        root_b = self.working_copy(keep_through=6)
+        state_a = cont.inspect_checkpoint(root_a, "primary", self.code, self.availability)
+        state_b = cont.inspect_checkpoint(root_b, "primary", self.code, self.availability)
+        self.assertEqual(state_a.identity_profile, cont.PROFILE_CURRENT_TBOTS)
+        preview_a = cont.preview_next_generation(state_a, self.availability)
+        preview_b = cont.preview_next_generation(state_b, self.availability)
+        self.assertEqual(canonical_json(preview_a), canonical_json(preview_b))
+
+
 if __name__ == "__main__":
     unittest.main()
