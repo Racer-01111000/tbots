@@ -1,0 +1,40 @@
+{
+  "execution_class": "population",
+  "frozen_identities": {
+    "completion_lock": "s6a_completion_lock_4af53c577a4520b7cfd48f1ea3553fe2c0393273b85272ed4f43d50c187aaf83",
+    "evolution": "s6a_evolution_f11988439d95eeb66c8b7ab11e625a5441e22e8eb2f5dd9d0087d5f9bddd5088",
+    "plan": "s6a_plan_f575e2b8617f8cad4d454d72079320744bb7b9514de0ab124e3b4e52ef26714d",
+    "protocol_ids": {
+      "advancement": "s6a_advancement_e07c320e6099f877ac487155649ebf7bde056e5801f1718a28b83dd97125a7f9",
+      "diversity": "s6a_diversity_b7e1f38a13fff230756da3e30d1f35e110242bc8b6818cb65be95f111325ba11",
+      "evolution": "s6a_evolution_f11988439d95eeb66c8b7ab11e625a5441e22e8eb2f5dd9d0087d5f9bddd5088",
+      "execution": "s6a_execution_972ceb538d8020eb461c700a89f756c35b75a3e70b530b968f14590e509f52c3",
+      "fitness": "s6a_fitness_0c428673a0f037b0045f9cced6aaec9e5452a6acf590fc2ffe769d801948a3f6",
+      "history": "s6a_history_47a5b532b597f95e87171b232c93193e17c729c288dbda7f83e75b7e42f47ad8",
+      "operators": "s6a_operators_b5a9245b23520cec85028d7f2730af9f26ee874394350753e80bb1c8d2b2543b"
+    },
+    "run_ids": {
+      "B": "s6a_b_11cf933f3df42f14f360338c1a834fda684eb2d58705abfd90b73ca8afe75d79",
+      "C": "s6a_c_99e51f2f688620f2bf46c8cc1d06cfefc5ea608d19aa378ebcb65d9ef8ac9c5a",
+      "D": "s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca",
+      "E": "s6a_e_569e97ec37fda9b1363d8bea6297a6134af160c37b03c94f5a0882ed40c9e91f",
+      "F": "s6a_f_69e8deca71456bde6a661f59e91088c8a17cf7921e1b4ea59ffb5602776bdff9",
+      "G": "s6a_g_1c923c4e2ec758e504723253be1dd482826832691de94f5a7045225411c969d5"
+    },
+    "schema_ids": {
+      "B": "s6a_schema_b_39619bd0c295340262805b765018540b84025a68312b8e5fec75bfb806ae9d30",
+      "C": "s6a_schema_c_2c736dc756cd874815695858fb1489517c780fa847c14258c6f0451640d6447d",
+      "D": "s6a_schema_d_e22ad90c115bbc09917e3257d29c5497ff95ced191aa4df47fb09c6771cb4211",
+      "E": "s6a_schema_e_7a760b60b0a5427f15de6056b8d2d6066b0135b727890b6878d68df590f4bd81",
+      "F": "s6a_schema_f_b2ab7c35baf5055a6760b9adcc23cb651b27942636415d162acd8af1a8ad9051",
+      "G": "s6a_schema_g_aa7ea76288905b8d067677602baf97a6e6ac8af62ebbb8374850ebf96141e40e"
+    }
+  },
+  "generation_end": 12,
+  "generation_start": 0,
+  "lineage": "B",
+  "phase": "S6B_EXECUTION_SURFACE",
+  "population_size": 64,
+  "run_id": "s6a_b_11cf933f3df42f14f360338c1a834fda684eb2d58705abfd90b73ca8afe75d79",
+  "schema_version": 1
+}
