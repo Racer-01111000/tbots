@@ -1,0 +1,202 @@
+{
+  "content": {
+    "asset_metadata": {
+      "DBC": {
+        "artifact": "DBC.csv",
+        "artifact_sha256": "c1d53325ea8d8ff8b0a44ed8e7af50ebc1514873a75f362c6d8d16685252f1a5",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2006-02-06",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "EEM": {
+        "artifact": "EEM.csv",
+        "artifact_sha256": "da79b6d969791aba9cce5cbd29fb52756b4adc1c77d9e4313a458fe91d6d814a",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2003-04-14",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "EFA": {
+        "artifact": "EFA.csv",
+        "artifact_sha256": "d51bdf40d606e30d211843fd8b6a6a0220d24d5c2d91216119fa6c445aa7e905",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2001-08-27",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "GLD": {
+        "artifact": "GLD.csv",
+        "artifact_sha256": "912c8d4f2cd846d879b1b58c8243b2317d13da2702da0663f0685e534fdefb2b",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2004-11-18",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "IEF": {
+        "artifact": "IEF.csv",
+        "artifact_sha256": "0810800dd249c05905e481c8ea7158882499aca66a1178686fa73af994b37dfa",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2002-07-30",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "SPY": {
+        "artifact": "SPY.csv",
+        "artifact_sha256": "b3206d4203256df6e623fad9cb38f6b60be6c2e7797ad6dffe5de4e0eed545ae",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "1993-01-29",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "TLT": {
+        "artifact": "TLT.csv",
+        "artifact_sha256": "84765db32dbaf732b903b3cc484d802009d9bff5073f2a4905ec7adaf68b2b44",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2002-07-30",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      },
+      "VNQ": {
+        "artifact": "VNQ.csv",
+        "artifact_sha256": "5cb8378b03e14d561a5d74a2a00c78156436acbf4a21ea1069043854f8bcdd18",
+        "earliest_included": "2017-09-27",
+        "latest_included": "2022-12-30",
+        "qualification_rows_included": 1008,
+        "source_earliest": "2004-09-29",
+        "source_latest": "2026-08-25",
+        "total_rows": 1325,
+        "warmup_rows_included": 317,
+        "warmup_rows_requested": 317
+      }
+    },
+    "authorized_lane_manifest_hash": "lane_c226205dfa6ff0f5ccd96f26c49a5bb080853fcca5e7d46ef94099fba30da539",
+    "authorized_lane_manifest_sha256": "490f1350765d6986f0926eca531d75c7f663213919051b8d2d9b7a61859eb6c9",
+    "bundle_kind": "S5B_AUTHORIZED_QUALIFICATION",
+    "construction_code_revision": "e89595009b9a8a23fc11fecbed8f1563159a7d00",
+    "derived_bundle_revision": "s5bqual_f1fdd7c4959272bcf52b0bbad569c236da6cb6fbdb95d64396867d9c350561c6",
+    "episode_protocol_hash": "s5b_episode_232f6c186f4b5082ae590811b5dcba4bf212801e8b180ef3a169fab898acacc6",
+    "frozen_top10_snapshot_hash": "s5b_top10_2f0135509ec196b88fe35b437737888b4d52bcfbf7a2fcf2e0d73370cd8e72a3",
+    "isolation_contract": {
+      "championship_observations": 0,
+      "evaluator_has_no_normalized_source_path": true,
+      "final_reserve_observations": 0,
+      "historical_s5a_performance_payloads": 0,
+      "observations_after_2022_12_31": 0,
+      "only_fixed_bundle_path_is_supported": true
+    },
+    "revision_basis": {
+      "artifact_hashes": {
+        "DBC": "c1d53325ea8d8ff8b0a44ed8e7af50ebc1514873a75f362c6d8d16685252f1a5",
+        "EEM": "da79b6d969791aba9cce5cbd29fb52756b4adc1c77d9e4313a458fe91d6d814a",
+        "EFA": "d51bdf40d606e30d211843fd8b6a6a0220d24d5c2d91216119fa6c445aa7e905",
+        "GLD": "912c8d4f2cd846d879b1b58c8243b2317d13da2702da0663f0685e534fdefb2b",
+        "IEF": "0810800dd249c05905e481c8ea7158882499aca66a1178686fa73af994b37dfa",
+        "SPY": "b3206d4203256df6e623fad9cb38f6b60be6c2e7797ad6dffe5de4e0eed545ae",
+        "TLT": "84765db32dbaf732b903b3cc484d802009d9bff5073f2a4905ec7adaf68b2b44",
+        "VNQ": "5cb8378b03e14d561a5d74a2a00c78156436acbf4a21ea1069043854f8bcdd18"
+      },
+      "asset_set": [
+        "DBC",
+        "EEM",
+        "EFA",
+        "GLD",
+        "IEF",
+        "SPY",
+        "TLT",
+        "VNQ"
+      ],
+      "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+      "episode_protocol_hash": "s5b_episode_232f6c186f4b5082ae590811b5dcba4bf212801e8b180ef3a169fab898acacc6",
+      "frozen_top10_snapshot_hash": "s5b_top10_2f0135509ec196b88fe35b437737888b4d52bcfbf7a2fcf2e0d73370cd8e72a3",
+      "lane_end": "2022-12-31",
+      "lane_start": "2019-01-01",
+      "qualification_lane_hash": "lane_c226205dfa6ff0f5ccd96f26c49a5bb080853fcca5e7d46ef94099fba30da539",
+      "schema_version": 1,
+      "score_protocol_hash": "s5b_score_413bd842d9b389e2066e44db23af79a92e56ef6c8bd541a055b2c9a3901cfd4a",
+      "warmup_policy": {
+        "basis": "actual accepted frozen top-ten genomes only",
+        "fabrication_backfill_interpolation": "PROHIBITED",
+        "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+        "per_genome_required_prequalification_bars": {
+          "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155": 295,
+          "gen_2a6d4d628da2ecb2b3aa84faf53d8fc19ad257d016087f1400c31a68dee9b23f": 295,
+          "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f": 305,
+          "gen_6452b74749c53e80b7bb6d0a5506e41760c4d17ead60b80c0c9b09c4bbddb422": 317,
+          "gen_908f66b505b9965160443a410c4538d81a7cb54ddf10c2c6cbe04e2ef5e8bd1c": 317,
+          "gen_9f8874becbe730e95d4dc2fa02333999f6dad00a87b85514305feae3aeb64137": 317,
+          "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70": 317,
+          "gen_bbe33d2b6208f6a28660b5a3750bf52863379e28c51d3b8301cf6a235854a1be": 305,
+          "gen_c139ea058d3691b6385b21be93a644ed2e28223fb09125f589378de4e23fc891": 317,
+          "gen_cb089956d968ecaa7b5e7f8c0e113af28b00b042e13c23028cd72159e27cfe57": 317
+        },
+        "selection": "last trading bars strictly before 2019-01-01",
+        "shared_bundle_prequalification_bars_per_asset": 317,
+        "shortened_indicators": "PROHIBITED"
+      }
+    },
+    "schema_version": 1,
+    "score_protocol_hash": "s5b_score_413bd842d9b389e2066e44db23af79a92e56ef6c8bd541a055b2c9a3901cfd4a",
+    "source_dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "source_manifest_sha256": "b57cea3ec75ec1317488ee8cb888b6a90895d0f4b24da5b5e3a382d8222617bf",
+    "source_normalized_content_hashes": {
+      "DBC": "a815b74c6ecaf1807b6e6b8dd283c95c736707a242ab5ac048205e0f97001334",
+      "EEM": "09eb69da68774ec1e2ab83af87a0c1636fc276b54d1f809e8205bc8ad6c556cb",
+      "EFA": "df886ea25a63b6048b3fcacbcd56c46375e3ff589143212322acee22df9d8884",
+      "GLD": "3d1159fa54d38d7cf27f026cf2041baca367d70c4d50b16611280fcd63342b8d",
+      "IEF": "024b21295ed53eabcc18f99da6045b54665419f0edf6032d7bf3b95996cf9f4e",
+      "SPY": "c2853530b644bdcc9c9e4f5aa59c54d3cbaae7b1bd9d13d75f10c4a61af53734",
+      "TLT": "0721bb9ac7e19f9583f47aba88345dc3adaa26cb7f31102fa18447bd14f082f2",
+      "VNQ": "0d83875ad240152936f0f90a88ee16bde83d340751ee011670ccec732b5a15f0"
+    },
+    "warmup_policy": {
+      "basis": "actual accepted frozen top-ten genomes only",
+      "fabrication_backfill_interpolation": "PROHIBITED",
+      "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+      "per_genome_required_prequalification_bars": {
+        "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155": 295,
+        "gen_2a6d4d628da2ecb2b3aa84faf53d8fc19ad257d016087f1400c31a68dee9b23f": 295,
+        "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f": 305,
+        "gen_6452b74749c53e80b7bb6d0a5506e41760c4d17ead60b80c0c9b09c4bbddb422": 317,
+        "gen_908f66b505b9965160443a410c4538d81a7cb54ddf10c2c6cbe04e2ef5e8bd1c": 317,
+        "gen_9f8874becbe730e95d4dc2fa02333999f6dad00a87b85514305feae3aeb64137": 317,
+        "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70": 317,
+        "gen_bbe33d2b6208f6a28660b5a3750bf52863379e28c51d3b8301cf6a235854a1be": 305,
+        "gen_c139ea058d3691b6385b21be93a644ed2e28223fb09125f589378de4e23fc891": 317,
+        "gen_cb089956d968ecaa7b5e7f8c0e113af28b00b042e13c23028cd72159e27cfe57": 317
+      },
+      "selection": "last trading bars strictly before 2019-01-01",
+      "shared_bundle_prequalification_bars_per_asset": 317,
+      "shortened_indicators": "PROHIBITED"
+    }
+  },
+  "manifest_hash": "s5b_qual_manifest_d09de89dd1281051d82558d16521402bfbabb287747b73af59292971b1be6d87"
+}

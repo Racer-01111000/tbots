@@ -1,0 +1,52 @@
+{
+  "content": {
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "drawdown_halt_scope": "episode_only",
+    "episode_rule": "four contiguous full calendar years",
+    "episodes": [
+      {
+        "end_date": "2019-12-31",
+        "episode_index": 0,
+        "start_date": "2019-01-01"
+      },
+      {
+        "end_date": "2020-12-31",
+        "episode_index": 1,
+        "start_date": "2020-01-01"
+      },
+      {
+        "end_date": "2021-12-31",
+        "episode_index": 2,
+        "start_date": "2021-01-01"
+      },
+      {
+        "end_date": "2022-12-31",
+        "episode_index": 3,
+        "start_date": "2022-01-01"
+      }
+    ],
+    "evolutionary_feedback_allowed": false,
+    "fresh_state_each_episode": [
+      "cash",
+      "portfolio",
+      "peak_equity",
+      "drawdown",
+      "halt"
+    ],
+    "genome_source": {
+      "reproduction_db_sha256": "a7fcfd9cd99e37a3124929e54422afef1dae18b6d8026b10ef77c3e9dcb33f78",
+      "result_sha256": "c9856a03d22352ef4dc53bc33f859096130e4e0121407c4c9027cb74ca7d62c2",
+      "run_id": "evo_cddf2362ef0d5f2844f3c747eb40454358301269c4789c752aa7c4d825f11971",
+      "selection": "accepted_frozen_top10"
+    },
+    "historical_s5a_performance_inputs_allowed": false,
+    "lane_end": "2022-12-31",
+    "lane_manifest_hash": "lane_c226205dfa6ff0f5ccd96f26c49a5bb080853fcca5e7d46ef94099fba30da539",
+    "lane_start": "2019-01-01",
+    "masked_time": true,
+    "name": "s5b_frozen_qualification_episodes_v1",
+    "schema_version": 1,
+    "starting_cash_cents": 100000000
+  },
+  "manifest_hash": "s5b_episode_232f6c186f4b5082ae590811b5dcba4bf212801e8b180ef3a169fab898acacc6"
+}

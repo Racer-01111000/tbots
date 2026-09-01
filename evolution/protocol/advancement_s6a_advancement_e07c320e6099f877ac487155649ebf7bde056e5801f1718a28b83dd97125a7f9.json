@@ -1,0 +1,33 @@
+{
+  "content": {
+    "all_eight_breach": "NO_FROZEN_WINNER",
+    "breach": "skip unchanged candidate",
+    "development_advance": {
+      "count": 8,
+      "rank": "fitness descending then genome_id ascending",
+      "threshold": null,
+      "unique_genomes": true
+    },
+    "development_source": "Gen12 only",
+    "independent_verification": "all Gen12 slots before ranking",
+    "qualification": {
+      "episodes": 4,
+      "feedback": false,
+      "fitness": "same frozen equation with N=4",
+      "rank": "fitness descending then genome_id ascending"
+    },
+    "regeneration": false,
+    "schema_version": 2,
+    "selection_order": [
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G"
+    ],
+    "threshold_changes": false,
+    "winner_rule": "first qualification-ranked candidate with A similarity<=0.75 and all prior winners<=0.80"
+  },
+  "manifest_hash": "s6a_advancement_e07c320e6099f877ac487155649ebf7bde056e5801f1718a28b83dd97125a7f9"
+}

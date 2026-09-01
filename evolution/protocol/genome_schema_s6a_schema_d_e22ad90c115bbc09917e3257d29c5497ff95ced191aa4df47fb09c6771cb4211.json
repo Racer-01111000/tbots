@@ -1,0 +1,105 @@
+{
+  "content": {
+    "additional_properties": false,
+    "constraints": [],
+    "cross_lineage_parent_allowed": false,
+    "external_drawdown_halt_pct": 0.12,
+    "genome_id_rule": "gen_ + sha256(canonical_json(genome))",
+    "lineage": "D",
+    "name": "Defensive Rotation",
+    "phase": "S6A_EXECUTABLE_PREPARATION",
+    "properties": {
+      "allocation_rule": {
+        "const": "equal_weight_rotation"
+      },
+      "breadth_threshold": {
+        "max": 0.8,
+        "min": 0.2,
+        "step": 0.05,
+        "type": "number"
+      },
+      "direction": {
+        "const": "long_only"
+      },
+      "gross_exposure_cap": {
+        "max": 1,
+        "min": 0.2,
+        "step": 0.01,
+        "type": "number"
+      },
+      "leverage": {
+        "const": "none"
+      },
+      "max_asset_weight": {
+        "max": 0.7,
+        "min": 0.2,
+        "step": 0.01,
+        "type": "number"
+      },
+      "rebalance_sessions": {
+        "max": 65,
+        "min": 10,
+        "step": 1,
+        "type": "integer"
+      },
+      "regime_window": {
+        "max": 250,
+        "min": 40,
+        "step": 1,
+        "type": "integer"
+      },
+      "risk_off_drawdown": {
+        "max": 0.15,
+        "min": 0.03,
+        "step": 0.01,
+        "type": "number"
+      },
+      "selection_count": {
+        "max": 3,
+        "min": 1,
+        "step": 1,
+        "type": "integer"
+      },
+      "shorting": {
+        "const": "none"
+      },
+      "signal_model": {
+        "const": "risk_regime_drawdown_breadth"
+      },
+      "strategy_family": {
+        "const": "defensive_rotation"
+      },
+      "universe": {
+        "const": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      }
+    },
+    "required": [
+      "strategy_family",
+      "signal_model",
+      "allocation_rule",
+      "universe",
+      "direction",
+      "leverage",
+      "shorting",
+      "regime_window",
+      "breadth_threshold",
+      "risk_off_drawdown",
+      "selection_count",
+      "rebalance_sessions",
+      "max_asset_weight",
+      "gross_exposure_cap"
+    ],
+    "schema_version": 2,
+    "trader_A_allowed": false
+  },
+  "manifest_hash": "s6a_schema_d_e22ad90c115bbc09917e3257d29c5497ff95ced191aa4df47fb09c6771cb4211"
+}

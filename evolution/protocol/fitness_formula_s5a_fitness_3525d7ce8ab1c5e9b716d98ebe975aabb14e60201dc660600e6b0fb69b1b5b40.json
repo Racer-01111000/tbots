@@ -1,0 +1,29 @@
+{
+  "content": {
+    "consistency_score": "0.5 * positive_episode_fraction + 0.5 * (1 - min(1, return_dispersion / 0.10))",
+    "daily_return_annualization": 252,
+    "episode_sharpe": "mean daily return / sample stdev daily return * sqrt(252); zero when fewer than 2 returns or stdev is zero",
+    "fitness_round_decimal_places": 12,
+    "formula": "3.0*median_episode_return + 0.20*median_episode_sharpe - 2.0*abs(worst_drawdown) + 0.50*consistency_score - 0.25*halt_rate - 0.02*median_episode_turnover - 5.0*median_transaction_cost_rate - 0.25*performance_concentration",
+    "halt_rate": "drawdown_halt_count / episode_count",
+    "name": "s5a_development_fitness_v1",
+    "performance_concentration": "normalized HHI of absolute episode returns: (HHI - 1/N) / (1 - 1/N); zero when all returns are zero",
+    "ranking_tiebreak": "genome_id ascending",
+    "return_dispersion": "median absolute deviation of episode total returns",
+    "schema_version": 1,
+    "transaction_cost_rate": "(commission_cents + slippage_cents) / starting capital; aggregate is median episode rate",
+    "turnover": "episode traded notional / starting capital; aggregate is median episode turnover",
+    "weights": {
+      "absolute_worst_drawdown": -2.0,
+      "consistency_score": 0.5,
+      "halt_rate": -0.25,
+      "median_episode_return": 3.0,
+      "median_episode_sharpe": 0.2,
+      "median_episode_turnover": -0.02,
+      "median_transaction_cost_rate": -5.0,
+      "performance_concentration": -0.25
+    },
+    "worst_drawdown": "minimum episode max_drawdown"
+  },
+  "manifest_hash": "s5a_fitness_3525d7ce8ab1c5e9b716d98ebe975aabb14e60201dc660600e6b0fb69b1b5b40"
+}

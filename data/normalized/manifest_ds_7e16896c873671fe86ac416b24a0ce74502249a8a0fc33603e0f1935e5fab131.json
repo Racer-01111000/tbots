@@ -1,0 +1,126 @@
+{
+  "asset_set": [
+    "DBC",
+    "EEM",
+    "EFA",
+    "GLD",
+    "IEF",
+    "SPY",
+    "TLT",
+    "VNQ"
+  ],
+  "coverage_metadata": {
+    "DBC": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 5170,
+      "start": "2006-02-06"
+    },
+    "EEM": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 5879,
+      "start": "2003-04-14"
+    },
+    "EFA": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 6285,
+      "start": "2001-08-27"
+    },
+    "GLD": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 5475,
+      "start": "2004-11-18"
+    },
+    "IEF": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 6057,
+      "start": "2002-07-30"
+    },
+    "SPY": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 8450,
+      "start": "1993-01-29"
+    },
+    "TLT": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 6057,
+      "start": "2002-07-30"
+    },
+    "VNQ": {
+      "duplicate_timestamps": [],
+      "end": "2026-08-25",
+      "missing_trading_days": [],
+      "missing_trading_days_count": 0,
+      "missing_trading_days_note": "reference set = union of trading dates observed across the asset universe within this asset's own coverage window; not an independently verified NYSE holiday calendar",
+      "rejected_invalid_numeric": [],
+      "rejected_missing_field": [],
+      "rows": 5511,
+      "start": "2004-09-29"
+    }
+  },
+  "created_at": "2026-08-26T07:47:48.513248+00:00",
+  "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+  "normalization_version": "v1",
+  "normalized_content_hashes": {
+    "DBC": "a815b74c6ecaf1807b6e6b8dd283c95c736707a242ab5ac048205e0f97001334",
+    "EEM": "09eb69da68774ec1e2ab83af87a0c1636fc276b54d1f809e8205bc8ad6c556cb",
+    "EFA": "df886ea25a63b6048b3fcacbcd56c46375e3ff589143212322acee22df9d8884",
+    "GLD": "3d1159fa54d38d7cf27f026cf2041baca367d70c4d50b16611280fcd63342b8d",
+    "IEF": "024b21295ed53eabcc18f99da6045b54665419f0edf6032d7bf3b95996cf9f4e",
+    "SPY": "c2853530b644bdcc9c9e4f5aa59c54d3cbaae7b1bd9d13d75f10c4a61af53734",
+    "TLT": "0721bb9ac7e19f9583f47aba88345dc3adaa26cb7f31102fa18447bd14f082f2",
+    "VNQ": "0d83875ad240152936f0f90a88ee16bde83d340751ee011670ccec732b5a15f0"
+  },
+  "source_artifact_hashes": {
+    "DBC": "1bf03aed426257a6c194861ca35561804a12fcb448d31b09bc4295bce41f4f29",
+    "EEM": "de47bb5901b00943fca162fc91c7795d308294dfad036d7a22499e6c52ca3468",
+    "EFA": "2a820955845963e1744e829e5a039ab3bb3a4c1a869f1f8113b9f1adc48673b7",
+    "GLD": "386c4cf3fe4e2d100b9b7e25d9ca149b6e426a15db50004512c5c9cc5164bfd4",
+    "IEF": "db161596808b3edb1a037307173bdfc53a788a9ea79bf464ecc32a23fc82dcbb",
+    "SPY": "83463686deab3cb7b391140d8b108ff2fe19dd18eba57303bc8af12fe7fa6f6e",
+    "TLT": "b175fe83d2e999ee71f146451e2a1188418406d7a4484cd4c354a74b1f659325",
+    "VNQ": "36cdcdf9bef8ace2a348cd9ee341207a9272e17344658131cf3a0ed5574de8f5"
+  },
+  "source_identity": "yahoo-finance-chart-api-v8"
+}

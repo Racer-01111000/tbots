@@ -1,0 +1,157 @@
+{
+  "content": {
+    "asset_metadata": {
+      "DBC": {
+        "artifact": "DBC.csv",
+        "artifact_sha256": "41278be4e3ab17dbf4d4d8be8939f7df82b040ded71067892926ef263d4b3d49",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "EEM": {
+        "artifact": "EEM.csv",
+        "artifact_sha256": "d1dc247cbb64c77fb8af74c1de5dd82742a62aeaf412b36293359c84ff4b9293",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "EFA": {
+        "artifact": "EFA.csv",
+        "artifact_sha256": "4cc3e08a3abbec2c7ea8a06a53ba7beb233020550ab4e576789424446197f8c9",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "GLD": {
+        "artifact": "GLD.csv",
+        "artifact_sha256": "1b8ff9657addb654ce211a5677ec04daff2a4eebabb9ac06959430e715e3217a",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "IEF": {
+        "artifact": "IEF.csv",
+        "artifact_sha256": "3f86e4b9680379102ec2e96b1f5719c86a422ca344a147a7f6c7de055e3ff079",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "SPY": {
+        "artifact": "SPY.csv",
+        "artifact_sha256": "62027a36d11dba3283b68011550ea4642e83a7d69e376443fe4f16869754b9b3",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "TLT": {
+        "artifact": "TLT.csv",
+        "artifact_sha256": "c9d350977bdb106808549004feb15fdfdc61e148a518ace1fe2db5096a2a3731",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      },
+      "VNQ": {
+        "artifact": "VNQ.csv",
+        "artifact_sha256": "adae9627daf9d0b5c7a51dd43dcd96eb7e1a011b9b6b65e485b4ab022300451b",
+        "earliest_included": "2024-10-28",
+        "final_reserve_rows_included": 162,
+        "latest_included": "2026-08-25",
+        "total_rows": 457,
+        "warmup_rows_included": 295,
+        "warmup_rows_requested": 295
+      }
+    },
+    "bundle_kind": "S5D_AUTHORIZED_FINAL_RESERVE",
+    "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "champion_snapshot_hash": "s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672",
+    "construction_code_revision": "b0dc2451ad33014455f94a4d45a932f802c19b56",
+    "derived_bundle_revision": "s5dreserve_1d284ca6b41992c149d2dfb6714be375773aff5a68c8db6e9bc8f324ef5cfee1",
+    "episode_protocol_hash": "s5d_final_reserve_episode_f497741313756b626c81bccdf19dcd3d78f12306722e28f4cefed6a13b3d5424",
+    "isolation_contract": {
+      "competing_genomes": 0,
+      "evaluator_has_no_normalized_source_path": true,
+      "evolutionary_feedback_outputs": 0,
+      "historical_s5a_performance_payloads": 0,
+      "historical_s5b_performance_payloads": 0,
+      "historical_s5c_performance_payloads": 0,
+      "observations_after_2026_08_25": 0,
+      "only_fixed_bundle_path_is_supported": true
+    },
+    "outcome_protocol_hash": "s5d_final_reserve_outcome_a7ff7da84d0df995f8ae3ae8495bd975719cd3fef549238d3fdf336e32155be4",
+    "revision_basis": {
+      "artifact_hashes": {
+        "DBC": "41278be4e3ab17dbf4d4d8be8939f7df82b040ded71067892926ef263d4b3d49",
+        "EEM": "d1dc247cbb64c77fb8af74c1de5dd82742a62aeaf412b36293359c84ff4b9293",
+        "EFA": "4cc3e08a3abbec2c7ea8a06a53ba7beb233020550ab4e576789424446197f8c9",
+        "GLD": "1b8ff9657addb654ce211a5677ec04daff2a4eebabb9ac06959430e715e3217a",
+        "IEF": "3f86e4b9680379102ec2e96b1f5719c86a422ca344a147a7f6c7de055e3ff079",
+        "SPY": "62027a36d11dba3283b68011550ea4642e83a7d69e376443fe4f16869754b9b3",
+        "TLT": "c9d350977bdb106808549004feb15fdfdc61e148a518ace1fe2db5096a2a3731",
+        "VNQ": "adae9627daf9d0b5c7a51dd43dcd96eb7e1a011b9b6b65e485b4ab022300451b"
+      },
+      "asset_set": [
+        "DBC",
+        "EEM",
+        "EFA",
+        "GLD",
+        "IEF",
+        "SPY",
+        "TLT",
+        "VNQ"
+      ],
+      "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "champion_snapshot_hash": "s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672",
+      "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+      "episode_protocol_hash": "s5d_final_reserve_episode_f497741313756b626c81bccdf19dcd3d78f12306722e28f4cefed6a13b3d5424",
+      "lane_end": "2026-08-25",
+      "lane_start": "2026-01-01",
+      "outcome_protocol_hash": "s5d_final_reserve_outcome_a7ff7da84d0df995f8ae3ae8495bd975719cd3fef549238d3fdf336e32155be4",
+      "schema_version": 1,
+      "warmup_policy": {
+        "basis": "actual accepted frozen champion only",
+        "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "fabrication_backfill_interpolation": "PROHIBITED",
+        "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+        "pre_reserve_bars_per_asset": 295,
+        "required_price_bars_including_current": 296,
+        "selection": "last trading bars strictly before 2026-01-01",
+        "shortened_indicators": "PROHIBITED"
+      }
+    },
+    "schema_version": 1,
+    "source_dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "source_manifest_sha256": "b57cea3ec75ec1317488ee8cb888b6a90895d0f4b24da5b5e3a382d8222617bf",
+    "warmup_policy": {
+      "basis": "actual accepted frozen champion only",
+      "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "fabrication_backfill_interpolation": "PROHIBITED",
+      "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+      "pre_reserve_bars_per_asset": 295,
+      "required_price_bars_including_current": 296,
+      "selection": "last trading bars strictly before 2026-01-01",
+      "shortened_indicators": "PROHIBITED"
+    }
+  },
+  "manifest_hash": "s5d_reserve_manifest_2fa1f8d2a9dae8691a46050fbdd9726ba676f23377a6bac27389b4eb3829950a"
+}

@@ -1,0 +1,77 @@
+{
+  "entries": {
+    "DBC": {
+      "bytes": 567298,
+      "fetched_at": "2026-08-26T07:37:34.694403+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/DBC.json",
+      "sha256": "1bf03aed426257a6c194861ca35561804a12fcb448d31b09bc4295bce41f4f29",
+      "ticker": "DBC",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/DBC?period1=0&period2=1787729854&interval=1d&events=div,splits"
+    },
+    "EEM": {
+      "bytes": 649121,
+      "fetched_at": "2026-08-26T07:35:17.445055+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/EEM.json",
+      "sha256": "de47bb5901b00943fca162fc91c7795d308294dfad036d7a22499e6c52ca3468",
+      "ticker": "EEM",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/EEM?period1=0&period2=1787729717&interval=1d&events=div,splits"
+    },
+    "EFA": {
+      "bytes": 682767,
+      "fetched_at": "2026-08-26T07:34:54.429243+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/EFA.json",
+      "sha256": "2a820955845963e1744e829e5a039ab3bb3a4c1a869f1f8113b9f1adc48673b7",
+      "ticker": "EFA",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/EFA?period1=0&period2=1787729694&interval=1d&events=div,splits"
+    },
+    "GLD": {
+      "bytes": 598192,
+      "fetched_at": "2026-08-26T07:36:58.795547+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/GLD.json",
+      "sha256": "386c4cf3fe4e2d100b9b7e25d9ca149b6e426a15db50004512c5c9cc5164bfd4",
+      "ticker": "GLD",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?period1=0&period2=1787729818&interval=1d&events=div,splits"
+    },
+    "IEF": {
+      "bytes": 664876,
+      "fetched_at": "2026-08-26T07:36:07.418660+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/IEF.json",
+      "sha256": "db161596808b3edb1a037307173bdfc53a788a9ea79bf464ecc32a23fc82dcbb",
+      "ticker": "IEF",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?period1=0&period2=1787729767&interval=1d&events=div,splits"
+    },
+    "SPY": {
+      "bytes": 854360,
+      "fetched_at": "2026-08-26T07:33:56.620649+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/SPY.json",
+      "sha256": "83463686deab3cb7b391140d8b108ff2fe19dd18eba57303bc8af12fe7fa6f6e",
+      "ticker": "SPY",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=0&period2=1787729636&interval=1d&events=div,splits"
+    },
+    "TLT": {
+      "bytes": 670029,
+      "fetched_at": "2026-08-26T07:36:33.079341+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/TLT.json",
+      "sha256": "b175fe83d2e999ee71f146451e2a1188418406d7a4484cd4c354a74b1f659325",
+      "ticker": "TLT",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?period1=0&period2=1787729793&interval=1d&events=div,splits"
+    },
+    "VNQ": {
+      "bytes": 590530,
+      "fetched_at": "2026-08-26T07:37:50.702586+00:00",
+      "http_status": 200,
+      "raw_path": "data/raw/VNQ.json",
+      "sha256": "36cdcdf9bef8ace2a348cd9ee341207a9272e17344658131cf3a0ed5574de8f5",
+      "ticker": "VNQ",
+      "url": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?period1=0&period2=1787729870&interval=1d&events=div,splits"
+    }
+  },
+  "source": "yahoo-finance-chart-api-v8"
+}

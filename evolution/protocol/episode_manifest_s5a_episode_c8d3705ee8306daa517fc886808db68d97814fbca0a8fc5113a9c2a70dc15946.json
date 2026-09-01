@@ -1,0 +1,28 @@
+{
+  "content": {
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "episode_rule": "contiguous calendar intervals; eleven full years plus final partial year",
+    "episodes": [
+      {"end_date": "2008-02-06", "episode_index": 0, "start_date": "2007-02-07"},
+      {"end_date": "2009-02-06", "episode_index": 1, "start_date": "2008-02-07"},
+      {"end_date": "2010-02-06", "episode_index": 2, "start_date": "2009-02-07"},
+      {"end_date": "2011-02-06", "episode_index": 3, "start_date": "2010-02-07"},
+      {"end_date": "2012-02-06", "episode_index": 4, "start_date": "2011-02-07"},
+      {"end_date": "2013-02-06", "episode_index": 5, "start_date": "2012-02-07"},
+      {"end_date": "2014-02-06", "episode_index": 6, "start_date": "2013-02-07"},
+      {"end_date": "2015-02-06", "episode_index": 7, "start_date": "2014-02-07"},
+      {"end_date": "2016-02-06", "episode_index": 8, "start_date": "2015-02-07"},
+      {"end_date": "2017-02-06", "episode_index": 9, "start_date": "2016-02-07"},
+      {"end_date": "2018-02-06", "episode_index": 10, "start_date": "2017-02-07"},
+      {"end_date": "2018-12-31", "episode_index": 11, "start_date": "2018-02-07"}
+    ],
+    "fresh_state_each_episode": ["cash", "portfolio", "peak_equity", "drawdown", "halt"],
+    "lane_end": "2018-12-31",
+    "lane_manifest_hash": "lane_a02f9a435d21bd21722356da8280a45b9454e653987174b897244ec9746d1dc2",
+    "lane_start": "2007-02-07",
+    "masked_time": true,
+    "schema_version": 1,
+    "starting_cash_cents": 100000000
+  },
+  "manifest_hash": "s5a_episode_c8d3705ee8306daa517fc886808db68d97814fbca0a8fc5113a9c2a70dc15946"
+}

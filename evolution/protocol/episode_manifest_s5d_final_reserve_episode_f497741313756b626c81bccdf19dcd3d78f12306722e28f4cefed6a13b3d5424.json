@@ -1,0 +1,39 @@
+{
+  "content": {
+    "accepted_champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "accepted_s5c_deterministic_digest": "ecada3c0a7430515fe01e262d08d7c69454364b141826137d14d659fca50835e",
+    "accepted_s5c_result_sha256": "974b911afcd8eed6d981ddf4179eac3244a8eed68f881f5deb529684ae5346c0",
+    "accepted_s5c_run_id": "s5c_c4f43cb6bad29918631189eadd456b1cd1ee8149437b55c432221ac4f18bde1d",
+    "accepted_starting_revision": "08325c0e3fbd9dc2daa60c82f0604a58ea09389a",
+    "champion_mutation_allowed": false,
+    "competing_genomes_allowed": false,
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "drawdown_halt_scope": "final_reserve_episode_only",
+    "episode_rule": "one contiguous final reserve episode",
+    "episodes": [
+      {
+        "end_date": "2026-08-25",
+        "episode_index": 0,
+        "start_date": "2026-01-01"
+      }
+    ],
+    "evolutionary_feedback_allowed": false,
+    "fresh_state": [
+      "cash",
+      "portfolio",
+      "peak_equity",
+      "drawdown",
+      "halt"
+    ],
+    "genome_source": "performance_free_frozen_champion_snapshot_only",
+    "historical_performance_inputs_allowed": false,
+    "lane_end": "2026-08-25",
+    "lane_start": "2026-01-01",
+    "masked_time": true,
+    "name": "s5d_frozen_final_reserve_episode_v1",
+    "schema_version": 1,
+    "selection_or_optimization_allowed": false,
+    "starting_cash_cents": 100000000
+  },
+  "manifest_hash": "s5d_final_reserve_episode_f497741313756b626c81bccdf19dcd3d78f12306722e28f4cefed6a13b3d5424"
+}

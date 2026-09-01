@@ -1,0 +1,104 @@
+{
+  "content": {
+    "accepted_s5b_deterministic_digest": "fb1b8284d4d9cd5f584af14047784ab1cdd27c85c33ae7575c9e685874053b91",
+    "accepted_s5b_result_sha256": "a50c71208bac5e774cb277845c41d5aa9bc46d46a7ddb2077f8edf3a1dad4fb6",
+    "accepted_s5b_run_id": "s5b_126c5fd6855e59e7db4a588580bd63b5fd401cd4a3a4ce09fa54373ee9504928",
+    "advancement_count": 3,
+    "alpaca_access": 0,
+    "breeding_or_retraining": 0,
+    "broker_connections": 0,
+    "championship_bundle_constructed": false,
+    "championship_observations_accessed": 0,
+    "episode_protocol_hash": "s5b_episode_232f6c186f4b5082ae590811b5dcba4bf212801e8b180ef3a169fab898acacc6",
+    "evolutionary_feedback": 0,
+    "final_reserve_observations_accessed": 0,
+    "frozen_top10_snapshot_hash": "s5b_top10_2f0135509ec196b88fe35b437737888b4d52bcfbf7a2fcf2e0d73370cd8e72a3",
+    "genome_mutations": 0,
+    "live_market_feeds": 0,
+    "name": "s5c_frozen_championship_advancement_manifest_v1",
+    "protocol_hash": "s5c_advancement_protocol_7ee46de082b7529832e10bc147192c4edacd5fca37dd31316e4dceee742df3f3",
+    "public_endpoints": 0,
+    "qualification_bundle_manifest_hash": "s5b_qual_manifest_d09de89dd1281051d82558d16521402bfbabb287747b73af59292971b1be6d87",
+    "qualification_bundle_revision": "s5bqual_f1fdd7c4959272bcf52b0bbad569c236da6cb6fbdb95d64396867d9c350561c6",
+    "qualification_organisms_executed": 0,
+    "real_orders": 0,
+    "schema_version": 1,
+    "score_protocol_hash": "s5b_score_413bd842d9b389e2066e44db23af79a92e56ef6c8bd541a055b2c9a3901cfd4a",
+    "sealed_observation_paths_read": [],
+    "selected_finalists": [
+      {
+        "development_rank": 3,
+        "genome_content_sha256": "3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+        "genome_id": "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+        "qualification_behavior_identity_sha256": "668065e29cb641490184076e0fa20aba8fe32dc8e19d29a3da0a8d0c5611d7d8",
+        "qualification_rank": 1,
+        "selection_order": 1
+      },
+      {
+        "development_rank": 1,
+        "genome_content_sha256": "0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "qualification_behavior_identity_sha256": "a00a2f0e9c31ad86f3c5cb35b43a891694ddbf4da87f9b0ebd8c87446969233b",
+        "qualification_rank": 3,
+        "selection_order": 2
+      },
+      {
+        "development_rank": 8,
+        "genome_content_sha256": "a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70",
+        "genome_id": "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70",
+        "qualification_behavior_identity_sha256": "2b486d7010d1d2279743fc4adff6edcb5dee8d70a5f7161172b03fac167ca53b",
+        "qualification_rank": 5,
+        "selection_order": 3
+      }
+    ],
+    "selection_complete": true,
+    "selection_trace": [
+      {
+        "action": "selected",
+        "behavior_identity_sha256": "668065e29cb641490184076e0fa20aba8fe32dc8e19d29a3da0a8d0c5611d7d8",
+        "development_rank": 3,
+        "genome_id": "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+        "identical_to_selected_genome_id": null,
+        "qualification_rank": 1
+      },
+      {
+        "action": "skipped_identical_behavior",
+        "behavior_identity_sha256": "668065e29cb641490184076e0fa20aba8fe32dc8e19d29a3da0a8d0c5611d7d8",
+        "development_rank": 4,
+        "genome_id": "gen_bbe33d2b6208f6a28660b5a3750bf52863379e28c51d3b8301cf6a235854a1be",
+        "identical_to_selected_genome_id": "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+        "qualification_rank": 2
+      },
+      {
+        "action": "selected",
+        "behavior_identity_sha256": "a00a2f0e9c31ad86f3c5cb35b43a891694ddbf4da87f9b0ebd8c87446969233b",
+        "development_rank": 1,
+        "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "identical_to_selected_genome_id": null,
+        "qualification_rank": 3
+      },
+      {
+        "action": "skipped_identical_behavior",
+        "behavior_identity_sha256": "a00a2f0e9c31ad86f3c5cb35b43a891694ddbf4da87f9b0ebd8c87446969233b",
+        "development_rank": 2,
+        "genome_id": "gen_2a6d4d628da2ecb2b3aa84faf53d8fc19ad257d016087f1400c31a68dee9b23f",
+        "identical_to_selected_genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+        "qualification_rank": 4
+      },
+      {
+        "action": "selected",
+        "behavior_identity_sha256": "2b486d7010d1d2279743fc4adff6edcb5dee8d70a5f7161172b03fac167ca53b",
+        "development_rank": 8,
+        "genome_id": "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70",
+        "identical_to_selected_genome_id": null,
+        "qualification_rank": 5
+      }
+    ],
+    "source_paths_read": [
+      "reports/s5b_qualification_f2f2c164_result.json",
+      "evolution/protocol/frozen_top10_s5b_top10_2f0135509ec196b88fe35b437737888b4d52bcfbf7a2fcf2e0d73370cd8e72a3.json",
+      "evolution/protocol/s5b_preparation_lock.json"
+    ]
+  },
+  "manifest_hash": "s5c_advancement_manifest_060da29f7b96405681da005983d70a267b24d51b31f200ce51e859ce97c4f7fa"
+}

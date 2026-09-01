@@ -1,0 +1,44 @@
+{
+  "content": {
+    "acceptance_question": "How did the frozen historical champion behave on the last untouched historical period?",
+    "complete_episode_count": 1,
+    "concentration": {
+      "definition_source": "normalized HHI of absolute episode returns: (HHI - 1/N) / (1 - 1/N); zero when all returns are zero",
+      "reason": "frozen cross-episode definition returns zero for fewer than two episodes",
+      "single_episode_value": 0.0
+    },
+    "daily_return_annualization": 252,
+    "episode_protocol_name": "s5d_frozen_final_reserve_episode_v1",
+    "episode_sharpe": "mean daily return / sample stdev daily return * sqrt(252); zero when fewer than 2 returns or stdev is zero",
+    "episode_sortino": "mean daily return / sample stdev of negative daily returns * sqrt(252); zero when fewer than 2 negative returns or downside stdev is zero",
+    "evolutionary_feedback_allowed": false,
+    "fitness_score": "NOT_APPLICABLE",
+    "historical_s5a_performance_inputs_allowed": false,
+    "historical_s5b_performance_inputs_allowed": false,
+    "historical_s5c_performance_inputs_allowed": false,
+    "metric_definitions_source": "s5a_fitness_3525d7ce8ab1c5e9b716d98ebe975aabb14e60201dc660600e6b0fb69b1b5b40",
+    "minimum_return_hurdle": "NONE",
+    "name": "s5d_frozen_final_reserve_reporting_v1",
+    "purpose": "reporting_and_validation_only",
+    "ranking": "NOT_APPLICABLE_ONE_FROZEN_CHAMPION",
+    "replacement_or_retraining_on_negative_return": "PROHIBITED",
+    "required_outcome_fields": [
+      "total_return",
+      "sharpe",
+      "sortino",
+      "max_drawdown",
+      "halted",
+      "turnover",
+      "commission_cents",
+      "slippage_cents",
+      "transaction_cost_cents",
+      "transaction_cost_rate",
+      "performance_concentration",
+      "final_equity_cents"
+    ],
+    "schema_version": 1,
+    "transaction_cost_rate": "(commission_cents + slippage_cents) / starting capital; aggregate is median episode rate",
+    "turnover": "episode traded notional / starting capital; aggregate is median episode turnover"
+  },
+  "manifest_hash": "s5d_final_reserve_outcome_a7ff7da84d0df995f8ae3ae8495bd975719cd3fef549238d3fdf336e32155be4"
+}

@@ -1,0 +1,46 @@
+{
+  "content": {
+    "advancement_manifest_hash": "s5c_advancement_manifest_060da29f7b96405681da005983d70a267b24d51b31f200ce51e859ce97c4f7fa",
+    "advancement_protocol_hash": "s5c_advancement_protocol_7ee46de082b7529832e10bc147192c4edacd5fca37dd31316e4dceee742df3f3",
+    "alpaca_access_configuration_authentication": 0,
+    "breeding_or_retraining": 0,
+    "broker_connections": 0,
+    "championship_bundle_manifest_hash": "s5c_champ_manifest_66b9acba20b78a4dd165d34bf5132aaaba6b33b8e9a5948cb9eec3b13a02be6e",
+    "championship_bundle_path": "data/championship_bundles/s5cchamp_ccc9d10aa04b16ed8efca437f6530f3070c850ec4c23309faa688beeb94b0c89",
+    "championship_bundle_revision": "s5cchamp_ccc9d10aa04b16ed8efca437f6530f3070c850ec4c23309faa688beeb94b0c89",
+    "championship_organisms_executed_during_preparation": 0,
+    "championship_result_rows_during_preparation": 0,
+    "construction_code_revision": "e9344ae7a4dcbddf0acf5508a8ae23d1573b9ef4",
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "episode_protocol_hash": "s5c_championship_episode_b482a030257f9a55310f30ad168bde26a237393cd86f3bd9571bc27f1c2e0e09",
+    "evaluator_visible_max_date": "2025-12-31",
+    "evaluator_visible_min_date": "2021-09-29",
+    "final_reserve_observations_accessed_or_exposed": 0,
+    "finalist_ids": [
+      "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f",
+      "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70"
+    ],
+    "genome_mutations": 0,
+    "external_system_access_or_mutation": 0,
+    "live_market_feeds": 0,
+    "public_endpoints": 0,
+    "real_orders": 0,
+    "schema_version": 1,
+    "score_protocol_hash": "s5c_championship_score_d66f5ad71322c1569c2d3f7d5503810389787b295707942f16f1c19b0f3af01d",
+    "warmup_policy": {
+      "basis": "actual accepted frozen S5C finalists only",
+      "fabrication_backfill_interpolation": "PROHIBITED",
+      "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+      "per_genome_required_prechampionship_bars": {
+        "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155": 295,
+        "gen_3e06a2be7814b193c9da1725ea559f8154bbce006a6ab227a72f18aa5c7eb30f": 305,
+        "gen_a8a5c9f1078a8e446bd3c55b6dc5d201b016c78d7f67ac2e047c76355936bf70": 317
+      },
+      "selection": "last trading bars strictly before 2023-01-01",
+      "shared_bundle_prechampionship_bars_per_asset": 317,
+      "shortened_indicators": "PROHIBITED"
+    }
+  },
+  "manifest_hash": "s5c_prep_lock_260592f4fbba27c1298c4e7e6d2610d0fdfcae641a80f884e6c52f071b866784"
+}

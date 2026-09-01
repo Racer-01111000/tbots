@@ -1,0 +1,42 @@
+{
+  "content": {
+    "accepted_s5c_deterministic_digest": "ecada3c0a7430515fe01e262d08d7c69454364b141826137d14d659fca50835e",
+    "accepted_s5c_result_sha256": "974b911afcd8eed6d981ddf4179eac3244a8eed68f881f5deb529684ae5346c0",
+    "accepted_s5c_run_id": "s5c_c4f43cb6bad29918631189eadd456b1cd1ee8149437b55c432221ac4f18bde1d",
+    "alpaca_access_configuration_authentication": 0,
+    "breeding_or_retraining": 0,
+    "broker_connections": 0,
+    "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "champion_snapshot_hash": "s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672",
+    "champion_snapshot_path": "evolution/protocol/frozen_champion_s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672.json",
+    "construction_code_revision": "b0dc2451ad33014455f94a4d45a932f802c19b56",
+    "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+    "episode_protocol_hash": "s5d_final_reserve_episode_f497741313756b626c81bccdf19dcd3d78f12306722e28f4cefed6a13b3d5424",
+    "evaluator_visible_max_date": "2026-08-25",
+    "evaluator_visible_min_date": "2024-10-28",
+    "evolutionary_feedback": 0,
+    "final_reserve_bundle_manifest_hash": "s5d_reserve_manifest_2fa1f8d2a9dae8691a46050fbdd9726ba676f23377a6bac27389b4eb3829950a",
+    "final_reserve_bundle_path": "data/final_reserve_bundles/s5dreserve_1d284ca6b41992c149d2dfb6714be375773aff5a68c8db6e9bc8f324ef5cfee1",
+    "final_reserve_bundle_revision": "s5dreserve_1d284ca6b41992c149d2dfb6714be375773aff5a68c8db6e9bc8f324ef5cfee1",
+    "final_reserve_champion_executions_during_preparation": 0,
+    "genome_mutations": 0,
+    "external_system_access_or_mutation": 0,
+    "live_market_feeds": 0,
+    "outcome_protocol_hash": "s5d_final_reserve_outcome_a7ff7da84d0df995f8ae3ae8495bd975719cd3fef549238d3fdf336e32155be4",
+    "public_endpoints": 0,
+    "real_final_reserve_result_rows": 0,
+    "real_orders": 0,
+    "schema_version": 1,
+    "warmup_policy": {
+      "basis": "actual accepted frozen champion only",
+      "champion_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "fabrication_backfill_interpolation": "PROHIBITED",
+      "missing_history_policy": "INSUFFICIENT_HISTORY_NOT_ELIGIBLE",
+      "pre_reserve_bars_per_asset": 295,
+      "required_price_bars_including_current": 296,
+      "selection": "last trading bars strictly before 2026-01-01",
+      "shortened_indicators": "PROHIBITED"
+    }
+  },
+  "manifest_hash": "s5d_prep_lock_3c0d48b612de79e048dc50e0103b901f09ee7ba844e0ea4b4707bce8c0da4bd6"
+}

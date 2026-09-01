@@ -1,0 +1,81 @@
+{
+  "content": {
+    "F_array": {
+      "add": "uniform legal unused horizon",
+      "operation": "uniform among currently valid shift/add/remove",
+      "remove": "uniform index when length>2",
+      "shift": "uniform index then uniform nonzero legal step delta within 10% horizon span"
+    },
+    "G_vector": {
+      "amount": "uniform legal positive multiple of 100 bps",
+      "constraints": "sum 10000, each<=4000, >=3 nonzero",
+      "donor": "uniform among positive targets",
+      "recipient": "uniform distinct asset below cap"
+    },
+    "cross_lineage": false,
+    "crossover": false,
+    "development_feasibility": {
+      "acceptance": "required_price_bars <= available_price_bars for every DEVELOPMENT episode and every frozen-universe asset",
+      "availability": "for every frozen DEVELOPMENT episode and every frozen-universe asset, count only physically present immutable-bundle price rows at or before that episode's first trading session",
+      "enforcement_before": [
+        "persistence",
+        "fitness",
+        "episode_execution"
+      ],
+      "latest_permitted_observation": "2018-12-31",
+      "prohibited": [
+        "fabrication",
+        "interpolation",
+        "backfill",
+        "shortened_indicators",
+        "asset_omission",
+        "development_date_change",
+        "2019_or_later_observation"
+      ],
+      "rejection": {
+        "action": "deterministically reject and resample",
+        "audit_counts_may_affect_fitness": false,
+        "episodes_executed": 0,
+        "fitness": null,
+        "population_slot_consumed": false,
+        "resampling_bound": 128
+      },
+      "required_price_bars": "frozen lineage warmup(code, genome), including the episode's first trading session",
+      "schema_version": 1,
+      "scope": [
+        "founder",
+        "mutated_child",
+        "immigrant"
+      ]
+    },
+    "gen0_founders": 64,
+    "immigrants": "uniform step-index draws; F length uniform 2..4 then unused horizons; G sequential uniform legal 100-bps unit composition; reject invalid; 128 retries",
+    "last_generation": 12,
+    "per_transition": {
+      "children": 48,
+      "elites": 8,
+      "immigrants": 8
+    },
+    "scalar_mutation": {
+      "clip": true,
+      "delta": "uniform nonzero integer in +/-ceil(10% domain steps)",
+      "domain": "integer step index",
+      "field_probability": 0.25,
+      "force_one_if_none": true,
+      "retry_limit": 128,
+      "unchanged_child": "reject and resample complete mutation draw"
+    },
+    "schema_version": 2,
+    "seed_streams": "lineage-specific SHA-256 derivation",
+    "slots_per_lineage": 832,
+    "slots_total": 4992,
+    "tournament": {
+      "parents": "current lineage only",
+      "replacement": false,
+      "size": 4,
+      "winner": "fitness descending then genome_id ascending"
+    },
+    "transitions": 12
+  },
+  "manifest_hash": "s6a_evolution_f11988439d95eeb66c8b7ab11e625a5441e22e8eb2f5dd9d0087d5f9bddd5088"
+}
