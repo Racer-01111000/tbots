@@ -1,0 +1,9 @@
+{
+  "deterministic_digest": "0a5fcc33cea3da54cc069c3148ec648b73386c6c37b2f584d100645b582d875a",
+  "generation_count": 13,
+  "lineage": "D",
+  "population_members_per_generation": 64,
+  "run_id": "s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca",
+  "schema_version": 1,
+  "status": "completed"
+}

@@ -1,0 +1,271 @@
+{
+  "frozen": [
+    {
+      "development_rank": 1,
+      "fitness": 0.548480762518,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.35000000000000003,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.23,
+        "leverage": "none",
+        "max_asset_weight": 0.47000000000000003,
+        "rebalance_sessions": 31,
+        "regime_window": 122,
+        "risk_off_drawdown": 0.08,
+        "selection_count": 3,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 2,
+      "fitness": 0.544487430033,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.4,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.2,
+        "leverage": "none",
+        "max_asset_weight": 0.5900000000000001,
+        "rebalance_sessions": 31,
+        "regime_window": 103,
+        "risk_off_drawdown": 0.09,
+        "selection_count": 2,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 3,
+      "fitness": 0.535323439945,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.4,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.21000000000000002,
+        "leverage": "none",
+        "max_asset_weight": 0.5900000000000001,
+        "rebalance_sessions": 31,
+        "regime_window": 111,
+        "risk_off_drawdown": 0.09,
+        "selection_count": 3,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 4,
+      "fitness": 0.534202909044,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.35000000000000003,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.23,
+        "leverage": "none",
+        "max_asset_weight": 0.47000000000000003,
+        "rebalance_sessions": 31,
+        "regime_window": 125,
+        "risk_off_drawdown": 0.08,
+        "selection_count": 3,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 5,
+      "fitness": 0.534202909044,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.4,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.23,
+        "leverage": "none",
+        "max_asset_weight": 0.47000000000000003,
+        "rebalance_sessions": 31,
+        "regime_window": 125,
+        "risk_off_drawdown": 0.08,
+        "selection_count": 3,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 6,
+      "fitness": 0.515950198548,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.4,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.2,
+        "leverage": "none",
+        "max_asset_weight": 0.56,
+        "rebalance_sessions": 31,
+        "regime_window": 130,
+        "risk_off_drawdown": 0.09,
+        "selection_count": 2,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 7,
+      "fitness": 0.515950198548,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.4,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.2,
+        "leverage": "none",
+        "max_asset_weight": 0.5800000000000001,
+        "rebalance_sessions": 31,
+        "regime_window": 130,
+        "risk_off_drawdown": 0.09,
+        "selection_count": 2,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+      "lineage": "D",
+      "verified": true
+    },
+    {
+      "development_rank": 8,
+      "fitness": 0.510644682171,
+      "generation": 12,
+      "genome": {
+        "allocation_rule": "equal_weight_rotation",
+        "breadth_threshold": 0.35000000000000003,
+        "direction": "long_only",
+        "gross_exposure_cap": 0.21000000000000002,
+        "leverage": "none",
+        "max_asset_weight": 0.5900000000000001,
+        "rebalance_sessions": 31,
+        "regime_window": 97,
+        "risk_off_drawdown": 0.09,
+        "selection_count": 3,
+        "shorting": "none",
+        "signal_model": "risk_regime_drawdown_breadth",
+        "strategy_family": "defensive_rotation",
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ]
+      },
+      "genome_id": "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb",
+      "lineage": "D",
+      "verified": true
+    }
+  ],
+  "lineage": "D",
+  "run_id": "s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca",
+  "schema_version": 1
+}
