@@ -1,0 +1,12 @@
+{
+  "episodes_executed": 0,
+  "fitness_effect": null,
+  "population_slots_consumed": 0,
+  "rejected_by_role": {
+    "founder": 0,
+    "immigrant": 0,
+    "mutated_child": 0
+  },
+  "rejected_total": 0,
+  "schema_version": 1
+}
