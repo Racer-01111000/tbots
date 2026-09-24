@@ -1,0 +1,288 @@
+{
+  "qualification_lane": {
+    "start": "2019-01-01",
+    "end": "2022-12-31",
+    "episode_rule": "four contiguous full calendar years",
+    "episodes": [
+      {
+        "episode_index": 0,
+        "start_date": "2019-01-01",
+        "end_date": "2019-12-31"
+      },
+      {
+        "episode_index": 1,
+        "start_date": "2020-01-01",
+        "end_date": "2020-12-31"
+      },
+      {
+        "episode_index": 2,
+        "start_date": "2021-01-01",
+        "end_date": "2021-12-31"
+      },
+      {
+        "episode_index": 3,
+        "start_date": "2022-01-01",
+        "end_date": "2022-12-31"
+      }
+    ]
+  },
+  "dataset_revision": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+  "bundle_isolation_check": {
+    "prequalification_warmup_observations_exposed": 0,
+    "qualification_observations_exposed": 0,
+    "championship_observations_exposed": 0,
+    "final_reserve_observations_exposed": 0,
+    "other_observations_exposed": 0,
+    "evaluator_visible_min_date": "2017-09-27",
+    "evaluator_visible_max_date": "2022-12-30",
+    "observations_after_2022_12_31_available_to_evaluator": 0,
+    "historical_s5a_performance_inputs_accepted": 0,
+    "bundle_revision": "s5bqual_f1fdd7c4959272bcf52b0bbad569c236da6cb6fbdb95d64396867d9c350561c6",
+    "bundle_manifest_hash": "s5b_qual_manifest_d09de89dd1281051d82558d16521402bfbabb287747b73af59292971b1be6d87"
+  },
+  "tbots_head": "9e573323501684ef8adfcbfbe357aa314cfdbdb4",
+  "d_primary_rank1": {
+    "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+    "genome": {
+      "allocation_rule": "equal_weight_rotation",
+      "breadth_threshold": 0.35000000000000003,
+      "direction": "long_only",
+      "gross_exposure_cap": 0.23,
+      "leverage": "none",
+      "max_asset_weight": 0.47000000000000003,
+      "rebalance_sessions": 31,
+      "regime_window": 122,
+      "risk_off_drawdown": 0.08,
+      "selection_count": 3,
+      "shorting": "none",
+      "signal_model": "risk_regime_drawdown_breadth",
+      "strategy_family": "defensive_rotation",
+      "universe": [
+        "SPY",
+        "EFA",
+        "EEM",
+        "IEF",
+        "TLT",
+        "GLD",
+        "DBC",
+        "VNQ"
+      ]
+    },
+    "source_file": "/home/rick/tbots/evolution/s6b_runs/primary/D_s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca/development_top_eight.json",
+    "source_file_sha256": "373879a9842f05385d41c67fab5a6208c7d0d7c5cbab323363173a04bd2c60e4",
+    "gross_exposure_cap": 0.23,
+    "episode_metrics": [
+      {
+        "episode_index": 0,
+        "start_date": "2019-01-01",
+        "end_date": "2019-12-31",
+        "final_equity_cents": 100948377,
+        "total_return": 0.009483769999999891,
+        "sharpe": 0.4194151866705084,
+        "sortino": 0.5601996585906454,
+        "max_drawdown": -0.02186996487262516,
+        "halted": false,
+        "turnover": 1.92723713,
+        "commission_cents": 96360,
+        "slippage_cents": 94637,
+        "transaction_cost_rate": 0.00190997,
+        "order_count": 38,
+        "fill_count": 38,
+        "step_count": 252
+      },
+      {
+        "episode_index": 1,
+        "start_date": "2020-01-01",
+        "end_date": "2020-12-31",
+        "final_equity_cents": 98241889,
+        "total_return": -0.017581109999999955,
+        "sharpe": -0.2800312574831123,
+        "sortino": -0.34878507281207327,
+        "max_drawdown": -0.078026361538579,
+        "halted": false,
+        "turnover": 1.0999923,
+        "commission_cents": 54999,
+        "slippage_cents": 54184,
+        "transaction_cost_rate": 0.00109183,
+        "order_count": 32,
+        "fill_count": 32,
+        "step_count": 253
+      },
+      {
+        "episode_index": 2,
+        "start_date": "2021-01-01",
+        "end_date": "2021-12-31",
+        "final_equity_cents": 105626763,
+        "total_return": 0.05626763000000001,
+        "sharpe": 1.8011707874374097,
+        "sortino": 2.537287898434124,
+        "max_drawdown": -0.014495117258566004,
+        "halted": false,
+        "turnover": 0.76582619,
+        "commission_cents": 38291,
+        "slippage_cents": 40714,
+        "transaction_cost_rate": 0.00079005,
+        "order_count": 30,
+        "fill_count": 30,
+        "step_count": 252
+      },
+      {
+        "episode_index": 3,
+        "start_date": "2022-01-01",
+        "end_date": "2022-12-31",
+        "final_equity_cents": 95114710,
+        "total_return": -0.04885289999999998,
+        "sharpe": -1.5163366753770047,
+        "sortino": -1.8621235189485714,
+        "max_drawdown": -0.056968739586865436,
+        "halted": false,
+        "turnover": 1.67806506,
+        "commission_cents": 83904,
+        "slippage_cents": 79552,
+        "transaction_cost_rate": 0.00163456,
+        "order_count": 19,
+        "fill_count": 19,
+        "step_count": 251
+      }
+    ],
+    "aggregate_full_lane": {
+      "n_episodes": 4,
+      "return_median": -0.004048670000000032,
+      "return_worst": -0.04885289999999998,
+      "return_best": 0.05626763000000001,
+      "max_drawdown_worst": -0.078026361538579,
+      "sharpe_median": 0.06969196459369806,
+      "sortino_median": 0.10570729288928604,
+      "turnover_median": 1.38902868,
+      "pct_halted": 0.0
+    }
+  },
+  "passive_envelope_exposure_matched": {
+    "target_exposure": 0.23,
+    "per_asset_weight": 0.02875,
+    "episode_metrics": [
+      {
+        "episode_index": 0,
+        "start_date": "2019-01-01",
+        "end_date": "2019-12-31",
+        "final_equity_cents": 103816312,
+        "total_return": 0.038163120000000106,
+        "sharpe": 2.525560061178532,
+        "sortino": 3.968952687354248,
+        "max_drawdown": -0.006379118632748093,
+        "halted": false,
+        "turnover": 0.22935548,
+        "commission_cents": 11468,
+        "slippage_cents": 12061,
+        "transaction_cost_rate": 0.00023529,
+        "order_count": 8,
+        "fill_count": 8,
+        "step_count": 252
+      },
+      {
+        "episode_index": 1,
+        "start_date": "2020-01-01",
+        "end_date": "2020-12-31",
+        "final_equity_cents": 101822652,
+        "total_return": 0.018226520000000024,
+        "sharpe": 0.5399201615630761,
+        "sortino": 0.6734037832378283,
+        "max_drawdown": -0.046400356333649806,
+        "halted": false,
+        "turnover": 0.22941894,
+        "commission_cents": 11473,
+        "slippage_cents": 11666,
+        "transaction_cost_rate": 0.00023139,
+        "order_count": 8,
+        "fill_count": 8,
+        "step_count": 253
+      },
+      {
+        "episode_index": 2,
+        "start_date": "2021-01-01",
+        "end_date": "2021-12-31",
+        "final_equity_cents": 102674208,
+        "total_return": 0.02674208,
+        "sharpe": 1.305370332386695,
+        "sortino": 1.8551993971427547,
+        "max_drawdown": -0.0107972988981887,
+        "halted": false,
+        "turnover": 0.23015978,
+        "commission_cents": 11509,
+        "slippage_cents": 12275,
+        "transaction_cost_rate": 0.00023784,
+        "order_count": 8,
+        "fill_count": 8,
+        "step_count": 252
+      },
+      {
+        "episode_index": 3,
+        "start_date": "2022-01-01",
+        "end_date": "2022-12-31",
+        "final_equity_cents": 96591399,
+        "total_return": -0.03408601,
+        "sharpe": -1.1916387196581038,
+        "sortino": -1.622943587640932,
+        "max_drawdown": -0.04585221950349394,
+        "halted": false,
+        "turnover": 0.23017066,
+        "commission_cents": 11509,
+        "slippage_cents": 11197,
+        "transaction_cost_rate": 0.00022706,
+        "order_count": 8,
+        "fill_count": 8,
+        "step_count": 251
+      }
+    ],
+    "aggregate_full_lane": {
+      "n_episodes": 4,
+      "return_median": 0.022484300000000013,
+      "return_worst": -0.03408601,
+      "return_best": 0.038163120000000106,
+      "max_drawdown_worst": -0.046400356333649806,
+      "sharpe_median": 0.9226452469748856,
+      "sortino_median": 1.2643015901902914,
+      "turnover_median": 0.22978936,
+      "pct_halted": 0.0
+    }
+  },
+  "comparison_fraction_d1_wins_full_lane": {
+    "total_return": 0.25,
+    "max_drawdown": 0.0,
+    "sharpe": 0.25,
+    "sortino": 0.25
+  },
+  "comparison_fraction_d1_wins_by_calendar_year": {
+    "2019": {
+      "total_return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe": 0.0,
+      "sortino": 0.0
+    },
+    "2020": {
+      "total_return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe": 0.0,
+      "sortino": 0.0
+    },
+    "2021": {
+      "total_return": 1.0,
+      "max_drawdown": 0.0,
+      "sharpe": 1.0,
+      "sortino": 1.0
+    },
+    "2022": {
+      "total_return": 0.0,
+      "max_drawdown": 0.0,
+      "sharpe": 0.0,
+      "sortino": 0.0
+    }
+  },
+  "determinism_rerun": {
+    "byte_identical": true,
+    "mismatches": []
+  },
+  "note_on_episode_independence": "These 4 calendar-year QUALIFICATION episodes (2019, 2020, 2021, 2022) are contiguous, non-overlapping annual slices of a single historical path, exactly as the 12 DEVELOPMENT episodes were -- NOT independent samples. Per-year figures are descriptive subdivisions of one correlated 4-year realization, not 4 independent trials.",
+  "known_limitation_dividend_accounting": "The frozen execution.py simulator marks daily equity using each session's RAW (unadjusted) close and credits no dividend cash on ex-dividend dates anywhere in Portfolio. Preserved UNCHANGED in this experiment for comparability, per explicit GO instruction. Silently understates total return for both D_primary_rank1 and PASSIVE_ENVELOPE_EXPOSURE_MATCHED alike -- both hold dividend-paying universe assets during this window. Not fixed, not quantified in aggregate here.",
+  "methodological_note_new_script_not_evaluator_modification": "See this file's module docstring: the frozen production evaluator (s6b_evaluator.py) is hash-bound to the DEVELOPMENT lane and cannot be pointed at QUALIFICATION without raising a BoundaryError/ProtocolError. This script is a new, self-contained file that reuses execution.py/risk.py/s6a_runtime.py (r.decide_D, r.warmup, r.validate_genome) UNMODIFIED and replicates s6b_evaluator._simulate_admitted_episode's per-step loop identically, parameterized by the QUALIFICATION bundle and the QUALIFICATION lane's own pre-existing, frozen 4-calendar-year episode manifest (s5b_config.EPISODE_PROTOCOL) instead of DEVELOPMENT's. No frozen file's bytes were changed."
+}

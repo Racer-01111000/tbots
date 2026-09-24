@@ -1,0 +1,143 @@
+# SABLE independent review — controls comparison / holdout / championship experiments
+
+Reviewer: SABLE (independent second read, no access to or reliance on CC's prior interpretation until Step 2 as instructed). All figures below were computed by me directly from the raw JSON and/or by re-running the existing (unmodified) evaluation primitives with added instrumentation, output only to `/tmp/.../scratchpad` and this review directory. Nothing in the three source experiment directories, the frozen champion file, or anything outside `/home/rick/tbots` was written to.
+
+Bottom line up front: **the headline claims (a)–(g) are all factually accurate against the raw data — I verified every number I checked. My disagreement is not with the arithmetic, it's with how much weight the "champion is overfit, D_rank1 generalizes" story deserves, and with how much the report leaves out.** The single most important thing this review surfaces that wasn't in scope for the original two-file interpretation.md: **a completely dumb, non-adaptive, buy-once-and-never-rebalance control (PASSIVE_ENVELOPE) beats every evolved agent and the champion on Sharpe in the one real out-of-sample window, and beats them by wide margins on absolute return in both non-DEV windows.** Whatever story gets told about champion-vs-D, it has to survive contact with that fact first, and right now the review material barely touches it.
+
+---
+
+## 1. Independent numeric verification
+
+Rick's requester (CC) already hand-verified the champion's FINAL_RESERVE Sharpe/Sortino/return. I verified a different pair: **D_primary_rank1 on the CHAMPIONSHIP window (2023-01-01 to 2025-12-31)**.
+
+From `championship_results.json`, stored values:
+- `total_return = 0.0646542699999999`
+- `sharpe = 0.7561918308184028`
+- `sortino = 1.0626351691132963`
+
+Independent recomputation from the same record's `daily_returns` array (751 daily returns), using the formulas specified in the task (Sharpe = mean/sample-stdev × √252; Sortino = mean/√(mean(min(r,0)²)) × √252):
+
+- Recomputed Sharpe: **0.7561918308184028** — exact match.
+- Recomputed Sortino: **1.0626351691132963** — exact match.
+- (For completeness: using population stdev instead of sample stdev for Sharpe gives 0.7566957907749212 — confirms the harness uses **sample** stdev, consistent with `statistics.stdev` in `harness.py`/`s6b_evaluator`.)
+
+I also independently confirmed the raw counterfactual behind claim (e). Pulling actual SPY prices from `data/championship_bundles/.../SPY.csv`: buying at the T+1 open with 5bps slippage on 2023-01-04 (open $383.18) and marking at the 2025-12-31 raw close ($681.92) gives an unhalted, ex-dividend price return of **77.87%** — closely matching the claimed "+77.4%" (small residual difference plausibly from exact share-rounding/commission handling I didn't replicate bit-for-bit). This is solid corroboration, not an exact byte-match, but well within what I'd expect from an independent hand-reconstruction.
+
+I did not find any arithmetic or data-integrity problems in the stored numbers I checked. The concerns below are about what the numbers mean and what's missing, not about whether they're computed correctly.
+
+---
+
+## 2. Methodological assessment
+
+**(i) Are the controls honest baselines for what's being asked?**
+Mostly yes, with one real gap: **NO_TRADE_CONTROL earns exactly 0.0% in every single episode across all three experiments** — I confirmed this directly (`set(e['total_return'] for e in NO_TRADE episodes) == {0.0}`). Tracing the code (`execution.py`'s `Portfolio` class) confirms why: idle cash earns no yield anywhere in this simulation. There is no risk-free-rate credit on uninvested cash for *any* agent, not just NO_TRADE. That's a legitimate simplification for isolating strategy skill from a cash benchmark, but it does mean "beats NO_TRADE" is a weaker bar than "beats a T-bill," and 2007–2018 (the DEV lane) spans multi-year stretches (2007-08, 2016-18) where T-bill yields were not zero. This doesn't invalidate the comparison, but it should be named as a simplification rather than left implicit.
+
+BUY_AND_HOLD_SPY and RANDOM_SIGNAL are implemented as documented (verified directly in `synthetic_controls.py`): SPY control literally uncapped (`max_asset_weight=1.0, max_total_exposure=1.0`), RANDOM_SIGNAL seeded, 3-of-8 draw, 21-session rebalance, capped at CONTROL_GENOME's 0.35/0.80 envelope, no market data read. Claim (g) is accurate as stated.
+
+**(ii) Is "beats no-trade after costs >50%" a meaningful floor, or does it undersell/oversell something?**
+It oversells. I computed the actual episode-level win rate of the 41 real agents against **BUY_AND_HOLD_SPY_CONTROL** (an actually-invested benchmark, not NO_TRADE) directly from `comparison_matrix`: the **average win fraction on raw return is 0.551** — essentially a coin flip. That's a very different picture than "all 41 agents clear the bar." The reason NO_TRADE is such an easy bar and BUY_AND_HOLD_SPY is a much harder one is instructive on its own (see 2(v) below): BUY_AND_HOLD_SPY's DEV-lane median return is actually **negative** (−1.24%), *not* because SPY did badly over 2007–2018, but because the shared drawdown halt knocked it out of the market in **7 of 12 episodes (58.3%)** and it never got to participate in the recovery within that episode window. A benchmark that's been structurally handicapped by the same halt mechanism that essentially never touches the evolved agents is not a stringent test, and "beats it in >50% of episodes" is not strong evidence of skill. The genuinely meaningful comparison in this dataset is the ~55% win rate against SPY, and that's a much weaker headline than "all 41 beat no-trade."
+
+**(iii) Is the structural-artifact framing for "beats all 3 controls on all 4 metrics = FALSE for everyone" legitimate?**
+Yes, this one I fully agree with, and interpretation.md's explanation of it holds up under my own check of the comparison matrix. NO_TRADE's max_drawdown is mathematically pinned to 0.00% by construction (an agent that never invests cannot draw down), so no invested strategy can ever "win" that cell. That's not a rationalization — it's a tautology inherent to the flag's definition, and it would be equally true of a genuinely skilled strategy. I'd flag it as a badly-designed evaluation flag (it should probably have excluded NO_TRADE's drawdown column from the start, or been defined per-control rather than "all controls simultaneously"), but not as evidence being spun to excuse a bad result.
+
+**(iv) Is separating literal-100%-SPY from envelope-capped controls (PASSIVE_ENVELOPE, RANDOM_SIGNAL) the right call, or does it let evolved agents off easy vs. an artificially hobbled benchmark?**
+The separation itself is the right call — conflating "did evolution beat a maximally concentrated, uncapped single-asset bet" with "did evolution beat a dumb diversified allocation inside the same risk envelope" would genuinely blur two different questions, and interpretation.md is correct to insist on keeping them apart.
+
+But I disagree with the implicit conclusion this supports. Once you build the fair, envelope-matched, genuinely non-adaptive comparison (PASSIVE_ENVELOPE_CONTROL — equal-weight across all 8 assets, bought once, never rebalanced, same 0.35/0.80 cap as the evolved agents), the evolved agents and the champion **lose to it**, not beat it. I confirmed this directly from both non-DEV windows:
+
+| Window | PASSIVE_ENVELOPE return | PASSIVE_ENVELOPE Sharpe | Champion return / Sharpe | D1 return / Sharpe |
+|---|---|---|---|---|
+| CHAMPIONSHIP (in-sample for champion) | +27.64% | 1.068 | +10.57% / 1.134 | +6.47% / 0.756 |
+| FINAL_RESERVE (genuinely blind for both) | +8.72% | **1.52 (highest of all 8 agents)** | +0.045% / 0.043 | +3.13% / 1.471 |
+
+So "envelope-capped is the fair comparison" is correct methodology, but the fair comparison is *worse* for the evolved population than the unfair one, not better. This deserves to be the headline finding of the whole exercise, and it currently isn't mentioned at all in the written interpretation.md (which only covers Phase 1/DEV-lane data — PASSIVE_ENVELOPE didn't exist yet at that point). I did not find any written document that addresses this result. See section 5.
+
+**(v) Is the drawdown-halt-on-SPY framing (claim e) correct, or is a design flaw being excused as neutral?**
+I think this is the most consequential judgment call in the whole review, and I land on: **the code is neutral, the effect is not, and "working as designed" undersells that.**
+
+I checked every episode/window for halt incidence across all three experiments. Result: **in the entire dataset — 12 DEV episodes × 41 real agents, plus the CHAMPIONSHIP and FINAL_RESERVE single-episode windows for champion + top-3 D — not one real evolved or champion agent was ever halted.** The halt fired only for BUY_AND_HOLD_SPY_CONTROL (7/12 DEV episodes, plus the CHAMPIONSHIP window) and RANDOM_SIGNAL_CONTROL (4/12 DEV episodes). I traced why: the champion's genome caps realized exposure at **18%** (`max_positions=1 × max_asset_weight=0.18`, which binds well before `target_max_exposure=0.89` ever would — I verified this directly in `control_agent.size_positions`), and D_primary_rank1 caps realized exposure at **~23%** (`gross_exposure_cap=0.23`, confirmed via `s6a_runtime._cap` and by tracing its actual FINAL_RESERVE fills, which never exceeded ~23% gross across a 3-asset equal-weight basket). At those exposure levels, a 12%-of-*portfolio* drawdown threshold is nearly unreachable no matter how badly the underlying assets perform — the champion's worst observed drawdown across every episode in every window I checked never exceeded −5.5%. PASSIVE_ENVELOPE_CONTROL, at 80% exposure across all 8 assets, also never triggers the halt (worst −7.58%) — diversification, not just exposure level, is doing real work there. BUY_AND_HOLD_SPY, at 100% exposure in one asset, hits it constantly.
+
+So the halt is applied identically in code to everyone, but by construction it can only ever bind on concentrated and/or fully-invested agents — which in this dataset means it can only ever bind on the passive benchmarks, never on the things being evaluated against them. That's not "the same mechanism working as designed" in any meaningful sense for comparison purposes; it's a mechanism whose entire realized effect in this dataset falls on the control side of the ledger. Whether that's a "bug" depends on whether the halt is meant to model something the evolved agents would also face live (in which case it's arguably *too* lenient on them, since their low exposure is itself an evolved/selected trait that happens to dodge it) or whether it's just a backstop that a low-exposure strategy should legitimately get credit for avoiding (in which case it's fine). I don't think this dataset settles which — it just makes clear the "neutral mechanism" framing is doing more work than the report acknowledges. At minimum, BUY_AND_HOLD_SPY's DEV-lane numbers (58% halted, negative median return) should not be used to claim evolved agents "beat buy-and-hold" without that caveat attached.
+
+---
+
+## 3. The circularity call (claim d)
+
+I agree 2023–2025 is in-sample for the champion, and I'd go further than "not evidentiary" in one direction while being less absolute in another.
+
+Verified directly from the frozen champion file (`evolution/protocol/frozen_champion_s5d_champion_...json`): `content.winner_rule_verified = "championship_rank_1"`. The champion's genome_id in that file is identical to the genome_id used in `championship_results.json`. This is about as clean a circularity confirmation as you can get — the window literally is the selection criterion.
+
+Does the 10.57% retain *any* interpretive value? A little, but not the value it might look like it has. It tells you the champion is internally consistent (it performs the way its own selection process rewarded it for performing, which is a trivial but not zero-value sanity check — e.g., it rules out a pipeline bug that would make the frozen genome behave differently from what selected it; `determinism_check.byte_identical_rerun: true` further backs this). It tells you nothing about generalization, skill, or what to expect going forward, and should never be cited as "the champion returned 10.57% in a recent 3-year window" without the in-sample caveat attached in the same sentence, every time.
+
+One nuance the "in-sample, therefore ignore" framing slightly overstates: the champion's *concentration/exposure profile* (max_positions=1, 18% cap) is a genome property, not something the selection window could retroactively bias in a way that's specific to 2023-2025's price path — a 1-asset, 18%-exposure trend strategy is going to be low-vol and low-return in basically any regime, in-sample or not. So while the *return level* (10.57%) is circular, the *behavioral signature* (low realized vol, rare rebalancing, narrow drawdowns) generalizes as a description of what this genome structurally does, and that structural description is corroborated independently by its behavior in the genuinely-blind FINAL_RESERVE window (0.40% daily-return stdev there too). That's a minor point, not a rehabilitation of the 10.57% figure.
+
+---
+
+## 4. The three-window overfitting narrative (claim f) and statistical power
+
+I verified the six numbers exactly: champion 1.998% → 10.574% → 0.045%; D_primary_rank1 3.049% → 6.465% → 3.127%. Directionally, I don't disagree that this pattern is *consistent* with a story where the champion's fit to its own selection protocol is doing more work than genuine edge, while D1's performance is flatter across the three windows. But I think "champion is overfit, D_rank1 generalizes" is being asserted with more confidence than a three-data-point comparison can support, for reasons beyond generic "small sample" hand-waving:
+
+- **The 12 DEV episodes are not 12 independent trials.** I checked: they are contiguous, non-overlapping, back-to-back annual windows (2007-02-07 through 2018-12-31) sliced from a single historical path. The 2008 episode and the 2009 episode are not independent draws of "what markets do" — they're causally the crash and its recovery. Treating "beats no-trade in >50% of 12 episodes" as 12 units of statistical evidence overstates the effective sample size; it's closer to one 12-year historical realization examined at 12 checkpoints.
+- **The two out-of-DEV windows (CHAMPIONSHIP, FINAL_RESERVE) are each a single episode.** So the entire "champion overfits, D generalizes" claim rests on comparing performance across literally 3 non-independent samples (1 correlated 12-year path, plus 2 single 1-off windows, one of which is contaminated for the champion). That is not enough to distinguish "overfitting" from "got a different draw of market regime" or "this specific genome's signal had a bad 8 months," all of which produce the identical observable pattern.
+- **The champion rebalances every 50 sessions.** Over FINAL_RESERVE's 162 trading days, that's at most 4 rebalance opportunities, and I confirmed by tracing the actual run that it took exactly 3 real position changes (GLD→EEM→DBC, with fills matching the stored `order_count=6` exactly). Judging a strategy's "generalization" from 3 discrete decisions is very thin evidence regardless of what conclusion those 3 decisions happen to support.
+
+My honest read: the pattern is *suggestive* and worth taking seriously as a flag, but "overfit vs. generalizes" is a specific causal claim that this data cannot actually distinguish from at least two other explanations of equal or greater plausibility (see Section 5). I would not present this to Rick as an established finding; I'd present it as one hypothesis among several that happen to fit the same three numbers.
+
+---
+
+## 5. What's missing — the most important section
+
+### 5(a) Alternative explanations that aren't "overfitting"
+
+**Exposure-level effects, verified directly, are a bigger and more mundane story than the report gives credit for.** I traced the actual code path (`control_agent.size_positions`): the champion's `max_positions=1` combined with `max_asset_weight=0.18` means its realized invested weight is capped at **18%** whenever it holds anything — *not* the 89% that `target_max_exposure` might suggest to a reader skimming the genome. That's actually *lower* than D_primary_rank1's realized ~23% gross exposure (verified by tracing its FINAL_RESERVE fills: three ~7.67%-weighted positions, summing to gross_exposure_cap=0.23 exactly). The champion sits on 82%+ idle cash (earning literally 0%, per section 2(i)) whenever it's invested at all, and 100% cash otherwise. A large chunk of "champion near-flat, D1 solidly positive" is mechanically explained by D1 simply having more skin in the game, independent of any signal-quality or overfitting story. This is a correction to the framing implied in the task background (which suggested champion's exposure was ~0.89 vs. D's ~0.20-0.23) — the real numbers make champion the *lower*-exposure strategy of the two, which strengthens rather than weakens the "this is exposure, not overfitting" alternative explanation.
+
+**But it isn't only exposure.** I traced which specific assets the champion actually held in FINAL_RESERVE (re-running the existing, unmodified `control_agent.decide` with instrumentation — this reproduces the stored final equity of $100,044,981 to the cent, confirming the trace is faithful): GLD (steps 1–100), then EEM (steps 101–150), then DBC (steps 151–161). I then pulled the actual price return of each asset over the exact sub-period held, and compared to SPY over the same sub-periods:
+
+| Held asset | Period return | SPY same-period return |
+|---|---|---|
+| GLD (steps 1–100) | +0.98% | +9.72% |
+| EEM (steps 101–150) | **−5.00%** | +2.19% |
+| DBC (steps 151–161) | +1.53% | −0.60% |
+
+Two of the champion's three rotations in this specific window picked an asset that badly lagged (GLD) or actively lost money (EEM) while the broader market rallied. That's a genuine signal-quality miss in this specific window, not just a low-exposure dilution effect — and it's exactly the kind of thing you'd expect from a trend-following family (whipsaw risk when leadership rotates) independent of any overfitting story. This is worth investigating on its own terms (is trend-following, as a family, just having a bad regime here, the way any single-strategy trend system periodically does?) rather than folded into "overfit to S5C."
+
+**Regime/strategy-family differences generally.** The champion is `strategy_family: trend` with long lookbacks (34/110/295 sessions) and infrequent rebalancing (50 sessions); D_primary_rank1 is `strategy_family: defensive_rotation` with shorter lookback (122-session regime window) and more frequent rebalancing (31 sessions), and in this window never even triggered its own risk-off logic — it stayed continuously invested in the risk-on equity/commodity basket the whole time (verified by trace: SPY/EFA/EEM/DBC/VNQ rotations throughout, IEF/TLT/GLD never selected). These are structurally different bets on regime persistence and rotation speed. A fast-rotating, always-risk-on strategy will mechanically outperform a slow trend-follower in a period that turns out to be a steady, low-volatility grind-up (which FINAL_RESERVE and CHAMPIONSHIP both appear to be, given PASSIVE_ENVELOPE and BUY_AND_HOLD_SPY both did well) — with zero need to invoke overfitting to explain it.
+
+### 5(b) Data-quality check
+
+I checked the actual FINAL_RESERVE price data for all 8 universe symbols: 162 rows each (matches `step_count` exactly), zero zero-volume days, and all `corporate_action` entries are ordinary scheduled dividend distributions (no splits, no obviously wrong/duplicated entries). No gaps or stale-price anomalies found.
+
+I did find one genuine, previously-unflagged **structural simulation gap**, not a bug in this run's data per se: **the simulation marks equity using each session's RAW close, and nowhere in `execution.py`'s `Portfolio` class is dividend income ever credited to cash.** I confirmed this by checking the `close` vs. `adjusted_close` ratio around a known ex-dividend date (SPY, 2026-03-20, $1.797 dividend): the ratio steps discontinuously from 0.99471 to 0.99743 exactly at that date and holds flat before/after — the textbook signature of back-adjustment. Since equity is marked on the *unadjusted* series with no offsetting dividend credit, **any agent holding a dividend-paying position through an ex-date has its true return silently understated**, and the degree of understatement is asset- and holding-period-dependent — worst for the bond ETFs (IEF/TLT paid ~7 monthly distributions of ~$0.3–0.35 each within just the 162-day FINAL_RESERVE window, ~2–2.5% cumulative if held continuously).
+
+In this specific comparison the effect turns out to be small: I traced both agents' actual holdings and found neither champion nor D_primary_rank1 held IEF/TLT/GLD (the highest-yielding, defensive basket) during FINAL_RESERVE — champion's one dividend-crossing (EEM, $0.351/share, ~18% weight) amounts to roughly 0.09 percentage points, not enough to change the qualitative story here. But this gap is real, systemic, and will matter more in other episodes/agents — particularly for D-lineage's own `strategy_family: defensive_rotation`, whose entire risk-off branch is built to rotate into exactly the assets (IEF/TLT/GLD) this bug most affects. I'd want this fixed (credit dividend cash on ex-date, or at minimum quantify its aggregate effect across the DEV lane's 12 episodes) before treating any of these return numbers as precise enough to rank strategies a few percentage points apart.
+
+### 5(c) Missing controls
+
+The report is missing a control that isolates **exposure level from strategy logic** — exactly what's needed to settle the section 5(a) ambiguity. Concretely: a "champion's own trend signal, but running at D-lineage's ~23% exposure instead of 18%" variant, or conversely "D_primary_rank1's signal at the champion's 18% cap," would directly test how much of the return gap is sizing vs. signal. Absent that, PASSIVE_ENVELOPE (dumb, 80% exposure, diversified) is doing double duty as both "does evolution beat a naive benchmark" and implicitly "what does more exposure alone buy you" — and it's not built to cleanly separate those two questions since it's diversified *and* higher-exposure *and* non-adaptive, all at once relative to champion.
+
+Also missing: any version of PASSIVE_ENVELOPE (or a similar dumb baseline) evaluated on the **DEVELOPMENT lane's 12 episodes**. It only exists for the two single-episode windows. Given how decisively it beat everything in both of those, knowing whether it would have also beaten the 41-agent evolved population across the (larger, if still non-independent) 12-episode DEV sample would be extremely informative — if PASSIVE_ENVELOPE also wins there, that's a much stronger indictment of the entire evolutionary search's value-add than anything currently in the record.
+
+### 5(d) What I'd want before founding a succession decision on D_rank1
+
+1. **The PASSIVE_ENVELOPE result addressed head-on, not left out of the written record.** Before promoting D_rank1, I'd want a direct answer to "why does a static, non-adaptive, equal-weight allocation beat it on risk-adjusted return in the one real holdout window we have." If the answer is "diversification benefit that any of these strategies could have captured but didn't because they're all concentrated in ≤3 assets," that's a design lesson, not a point in D_rank1's favor.
+2. **The exposure-isolation control from 5(c).** Without it, "D_rank1 generalizes better" is not separable from "D_rank1 simply runs hotter and diversification/exposure happens to have been the right call in these two particular windows."
+3. **More than one blind window.** Two single-episode windows (one contaminated) is not enough to promote anything. At minimum, I'd want D_rank1 (and rank2/rank3) evaluated across several more non-overlapping historical stretches it never touched during evolution, the same way the champion got 12 DEV episodes — right now D's evidence base is thinner than the champion's, not just less circular.
+4. **The dividend-accounting gap quantified or fixed**, at least for any lineage/episode combination involving IEF/TLT/GLD holdings, before trusting return comparisons to within a few points.
+5. **A live/paper-style forward test genuinely start-to-finish before D_rank1 ever executes real capital** — this review only reinforces that nothing here (correctly) constitutes anything beyond historical replay, and three windows' worth of replay is a research signal, not a promotion dossier.
+
+---
+
+## 6. Doctrine check
+
+- `git -C /home/rick/tbots status --porcelain -uall`: the three experiment directories (`controls_comparison_20260921T064013Z/`, `controls_interpretation_holdout_20260921T140000Z/`, `championship_holdout_20260921T160000Z/`) are **entirely untracked** (`??`) — they were never committed to git. This means I cannot use git history to prove they're unmodified since completion; I used mtimes instead (below) as the best available evidence, and flag this as a genuine provenance gap: an untracked file could in principle be edited post-hoc without leaving a git trace. I found no indication that happened (see next point), but "confirmed via git" isn't fully achievable here, only "confirmed via mtimes + internal cross-consistency."
+- File mtimes within each directory are self-consistent with normal sequential creation (code files, then a results.json written last, each results.json's timestamp trailing its harness code by a plausible multi-minute evaluation runtime — e.g. controls_comparison's results.json is ~7 minutes after its harness.py, consistent with 44 agents × 12 episodes of backtesting). `interpretation.md` in the holdout dir is timestamped after its `holdout_results.json`, consistent with "write data, then interpret." No file is dated implausibly (nothing postdates the directories' own last-modified times, nothing is out of creation-order).
+- **One unrelated pre-existing modification exists in the repo**, outside the three reviewed directories and not touched by this review session: `scripts/s6b_resume_executor.py` shows as modified (`M`) in git status, and two untracked files exist outside the review scope (`scripts/s6b_primary_development.py`, `tests/test_s6b_primary_development.py`). I did not create, read in detail, or modify any of these — they predate this review session and are simply visible in the working tree's status. Worth flagging to Rick as outstanding uncommitted state to account for separately, since it's not part of what I was asked to review.
+- No `.db` file exists anywhere in the repository (`find . -iname "*.db"` returned nothing).
+- Grepped all three experiment directories (code + docs) for NODE/broker/live-trading/paper-trading/webhook/API-key terms. The only hits were two docstring mentions of "NODE" in `harness.py`/`run_comparison.py`, both explicitly stating the harness is **read-only against NODE** — i.e., a statement of the constraint being honored, not a violation of it. No broker API, live/paper trading endpoint, or credential references found anywhere in the three directories.
+- Nothing outside `/home/rick/tbots` was touched by this review; all my working files live in `/tmp/claude-.../scratchpad` (session-local) and the new `experiments/sable_review_20260921T104614Z/` directory holding this file.
+
+---
+
+## Summary judgment
+
+Everything I independently checked — the numbers, the control implementations, the circularity claim, the halt mechanics, the exposure caps — held up as stated. Where I part ways with the material as given to Rick is on emphasis and completeness, not accuracy: the "beats no-trade" headline is technically true but a weak floor once you look at what NO_TRADE actually is; the drawdown-halt is code-neutral but effect-biased against the one control that could have been a real stress test; the champion's low exposure (not high, contrary to how the background framed it) does a lot of the explanatory work that "overfitting" is currently getting credit for; and — most importantly — the PASSIVE_ENVELOPE result, which by my read is the single most damaging data point to the whole evolved-agent population's case for having found real edge, isn't addressed anywhere in the written record I could find. I would not sign off on a succession design built on "champion overfit, D_rank1 generalizes" without that control's result being reconciled first.

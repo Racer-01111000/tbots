@@ -1,0 +1,328 @@
+{
+  "stress_episodes": [
+    1,
+    8
+  ],
+  "nonstress_episodes": [
+    0,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    11
+  ],
+  "lineage_report": {
+    "S5D_CHAMPION": {
+      "n_genomes": 1,
+      "n_agent_episode_pairs": 12,
+      "median_evolved": {
+        "return": 0.019978045,
+        "max_drawdown": -0.03157504340998413,
+        "sharpe": 0.6104310267145927,
+        "sortino": 0.8565370282537633,
+        "turnover": 1.1316833499999999
+      },
+      "passive_win_fraction_all": {
+        "return": 0.5,
+        "max_drawdown": 0.0,
+        "sharpe": 0.4166666666666667,
+        "sortino": 0.4166666666666667
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.0,
+        "sortino": 0.0
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.6,
+        "max_drawdown": 0.0,
+        "sharpe": 0.5,
+        "sortino": 0.5
+      }
+    },
+    "B_primary": {
+      "n_genomes": 8,
+      "n_agent_episode_pairs": 96,
+      "median_evolved": {
+        "return": 0.006126085000000003,
+        "max_drawdown": -0.010107502748014752,
+        "sharpe": 0.5949139229694216,
+        "sortino": 0.8839328550193426,
+        "turnover": 1.654961645
+      },
+      "passive_win_fraction_all": {
+        "return": 0.6666666666666666,
+        "max_drawdown": 0.0,
+        "sharpe": 0.3958333333333333,
+        "sortino": 0.3645833333333333
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.25,
+        "sortino": 0.1875
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.8,
+        "max_drawdown": 0.0,
+        "sharpe": 0.425,
+        "sortino": 0.4
+      }
+    },
+    "B_reproduction": {
+      "n_genomes": 8,
+      "n_agent_episode_pairs": 96,
+      "median_evolved": {
+        "return": 0.006126085000000003,
+        "max_drawdown": -0.010107502748014752,
+        "sharpe": 0.5949139229694216,
+        "sortino": 0.8839328550193426,
+        "turnover": 1.654961645
+      },
+      "passive_win_fraction_all": {
+        "return": 0.6666666666666666,
+        "max_drawdown": 0.0,
+        "sharpe": 0.3958333333333333,
+        "sortino": 0.3645833333333333
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.25,
+        "sortino": 0.1875
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.8,
+        "max_drawdown": 0.0,
+        "sharpe": 0.425,
+        "sortino": 0.4
+      }
+    },
+    "C_primary": {
+      "n_genomes": 8,
+      "n_agent_episode_pairs": 96,
+      "median_evolved": {
+        "return": 0.008334949999999952,
+        "max_drawdown": -0.020137440711828603,
+        "sharpe": 0.33915472831186194,
+        "sortino": 0.46743062231660537,
+        "turnover": 4.847530365
+      },
+      "passive_win_fraction_all": {
+        "return": 0.6666666666666666,
+        "max_drawdown": 0.0,
+        "sharpe": 0.5416666666666666,
+        "sortino": 0.5416666666666666
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.0,
+        "sortino": 0.0
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.8,
+        "max_drawdown": 0.0,
+        "sharpe": 0.65,
+        "sortino": 0.65
+      }
+    },
+    "D_primary": {
+      "n_genomes": 8,
+      "n_agent_episode_pairs": 96,
+      "median_evolved": {
+        "return": 0.025886019999999954,
+        "max_drawdown": -0.023522812108861202,
+        "sharpe": 0.868758345626705,
+        "sortino": 1.2000046506643038,
+        "turnover": 1.45804981
+      },
+      "passive_win_fraction_all": {
+        "return": 0.6666666666666666,
+        "max_drawdown": 0.0,
+        "sharpe": 0.2604166666666667,
+        "sortino": 0.2604166666666667
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.0,
+        "sortino": 0.0
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.8,
+        "max_drawdown": 0.0,
+        "sharpe": 0.3125,
+        "sortino": 0.3125
+      }
+    },
+    "D_reproduction": {
+      "n_genomes": 8,
+      "n_agent_episode_pairs": 96,
+      "median_evolved": {
+        "return": 0.025886019999999954,
+        "max_drawdown": -0.023522812108861202,
+        "sharpe": 0.868758345626705,
+        "sortino": 1.2000046506643038,
+        "turnover": 1.45804981
+      },
+      "passive_win_fraction_all": {
+        "return": 0.6666666666666666,
+        "max_drawdown": 0.0,
+        "sharpe": 0.2604166666666667,
+        "sortino": 0.2604166666666667
+      },
+      "passive_win_fraction_stress_episodes_1_8": {
+        "return": 0.0,
+        "max_drawdown": 0.0,
+        "sharpe": 0.0,
+        "sortino": 0.0
+      },
+      "passive_win_fraction_nonstress_10_episodes": {
+        "return": 0.8,
+        "max_drawdown": 0.0,
+        "sharpe": 0.3125,
+        "sortino": 0.3125
+      }
+    }
+  },
+  "duplication_check": {
+    "B": {
+      "primary_genome_ids": [
+        "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+        "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+        "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+        "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+        "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+        "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+        "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+        "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b"
+      ],
+      "reproduction_genome_ids": [
+        "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+        "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+        "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+        "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+        "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+        "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+        "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+        "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b"
+      ],
+      "genome_id_lists_identical_by_rank": true,
+      "per_rank": [
+        {
+          "rank": 1,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 2,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 3,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 4,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 5,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 6,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 7,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 8,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        }
+      ],
+      "all_ranks_fully_identical": true
+    },
+    "D": {
+      "primary_genome_ids": [
+        "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+        "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+        "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+        "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+        "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+        "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+        "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+        "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb"
+      ],
+      "reproduction_genome_ids": [
+        "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+        "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+        "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+        "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+        "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+        "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+        "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+        "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb"
+      ],
+      "genome_id_lists_identical_by_rank": true,
+      "per_rank": [
+        {
+          "rank": 1,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 2,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 3,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 4,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 5,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 6,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 7,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        },
+        {
+          "rank": 8,
+          "same_genome_id": true,
+          "same_all_12ep_metrics": true
+        }
+      ],
+      "all_ranks_fully_identical": true
+    }
+  }
+}

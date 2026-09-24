@@ -1,0 +1,226 @@
+{
+  "preservation_timestamp": "2026-09-24T04:59:29Z",
+  "authoritative_source_revision": "4ee5b098f73d0db3b8b97485b3fcefa3200582f3",
+  "preservation_branch": "evidence/research-log-20260924",
+  "file_count": 31,
+  "aggregate_sha256": "a579c1c8bdc4ed88d36a1b1764c9177e7e8edf814f0534ff7ad2456d2d59faab",
+  "files": [
+    {
+      "relative_path": "championship_holdout_20260921T160000Z/championship_controls.py",
+      "byte_size": 1932,
+      "source_mtime": 1789976463,
+      "sha256": "235da35b0aab14dec698a49aaf90cc674e55d3e5e36c0aa7f08f283df7241afb",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "championship_holdout_20260921T160000Z/championship_harness.py",
+      "byte_size": 9270,
+      "source_mtime": 1789976455,
+      "sha256": "81f9cfe70eae79e851699ca89d3db3290037b78c5eeb9de842e66cbcc08208d4",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "championship_holdout_20260921T160000Z/championship_results.json",
+      "byte_size": 192087,
+      "source_mtime": 1789976490,
+      "sha256": "d6c4689d4dba265f47c386ea91ab1fd15f9c4e6d049ea5b5be12559a8c4279a1",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "championship_holdout_20260921T160000Z/run_championship_holdout.py",
+      "byte_size": 5849,
+      "source_mtime": 1789976483,
+      "sha256": "c051814fd63d5869f1810a18442f5bb54bb9b2a32bb6f22e3f5cb8580387cc02",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_comparison_20260921T064013Z/harness.py",
+      "byte_size": 14690,
+      "source_mtime": 1789972889,
+      "sha256": "de4e6b35267c6bf73ac2145a3720163671bbc364760854b9ff697d34a613e1f1",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_comparison_20260921T064013Z/results.json",
+      "byte_size": 4426689,
+      "source_mtime": 1789973307,
+      "sha256": "bfbee4dac750cfcaea3a21a72e1f320721fb406e232397729a98b52fa19707ed",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_comparison_20260921T064013Z/run_comparison.py",
+      "byte_size": 9346,
+      "source_mtime": 1789973208,
+      "sha256": "a75159b8304064e009eec803f5a5199ad1681c82dc92e28fb6274e48b2147ee2",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_comparison_20260921T064013Z/synthetic_controls.py",
+      "byte_size": 3043,
+      "source_mtime": 1789973242,
+      "sha256": "bfb45b6600fb5f898214871cfd457a6bbaf197cbe3e30f1b7b73481727e8d758",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_interpretation_holdout_20260921T140000Z/holdout_controls.py",
+      "byte_size": 2122,
+      "source_mtime": 1789974181,
+      "sha256": "391ab66b1c8c25741d971fc04e0a8fa3c5e4098ee101e305731c708dde57abbc",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_interpretation_holdout_20260921T140000Z/holdout_harness.py",
+      "byte_size": 9480,
+      "source_mtime": 1789974163,
+      "sha256": "0b3199796d20f3d5257b04355c304f70e86df738dc28d0c3901dd64361de7709",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_interpretation_holdout_20260921T140000Z/holdout_results.json",
+      "byte_size": 50377,
+      "source_mtime": 1789974210,
+      "sha256": "104741923a74034a104060d97340449b99b4593b95cbbc528c1785a2abeea209",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_interpretation_holdout_20260921T140000Z/interpretation.md",
+      "byte_size": 4875,
+      "source_mtime": 1789974257,
+      "sha256": "4935e9abb3c07720ecf134b7b1ba8320cef6f441a9c318abaab15a5b14963727",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "controls_interpretation_holdout_20260921T140000Z/run_holdout.py",
+      "byte_size": 5445,
+      "source_mtime": 1789974203,
+      "sha256": "418763fa5e1e374e8957611572c7bf0d224aa3d5c16bb2960303d97ad3b4cabe",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "cross_regime_fitness_design_20260923T060532Z/DESIGN.md",
+      "byte_size": 42874,
+      "source_mtime": 1790143697,
+      "sha256": "9a0f0e8c1d9b2f3c12b50ce0af316ae92d3a6a849f43fba19d67d17ee382d26d",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "d1_qualification_generalization_20260923T054829Z/qualification_generalization_results.json",
+      "byte_size": 10375,
+      "source_mtime": 1790142619,
+      "sha256": "e49aede16c800288d1bb749b2f776a925851e05d9fc77493ee5df3e7bf169c90",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "d1_qualification_generalization_20260923T054829Z/run_qualification_generalization.py",
+      "byte_size": 22685,
+      "source_mtime": 1790142616,
+      "sha256": "9eb17bf9db3374d35e89475a1910d77f8071a5e80b0be3b2897fd34fdbeaa756",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "d_exposure_isolation_20260923T052542Z/PREDECLARATION.md",
+      "byte_size": 6790,
+      "source_mtime": 1790141180,
+      "sha256": "d31075d59068b91e2d4fe2670b55b7ca79a5c8c112c149794d2ae48cf624b97f",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "d_exposure_isolation_20260923T052542Z/exposure_isolation_results.json",
+      "byte_size": 219914,
+      "source_mtime": 1790141228,
+      "sha256": "2903677a161c0027e691cae771a47e7ceb16db116e16a7b3b03b23a8ef1ba3a1",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "d_exposure_isolation_20260923T052542Z/run_exposure_isolation.py",
+      "byte_size": 12940,
+      "source_mtime": 1790141222,
+      "sha256": "930136293e8bdbc606d2093a94d1d65085e1c79231bc8244b8402f946a43bb97",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "fitness_contract_adversarial_review_20260923T062256Z/REVIEW.md",
+      "byte_size": 31203,
+      "source_mtime": 1790144679,
+      "sha256": "050c3efa3eb8ea00951c041268e6036d9f15cc5783e0457365c03bba631566f7",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "fitness_v2_prefreeze_errata_20260923T084553Z/FINAL_CONTRACT.md",
+      "byte_size": 27128,
+      "source_mtime": 1790153255,
+      "sha256": "03776176ec4dadef17d9dc415543caff0207b34b248114a834d29f61c4b367e7",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "passive_envelope_dev_gap_20260923T045250Z/passive_envelope_dev_results.json",
+      "byte_size": 109959,
+      "source_mtime": 1790139227,
+      "sha256": "0e3435494581f07237e0ca0d4e0cb193b9b5e8713bcf20d449d911339296d673",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "passive_envelope_dev_gap_20260923T045250Z/run_passive_envelope_dev.py",
+      "byte_size": 16796,
+      "source_mtime": 1790139222,
+      "sha256": "56725140c31beb6277b3cf323392de789f4c13d3000c3bffa00f7861f4c0ecbd",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "passive_envelope_lineage_decomposition_20260923T045937Z/decompose.py",
+      "byte_size": 6696,
+      "source_mtime": 1790139600,
+      "sha256": "87e69ce58c25fb1daead9c18412c1026ad1ea713ca2b71665d4f2ad99ba74f6c",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "passive_envelope_lineage_decomposition_20260923T045937Z/lineage_decomposition_results.json",
+      "byte_size": 9993,
+      "source_mtime": 1790139604,
+      "sha256": "282fb4ccb1ae84f86e08c0c2f3214ccb3fe70e8ec04c3d63de7495e9dbc795d7",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "qualification_harness_equivalence_20260923T055652Z/equivalence_results.json",
+      "byte_size": 3480,
+      "source_mtime": 1790143061,
+      "sha256": "f9f2926b07855b98b2d8a02985876920e0e1348cc75f74927f6844c91a13bb41",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "qualification_harness_equivalence_20260923T055652Z/run_equivalence_check.py",
+      "byte_size": 13533,
+      "source_mtime": 1790143057,
+      "sha256": "ac831106776b320d9885cc3743c73dd670dac01099bc9536399ea159c04139d8",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "sable_audit_20260924T040809Z/AUDIT.md",
+      "byte_size": 16940,
+      "source_mtime": 1790222971,
+      "sha256": "aa72cfc3592bf18f2f4a90dcefc1abc8935eb1f0c1a12f4f0825825f1d9c49f0",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "sable_review_20260921T104614Z/review.md",
+      "byte_size": 28767,
+      "source_mtime": 1789987693,
+      "sha256": "bdd7a35e4ff84ae61fbeb56c919b6540d082922fb27a6933557d41ea47287776",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "world_league_design_20260923T063845Z/DESIGN.md",
+      "byte_size": 51245,
+      "source_mtime": 1790146358,
+      "sha256": "94850d63821394f2669b05b82b65b47c1e69ef6f6c11115cb531d7991409d0c8",
+      "source": "HOST working tree"
+    },
+    {
+      "relative_path": "world_league_fitness_correction_20260923T071111Z/CORRECTED_CONTRACT.md",
+      "byte_size": 27591,
+      "source_mtime": 1790147572,
+      "sha256": "d9d5e8b219747885d687c9dd3f8741882fd680d5f26c465c0b1013295deb9e9a",
+      "source": "HOST working tree"
+    }
+  ]
+}

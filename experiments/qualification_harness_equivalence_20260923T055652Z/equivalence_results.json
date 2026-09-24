@@ -1,0 +1,54 @@
+{
+  "VERDICT": "PASS",
+  "tbots_head": "9e573323501684ef8adfcbfbe357aa314cfdbdb4",
+  "identities_compared": {
+    "script_under_test": "/home/rick/tbots/experiments/d1_qualification_generalization_20260923T054829Z/run_qualification_generalization.py",
+    "script_under_test_sha256": "9eb17bf9db3374d35e89475a1910d77f8071a5e80b0be3b2897fd34fdbeaa756",
+    "frozen_evaluator_s6b_evaluator_py_sha256": "d306f6236149c6445e8ca21ccaae4d03339708284db547f8179d533fd9fae048",
+    "d1_ground_truth_source": "/home/rick/tbots/experiments/controls_comparison_20260921T064013Z/results.json",
+    "d1_ground_truth_source_sha256": "bfbee4dac750cfcaea3a21a72e1f320721fb406e232397729a98b52fa19707ed",
+    "d1_ground_truth_producer": "frozen s6b_evaluator.py / harness.py, original controls-comparison GO run",
+    "passive_matched_ground_truth_source": "/home/rick/tbots/experiments/d_exposure_isolation_20260923T052542Z/exposure_isolation_results.json",
+    "passive_matched_ground_truth_source_sha256": "2903677a161c0027e691cae771a47e7ceb16db116e16a7b3b03b23a8ef1ba3a1",
+    "passive_matched_ground_truth_producer": "harness.evaluate_generic_agent (parallel frozen DB-free loop), prior exposure-isolation GO run",
+    "qualification_result_untouched_sha256": "e49aede16c800288d1bb749b2f776a925851e05d9fc77493ee5df3e7bf169c90",
+    "d1_genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+    "d1_source_file": "/home/rick/tbots/evolution/s6b_runs/primary/D_s6a_d_b986e97007ea1d059d3a55d8dbec42f17a53fda7a805db13849e112e273f74ca/development_top_eight.json",
+    "d1_source_file_sha256": "373879a9842f05385d41c67fab5a6208c7d0d7c5cbab323363173a04bd2c60e4",
+    "passive_target_exposure": 0.23
+  },
+  "dataset_revision_observed": "ds_7e16896c873671fe86ac416b24a0ce74502249a8a0fc33603e0f1935e5fab131",
+  "comparison_coverage": {
+    "episodes_compared": 12,
+    "fields_compared_per_episode": [
+      "total_return",
+      "max_drawdown",
+      "sharpe",
+      "sortino",
+      "turnover",
+      "commission_cents",
+      "slippage_cents",
+      "transaction_cost_cents",
+      "transaction_cost_rate",
+      "order_count",
+      "fill_count",
+      "step_count",
+      "halted",
+      "final_equity_cents",
+      "start_date",
+      "end_date",
+      "daily_returns (full per-day series, exact float equality)"
+    ],
+    "equality_standard": "exact equality (== ), not tolerance-based, for every field including floats",
+    "not_available_for_comparison": "orders/fills/position-transitions/risk-state-transition event logs are not persisted in either ground-truth results.json file (only aggregate order_count/fill_count survive) -- daily_returns (implying the full daily equity path via cumulative product) and final_equity_cents are the finest-grained state actually available in both ground-truth artifacts, and both were compared."
+  },
+  "mismatch_count": 0,
+  "first_mismatch": null,
+  "all_mismatches": [],
+  "self_determinism": {
+    "byte_identical": true,
+    "mismatches": []
+  },
+  "qualification_result_supported_by_equivalence_validated_path": true,
+  "known_limitation_dividend_accounting": "Not repaired here, per GO instruction. Both the new harness and the frozen ground truth share the same execution.py Portfolio (raw-close marking, no dividend credit) -- this experiment does not change or evaluate that behavior, only confirms both harnesses treat it identically (which the field-level equality check above establishes if VERDICT is PASS)."
+}
