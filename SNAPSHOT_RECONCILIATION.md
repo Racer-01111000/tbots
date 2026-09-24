@@ -4,6 +4,12 @@ Reconciles the sanitized import on `main` (`e00af4a`) against the newer TBOTS
 work already pushed to this repository. Read-only review: no branch other than
 `claude/loving-davinci-wbfut7` was changed.
 
+**Correction (2026-09-24), per Rick's GO "TBOTS PR #2 CORRECTION, RETARGET, AND
+DOCUMENTATION-ONLY MERGE":** the original "Access to physical NODE" section
+below misattributed HOST-local paths and HOST-local uncommitted work to NODE.
+That section has been corrected below. No other finding in this document was
+changed.
+
 ## Branches
 
 | Branch | Head | Relation to `main` |
@@ -66,19 +72,40 @@ Exact path:
 
 ## Access to physical NODE
 
-Reconciling against GitHub needs no NODE access. NODE is needed only to
-check the repository copy against its origin again, or for work that exists
-only there (for example `/home/rick/tbots/experiments/…` and uncommitted
-Gen0-bootstrap work). That needs:
+Reconciling against GitHub needs no NODE access.
+
+Two items in this repository's history are HOST-local, not NODE-local, and
+were readable directly from HOST (`/home/rick/tbots`) without touching NODE:
+`/home/rick/tbots/experiments/…` (untracked research directories) and the
+uncommitted Gen0-bootstrap work (`scripts/s6b_primary_development.py`,
+`tests/test_s6b_primary_development.py`, and an unstaged edit to
+`scripts/s6b_resume_executor.py`). NODE's repository
+(`/opt/evolutionary-markets`) has no `experiments/` directory at all, and
+never received either of these HOST-local changes.
+
+NODE access is needed only for evidence that is actually stored or observed
+on NODE — for example, checking this repository's copy against its origin
+again, or reading anything under `/opt/evolutionary-markets` that has not
+been preserved into `tbots`. That needs:
 
 - a shell on the NODE host, either sitting at it or through SSH over the
   tailnet from a device already on it. The cloud session cannot join the
   tailnet.
-- read access to `/opt/evolutionary-markets` (for this bundle) and
-  `/home/rick/tbots` (for newer work).
+- read access to `/opt/evolutionary-markets`.
 - a Claude session started there (`claude remote-control` in the target
-  folder) or manual commands. For this bundle the check is read-only:
-  `sha256sum` of the 9 files compared with the table in
+  folder) or manual commands. For the development bundle the check is
+  read-only: `sha256sum` of the 9 files compared with the table in
   `HISTORICAL_PRESERVATION_MIGRATION.md`.
 - push rights to `Racer-01111000/tbots` from NODE only if new artifacts need
   to be committed.
+
+One confirmed divergence between NODE and this repository, verified live via
+SSH on 2026-09-24: `evolution/s6b_runs/` on NODE still shows C primary
+interrupted after Gen11 and D reproduction interrupted after Gen6 (no
+`completion.json`, no further generations) — the pre-resume state. This
+repository's preserved copy shows both lineages resumed to COMPLETE through
+Gen12. The resume executor was run only against the preserved copy inside
+this repository, per its own governing GO, and NODE's source tree was never
+touched. This is intentional historical state, not a data-integrity problem,
+and it stays as-is unless a later Rick GO specifically authorizes NODE
+reconciliation.
