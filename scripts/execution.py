@@ -21,11 +21,38 @@ Execution convention (frozen before any performance was inspected):
   - Realized P/L and cost basis are rounded to the nearest cent at each
     fill; small residual rounding (at most a few cents over the life of
     an episode) is an accepted simplification, not a defect.
+  - Dividend cash: a held position's per-share cash dividend is credited
+    to cash_cents exactly once, on the exact date its corporate_action
+    record carries a dividend_amount, for whichever shares this Portfolio
+    already holds AT THAT POINT -- i.e. the caller must call
+    credit_dividend() before applying that same date's fill, so entitlement
+    reflects the position carried INTO the date (the standard record-date
+    convention), not a same-day trade. This is intentionally symmetric
+    with the existing T+1 fill rule: an order decided on T only fills on
+    T+1's open, so a same-day buy was never a holder of record and a
+    same-day sell still was. Amount is rounded to the nearest cent, same
+    discipline as a fill. Marking uses each session's RAW close (never
+    adjusted_close, which already embeds reinvested dividends) so crediting
+    cash on top never double-counts.
 """
+import json
 import math
 
 COMMISSION_BPS = 5
 SLIPPAGE_BPS = 5
+
+
+def dividend_amount_dollars(corporate_action_json) -> float | None:
+    """Parses one row's corporate_action field (a JSON string, or None/empty
+    per lib.normalize's encoding) and returns the per-share cash dividend
+    amount for that date, or None if there isn't one. A concurrent split
+    entry, if present, is ignored here -- splits are not part of this
+    accounting repair (Yahoo's raw close/open are already split-adjusted at
+    the source, per lib.normalize's own documented convention; nothing in
+    this function's scope touches that)."""
+    if not corporate_action_json:
+        return None
+    return json.loads(corporate_action_json).get("dividend_amount")
 
 
 def buy_fill_price_cents(open_price_cents: int) -> int:
@@ -51,9 +78,23 @@ class Portfolio:
         self.total_commission_cents = 0
         self.total_traded_notional_cents = 0
         self.fill_count = 0
+        self.total_dividend_cents = 0
 
     def shares_of(self, symbol: str) -> int:
         return self.positions.get(symbol, {}).get("shares", 0)
+
+    def credit_dividend(self, symbol: str, per_share_amount_dollars: float) -> int:
+        """Credits cash for a dividend on `symbol`'s CURRENTLY held shares
+        (see module docstring for the entitlement/timing rule the caller
+        must follow). No-op (returns 0) if the position isn't held. Returns
+        the credited amount in cents."""
+        shares = self.shares_of(symbol)
+        if shares <= 0 or not per_share_amount_dollars:
+            return 0
+        amount_cents = round(shares * per_share_amount_dollars * 100)
+        self.cash_cents += amount_cents
+        self.total_dividend_cents += amount_cents
+        return amount_cents
 
     def equity_cents(self, mark_prices_cents: dict) -> int:
         val = self.cash_cents

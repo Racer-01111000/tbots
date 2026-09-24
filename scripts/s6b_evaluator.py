@@ -109,6 +109,15 @@ def _simulate_admitted_episode(bundle, code: str, genome: dict,
             for s in universe:
                 h[s].append(float(assets[s]["adjusted_close"]))
 
+        # credit any dividend on positions held coming into this step, before
+        # this step's fill can change what's held (see execution.py)
+        for s in universe:
+            a = assets[s]
+            if a["available"]:
+                div = execution.dividend_amount_dollars(a["corporate_action"])
+                if div:
+                    portfolio.credit_dividend(s, div)
+
         if pending is not None:
             for order in pending:
                 open_cents = dollars_to_cents(assets[order["symbol"]]["open"])
@@ -207,6 +216,7 @@ def _simulate_admitted_episode(bundle, code: str, genome: dict,
         "order_count": order_count,
         "fill_count": portfolio.fill_count,
         "step_count": step,
+        "dividend_cents": portfolio.total_dividend_cents,
     }
 
 
