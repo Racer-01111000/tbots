@@ -14,6 +14,7 @@ data/normalized/*
 data/sealed/*
 !data/sealed/.gitkeep
 data/development_bundles/*
+!data/development_bundles/s5adev_98e2f764f466b90ee2bbc2532b75188bfc4fd20b4a13523f94bce65e6a1f193a/
 reports/*
 !reports/.gitkeep
 evolution/s6b_runs/
