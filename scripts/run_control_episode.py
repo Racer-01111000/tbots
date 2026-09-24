@@ -6,6 +6,9 @@ integration (S0's experiments/episodes/decisions/orders/fills tables)
 and an independent-verifier cross-check on every rebalance decision.
 
 State machine, one iteration per replay step T:
+  0. credit any cash dividend on positions held coming into T, for
+     whichever symbols have a dividend-bearing corporate_action dated T
+     (before T's fill can change what's held -- see execution.py)
   1. execute any order decided at T-1, using T's raw OPEN (never the
      close a decision was made from -- S4.8's no-same-bar rule)
   2. mark equity/drawdown using T's raw CLOSE
@@ -95,6 +98,16 @@ def _execute_control_episode(conn, dataset_root, dataset_revision: str, start_da
         full = engine.observe()
         obs = view.observe()
         assets = obs["assets"]
+
+        # 0. credit any dividend on today's held-into-today positions, before
+        #    today's fill can change what's held (S4.8's dividend-accounting
+        #    entitlement rule; see execution.py's module docstring)
+        for sym in universe:
+            a = assets[sym]
+            if a["available"]:
+                div = execution.dividend_amount_dollars(a["corporate_action"])
+                if div:
+                    portfolio.credit_dividend(sym, div)
 
         # 1. execute pending order from the previous decision, at THIS step's open
         if pending is not None:
@@ -235,6 +248,7 @@ def _execute_control_episode(conn, dataset_root, dataset_revision: str, start_da
         "starting_cash_cents": STARTING_CASH_CENTS, "final_equity_cents": final_equity_cents,
         "total_return": final_equity_cents / STARTING_CASH_CENTS - 1.0,
         "max_drawdown": max_drawdown, "daily_returns": daily_returns,
+        "total_dividend_cents": portfolio.total_dividend_cents,
         "rebalance_count": len(rebalance_log), "order_count": sum(len(r["orders"]) for r in rebalance_log),
         "fill_count": portfolio.fill_count, "total_commission_cents": portfolio.total_commission_cents,
         "total_traded_notional_cents": portfolio.total_traded_notional_cents,
