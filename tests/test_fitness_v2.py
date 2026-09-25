@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -152,6 +153,20 @@ class BoundaryTests(unittest.TestCase):
         manifest["manifest_id"] = fv2.content_identity("fitness_v2_world_bank_", unsigned)
         with self.assertRaisesRegex(fv2.FitnessV2Error, "at least three"):
             fv2.validate_world_manifest(manifest)
+
+    def test_exact_rick_parameter_freeze_is_content_addressed_and_accepted(self):
+        path = ROOT / fv2.PARAMETER_FREEZE_PATH
+        with path.open(encoding="utf-8") as handle:
+            manifest = json.load(handle)
+        self.assertEqual(fv2.validate_parameter_freeze(manifest), fv2.PARAMETER_FREEZE_ID)
+
+    def test_parameter_freeze_tampering_fails_closed(self):
+        path = ROOT / fv2.PARAMETER_FREEZE_PATH
+        with path.open(encoding="utf-8") as handle:
+            manifest = json.load(handle)
+        manifest["campaign_batch"]["evolution_seeds"][0] += 1
+        with self.assertRaisesRegex(fv2.FitnessV2Error, "identity mismatch"):
+            fv2.validate_parameter_freeze(manifest)
 
 
 class SurvivalGateTests(unittest.TestCase):

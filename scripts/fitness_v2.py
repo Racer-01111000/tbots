@@ -35,6 +35,15 @@ ACTIVITY_FLOOR = 0.50
 OC2_ACTIVITY_FLOOR = 0.75
 OC2_SIGNAL_DELTA_LIMIT = 0.05
 OC2_ABSOLUTE_MARGIN = 0.10
+PARAMETER_FREEZE_ID = (
+    "fitness_v2_parameter_freeze_"
+    "47aba93e384f50836713b7c4e4723ddf858d6c8eda8da363c391d9bbb261cfac"
+)
+PARAMETER_FREEZE_PATH = (
+    "evolution/protocol/"
+    + PARAMETER_FREEZE_ID
+    + ".json"
+)
 
 
 def canonical_json(value: object) -> str:
@@ -179,6 +188,75 @@ def validate_world_manifest(manifest: Mapping[str, object]) -> str:
     actual = content_identity("fitness_v2_world_bank_", unsigned)
     if declared != actual:
         raise FitnessV2Error("world manifest identity mismatch")
+    return actual
+
+
+def validate_parameter_freeze(manifest: Mapping[str, object]) -> str:
+    """Fail closed unless the exact pre-result Rick parameter freeze is supplied."""
+    if manifest.get("schema_version") != 1:
+        raise FitnessV2Error("unsupported parameter-freeze schema")
+    declared = manifest.get("manifest_id")
+    unsigned = dict(manifest)
+    unsigned.pop("manifest_id", None)
+    actual = content_identity("fitness_v2_parameter_freeze_", unsigned)
+    if declared != actual or actual != PARAMETER_FREEZE_ID:
+        raise FitnessV2Error("Fitness V2 parameter-freeze identity mismatch")
+    validate_calibration_source(manifest.get("calibration_source", {}))
+
+    if manifest.get("frozen_before_results") != {
+        "baseline_population_created": False,
+        "genome_evaluated": False,
+        "pre_freeze_git_head": "622cbb5ceaf93f60da4d2e76a3d42cbc97bc7d82",
+        "recorded_utc": "2026-09-25T11:56:32+00:00",
+        "world_generated": False,
+    }:
+        raise FitnessV2Error("parameter freeze lacks the exact pre-result boundary")
+
+    campaigns = manifest.get("campaign_batch", {})
+    if campaigns.get("campaign_count") != 5 or campaigns.get("admission_required") != 3:
+        raise FitnessV2Error("campaign batch must remain frozen at three-of-five")
+    if campaigns.get("evolution_seeds") != [
+        2066557696, 604610261, 3608585586, 3251376561, 1894202052
+    ]:
+        raise FitnessV2Error("campaign seed list differs from Rick's freeze")
+    if campaigns.get("final_selection_rule") != "lowest_EVOLUTION_SEED_among_qualifiers":
+        raise FitnessV2Error("final-selection rule differs from the predeclared rule")
+
+    families = manifest.get("synthetic_families", {})
+    expected = {
+        "distributional": (
+            "stationary_block_bootstrap",
+            [2232522471, 817777979, 4071970222, 1669371075],
+        ),
+        "execution": (
+            "deterministic_seeded_skipped_fill_stress",
+            [2417722352, 133793614, 607285341, 780370636],
+        ),
+        "sequence": (
+            "chronology_preserving_intact_segment_recombination",
+            [3101765671, 2463827558, 1949083376, 1649363392],
+        ),
+        "shock": (
+            "controlled_gap_relocation",
+            [2470494651, 490895778, 2160267573, 2145432915],
+        ),
+    }
+    if set(families) != set(expected):
+        raise FitnessV2Error("synthetic family set differs from Rick's freeze")
+    for family, (technique, seeds) in expected.items():
+        row = families[family]
+        if row.get("technique") != technique or row.get("seeds") != seeds:
+            raise FitnessV2Error(f"{family} technique or seeds differ from Rick's freeze")
+
+    rotation = manifest.get("training_rotation", {})
+    if rotation.get("world_indices_by_generation_mod_3") != {
+        "0": [1, 2], "1": [2, 3], "2": [3, 1]
+    }:
+        raise FitnessV2Error("training rotation differs from Rick's freeze")
+    if manifest.get("withheld_worlds", {}).get("per_family_world_index") != 4:
+        raise FitnessV2Error("withheld-world rule differs from Rick's freeze")
+    if manifest.get("diversity", {}).get("minimum_pairwise_distance") != 0.75:
+        raise FitnessV2Error("world-diversity threshold differs from Rick's freeze")
     return actual
 
 

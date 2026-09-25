@@ -1,0 +1,151 @@
+{
+  "authority": "Rick",
+  "campaign_batch": {
+    "admission_required": 3,
+    "campaign_count": 5,
+    "evolution_seeds": [
+      2066557696,
+      604610261,
+      3608585586,
+      3251376561,
+      1894202052
+    ],
+    "final_selection_rule": "lowest_EVOLUTION_SEED_among_qualifiers",
+    "rank_per_campaign": 1
+  },
+  "calibration_source": {
+    "end": "2018-12-31",
+    "lane": "DEVELOPMENT",
+    "start": "2007-01-01"
+  },
+  "diversity": {
+    "descriptors": [
+      "realized_volatility_aggregate_and_per_asset",
+      "trend_strength",
+      "cross_sectional_dispersion",
+      "rolling_cross_asset_correlation",
+      "drawdown_depth_and_duration",
+      "turnover_opportunity_regime_change_frequency",
+      "return_autocorrelation",
+      "gap_frequency_and_magnitude"
+    ],
+    "distance": "sqrt(mean((z_i-z_j)^2))",
+    "minimum_pairwise_distance": 0.75,
+    "normalization": "robust_median_MAD_from_DEVELOPMENT_2007_2018_only",
+    "timing": "before_any_strategy_evaluation"
+  },
+  "expansion": {
+    "after_each_complete_campaign_batch": 4,
+    "family_allocation": {
+      "distributional": 1,
+      "execution": 1,
+      "sequence": 1,
+      "shock": 1
+    },
+    "first_batch_bank_is_immutable": true,
+    "never_remove_existing_worlds": true,
+    "synthetic_world_hold_count": 32
+  },
+  "frozen_before_results": {
+    "baseline_population_created": false,
+    "genome_evaluated": false,
+    "pre_freeze_git_head": "622cbb5ceaf93f60da4d2e76a3d42cbc97bc7d82",
+    "recorded_utc": "2026-09-25T11:56:32+00:00",
+    "world_generated": false
+  },
+  "historical_worlds": [
+    {
+      "calendar_end": "2010-12-31",
+      "calendar_start": "2007-01-01",
+      "provenance_class": "REAL_DEVELOPMENT",
+      "world_id": "World-H1"
+    },
+    {
+      "calendar_end": "2014-12-31",
+      "calendar_start": "2011-01-01",
+      "provenance_class": "REAL_DEVELOPMENT",
+      "world_id": "World-H2"
+    },
+    {
+      "calendar_end": "2018-12-31",
+      "calendar_start": "2015-01-01",
+      "provenance_class": "REAL_DEVELOPMENT",
+      "world_id": "World-H3"
+    }
+  ],
+  "manifest_id": "fitness_v2_parameter_freeze_47aba93e384f50836713b7c4e4723ddf858d6c8eda8da363c391d9bbb261cfac",
+  "passive_comparator": {
+    "allocation": "equal_weight_across_fixed_eight_asset_universe",
+    "exposure": "genome_pre_existing_declared_gross_exposure_cap",
+    "passive_envelope_80_percent": "diagnostic_only",
+    "realized_exposure_matching": false,
+    "rebalance": "buy_once",
+    "simulator_and_world": "identical_to_genome"
+  },
+  "schema_version": 1,
+  "synthetic_families": {
+    "distributional": {
+      "parameters": {
+        "asset_sampling": "synchronized_all_8_assets",
+        "block_length_distribution": "geometric",
+        "mean_block_length_sessions": 21
+      },
+      "seeds": [2232522471, 817777979, 4071970222, 1669371075],
+      "technique": "stationary_block_bootstrap"
+    },
+    "execution": {
+      "parameters": {
+        "maximum_skipped_sessions_per_affected_fill": 1,
+        "skip_probability": 0.05
+      },
+      "seeds": [2417722352, 133793614, 607285341, 780370636],
+      "technique": "deterministic_seeded_skipped_fill_stress"
+    },
+    "sequence": {
+      "parameters": {
+        "preserve_chronology_within_segment": true,
+        "segment_length_sessions": 63
+      },
+      "seeds": [3101765671, 2463827558, 1949083376, 1649363392],
+      "technique": "chronology_preserving_intact_segment_recombination"
+    },
+    "shock": {
+      "parameters": {
+        "empirical_gap_source": "DEVELOPMENT_2007_2018_only",
+        "preserve_sampled_sign_and_magnitude": true,
+        "relocated_gap_events_per_world": 3,
+        "within_DEVELOPMENT_observed_bounds": true
+      },
+      "seeds": [2470494651, 490895778, 2160267573, 2145432915],
+      "technique": "controlled_gap_relocation"
+    }
+  },
+  "synthetic_world_count": 16,
+  "training_rotation": {
+    "all_historical_worlds_each_generation": true,
+    "same_subset_for_every_genome_in_generation": true,
+    "synthetic_worlds_per_family_each_generation": 2,
+    "synthetic_worlds_total_each_generation": 8,
+    "world_indices_by_generation_mod_3": {
+      "0": [1, 2],
+      "1": [2, 3],
+      "2": [3, 1]
+    }
+  },
+  "validation_failure_rule": {
+    "bot_performance_may_influence_replacement": false,
+    "reject_failed_world": true,
+    "replacement": "advance_deterministically_to_next_seed_in_same_family"
+  },
+  "withheld_worlds": {
+    "evidence_class": "DEVELOPMENT_robustness_not_independent_historical",
+    "evaluation_timing": "after_campaign_selects_rank_1_nominee",
+    "per_family_world_index": 4,
+    "used_for_evolutionary_ranking_or_breeding": false
+  },
+  "world_bank": {
+    "historical_count": 3,
+    "synthetic_count": 16,
+    "total_count": 19
+  }
+}
