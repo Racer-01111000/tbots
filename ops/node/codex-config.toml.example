@@ -1,0 +1,10 @@
+# Install as /home/rick/.codex/config.toml on the dedicated Dell Node.
+# The unattended permissions are available only when the caller explicitly
+# selects `--profile tbots_unattended`.
+
+[profiles.tbots_unattended]
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
+[projects."/opt/evolutionary-markets"]
+trust_level = "trusted"
