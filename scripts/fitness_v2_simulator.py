@@ -118,7 +118,19 @@ class WorldView:
     """The AgentView-equivalent contract (observe/history) over one
     pre-materialized Fitness V2 world, at a caller-advanced current index.
     No method here can see an index past `current_index` -- the same
-    "sealed interface" guarantee AgentView gives against ReplayEngine."""
+    "sealed interface" guarantee AgentView gives against ReplayEngine.
+
+    An asset's `adjusted_close[i] is None` means: no real observation exists
+    there (handoff §18 -- e.g. DBC has only 252 real prior bars before H1,
+    not every asset's 378). This only ever occurs in the warmup prefix, never
+    in a world's scored region (all eight assets have complete synchronized
+    daily coverage inside the DEVELOPMENT window itself -- see
+    FITNESS_V2_COMPLETE_PROTOCOL_FREEZE_20260926.md §3). history() skips
+    None entries entirely (an asset with a short real warmup simply
+    contributes fewer rows, exactly like indicators.py's own
+    "insufficient_history_*" natural rejection -- never a fabricated or
+    interpolated value); observe() reports unavailable as
+    AgentView/ReplayEngine's own `_asset_fields(None)` does."""
 
     def __init__(self, assets: Mapping[str, Mapping[str, Sequence]], current_index: int):
         self._assets = assets
@@ -127,11 +139,11 @@ class WorldView:
     def observe(self) -> dict:
         out = {}
         for symbol in ASSET_UNIVERSE:
-            row = self._assets[symbol]
-            out[symbol] = {
-                "available": True,
-                "adjusted_close": row["adjusted_close"][self._current_index],
-            }
+            price = self._assets[symbol]["adjusted_close"][self._current_index]
+            if price is None:
+                out[symbol] = {"available": False}
+            else:
+                out[symbol] = {"available": True, "adjusted_close": price}
         return {"episode_day_index": self._current_index + 1, "assets": out}
 
     def history(self, symbol: str, bars: int) -> list[dict]:
@@ -139,11 +151,15 @@ class WorldView:
             raise TypeError(f"bars must be an int, got {type(bars).__name__}")
         if bars <= 0:
             return []
-        row = self._assets[symbol]
-        cut = self._current_index + 1  # bisect_right semantics: today is included
-        start = max(0, cut - bars)
-        return [{"adjusted_close": row["adjusted_close"][i], "available": True}
-                for i in range(start, cut)]
+        prices = self._assets[symbol]["adjusted_close"]
+        collected = []
+        for i in range(self._current_index, -1, -1):  # bisect_right: today included
+            if len(collected) == bars:
+                break
+            if prices[i] is not None:
+                collected.append({"adjusted_close": prices[i], "available": True})
+        collected.reverse()
+        return collected
 
 
 def _current_raw_prices(assets, field: str, index: int) -> dict:

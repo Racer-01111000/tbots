@@ -95,6 +95,34 @@ class WorldViewContract(unittest.TestCase):
             obs["assets"]["SPY"]["adjusted_close"], world["assets"]["SPY"]["adjusted_close"][5]
         )
 
+    def test_observe_reports_unavailable_for_a_none_price(self):
+        world = _trending_world(n_sessions=10)
+        world["assets"]["DBC"]["adjusted_close"][3] = None
+        view = WorldView(world["assets"], current_index=3)
+        obs = view.observe()
+        self.assertFalse(obs["assets"]["DBC"]["available"])
+        self.assertNotIn("adjusted_close", obs["assets"]["DBC"])
+
+    def test_history_skips_leading_none_entries_short_real_warmup(self):
+        # DBC (handoff §18) has real history starting only at index 5, while
+        # every other asset has the full run -- history() must contribute
+        # only DBC's genuinely-real rows, never a fabricated fill-in.
+        world = _trending_world(n_sessions=10)
+        for i in range(5):
+            world["assets"]["DBC"]["adjusted_close"][i] = None
+        view = WorldView(world["assets"], current_index=7)
+        history = view.history("DBC", 100)
+        self.assertEqual(len(history), 3)  # only indices 5,6,7 are real
+        self.assertEqual(
+            history[-1]["adjusted_close"], world["assets"]["DBC"]["adjusted_close"][7]
+        )
+
+    def test_history_all_none_returns_empty(self):
+        world = _trending_world(n_sessions=10)
+        world["assets"]["DBC"]["adjusted_close"] = [None] * 10
+        view = WorldView(world["assets"], current_index=9)
+        self.assertEqual(view.history("DBC", 5), [])
+
 
 class SimulateWorldNoActivity(unittest.TestCase):
     def test_flat_short_world_holds_cash_no_orders(self):
