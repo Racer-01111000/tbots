@@ -1,0 +1,46 @@
+{
+  "content": {
+    "authority": "Rick: CONTINUING GO FITNESS V2 FINAL FORMULA DEFINITIONS and subsequent scientific review instruction",
+    "checkpoint": "02bc2ad0e3624bad28096c7b9541dd1a520fc246",
+    "oc1": {
+      "candidate_inputs": "None; supplied Sharpes must be the already-frozen candidate-independent passive comparator",
+      "family_aggregation": "Ordinary median of numeric z values, including signed zero-MAD sentinels",
+      "family_anomaly": "family_median_z > +3.0; negative deviations cannot trigger favorable-passive OC1",
+      "nonzero_development_mad": "(passive_sharpe-reference_median)/(1.4826*MAD)",
+      "zero_development_mad": {
+        "above_median": 4.0,
+        "below_median": -4.0,
+        "equal_median": 0.0
+      },
+      "zero_mad_per_world_anomaly": "passive_sharpe != reference_median"
+    },
+    "resolution_status": {
+      "complete_protocol_ready": false,
+      "execution_distance_and_execution_shock_warmup": "Remain resolved, unchanged",
+      "prior_trend_and_oc1_stop": "Resolved by Rick; old receipt retained",
+      "scope": "Exact formula/source amendment only; remaining descriptor/transformation conventions require authority"
+    },
+    "schema_version": 1,
+    "source_boundary": {
+      "earlier_observations": "Only real historical-anchor warm-up under frozen S5A eligibility, including Execution/Shock exceptions; never Distributional/Sequence source, donors, or calibration",
+      "generation_and_calibration": [
+        "2007-02-07",
+        "2018-12-31"
+      ],
+      "precedence": "Later executable GO and explicit scientific-review clarification supersede earlier 2007-01-01 source metadata without rewriting it",
+      "protected_post2018": "Prohibited"
+    },
+    "trend": {
+      "constant_y": 0.0,
+      "incomplete_windows": "Do not contribute; no complete windows produces no descriptor value",
+      "invalid_price": "Any nonfinite or nonpositive price rejects candidate world",
+      "other_normalizations": "Prohibited: no t-statistic, raw slope or annualized slope",
+      "per_asset": "Median of strengths from every complete 63-session window in that world",
+      "strength": "abs(PearsonCorrelation(x,y))",
+      "window_price_sessions": 63,
+      "x": "0,1,...,62",
+      "y": "ln(adjusted_close)"
+    }
+  },
+  "manifest_id": "fitness_v2_formula_definitions_1a352cc511d2d0b4c408c1493bb1c88879b4f78e2b15955d9d4e4b47f158208b"
+}
