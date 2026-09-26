@@ -36,9 +36,9 @@ from fitness_v2_campaign import (
     reference_passive_sharpes, run_generation,
 )
 from fitness_v2_evolution_protocol import FINAL_GENERATION
-from fitness_v2_protocol import development_reference_calibration
+from fitness_v2_protocol import development_reference_calibration, world_descriptor_vector
 from fitness_v2_world_bank import (
-    MAX_WORLDS_PER_FAMILY, SYNTHETIC_FAMILIES, build_synthetic_family,
+    SYNTHETIC_FAMILIES, ExpansionHeld, build_synthetic_family,
     distributional_world, execution_world, expand_family, historical_world,
     load_complete_protocol, load_real_development_pool, scored_only,
     sequence_world, shock_world,
@@ -89,8 +89,13 @@ def _checkpoint_and_push(label: str, artifacts: dict, message: str) -> None:
     commit_and_push(REPO_ROOT, BRANCH, list(dict.fromkeys(paths)), message)
 
 
-def _world_bank_path() -> Path:
-    return CHECKPOINT_DIR / "world_bank.json"
+def _world_bank_path(world_bank_id: str) -> Path:
+    # Every world-bank generation (initial + each expansion, handoff §50)
+    # is its own immutable checkpoint artifact, never overwritten in place --
+    # worker_checkpoint refuses to silently replace an existing path's
+    # content, by design. world_bank_id is what STATUS.json points at the
+    # CURRENT one with.
+    return CHECKPOINT_DIR / f"{world_bank_id}.json"
 
 
 def _serialize_worlds(historical, synthetic) -> dict:
@@ -98,14 +103,17 @@ def _serialize_worlds(historical, synthetic) -> dict:
         "historical": historical,
         "synthetic": {family: result["worlds"] for family, result in synthetic.items()},
         "synthetic_state": {
-            family: {"consumed_indices": result["consumed_indices"], "used_seeds": result["used_seeds"]}
+            family: {
+                "consumed_indices": result["consumed_indices"], "used_seeds": result["used_seeds"],
+                "attempts": result["attempts"],
+            }
             for family, result in synthetic.items()
         },
     }
 
 
-def _load_world_bank() -> dict:
-    return json.loads(_world_bank_path().read_text())
+def _load_world_bank(world_bank_id: str) -> dict:
+    return json.loads(_world_bank_path(world_bank_id).read_text())
 
 
 def run_one_step() -> dict:
@@ -128,6 +136,15 @@ def run_one_step() -> dict:
     if gate["outcome"] == "stopped":
         raise WorkerStop(gate["stop_code"], gate["detail"])
 
+    # A "hold" is a deliberate, recorded pause (the 32-world expansion
+    # ceiling, or a scientific-protocol ambiguity fail-closed per AGENTS.md
+    # "do not invent a rule") -- not an error. Idle here rather than
+    # re-entering _finalize_or_expand, which would otherwise re-attempt
+    # (and, for the ceiling case, re-raise) the same held step on every
+    # timer firing. Only a fresh Rick GO that rewrites STATUS.json clears it.
+    if status is not None and status.get("state") == "hold":
+        return {"action": "holding", "detail": status.get("stop_reason")}
+
     return _advance(status)
 
 
@@ -143,13 +160,14 @@ def _advance(status: dict) -> dict:
 # World-bank generation (real data; runs exactly once per experiment)
 # ---------------------------------------------------------------------------
 
-def _generate_world_bank(status: dict | None) -> dict:
-    protocol = load_complete_protocol()
-    freeze = load_parameter_freeze()
-    pool = load_real_development_pool()
+def _world_bank_build_context(protocol: dict, pool, historical: list[dict]):
+    """Shared setup for both initial world-bank generation and later
+    expansion (handoff §50) -- the candidate builder and calibration
+    reference must be rebuilt identically both times (same frozen protocol,
+    same 3 historical worlds, same DEVELOPMENT reconstruction pool), or an
+    expansion world would not be reproducible under the same rules as the
+    initial 16. Returns (tau, reference, builder)."""
     tau = protocol["gap_threshold_tau"]
-
-    historical = [historical_world(pool, shape, protocol) for shape in ("H1", "H2", "H3")]
     reference = development_reference_calibration([scored_only(w) for w in historical], tau)
 
     from fitness_v2_world_bank import _development_pool_for_reconstruction
@@ -178,6 +196,17 @@ def _generate_world_bank(status: dict | None) -> dict:
             raise ValueError(family)
         return build
 
+    return tau, reference, builder
+
+
+def _generate_world_bank(status: dict | None) -> dict:
+    protocol = load_complete_protocol()
+    freeze = load_parameter_freeze()
+    pool = load_real_development_pool()
+
+    historical = [historical_world(pool, shape, protocol) for shape in ("H1", "H2", "H3")]
+    tau, reference, builder = _world_bank_build_context(protocol, pool, historical)
+
     synthetic = {}
     admitted_vectors: list[list[float]] = []
     for family in SYNTHETIC_FAMILIES:
@@ -189,13 +218,14 @@ def _generate_world_bank(status: dict | None) -> dict:
         synthetic[family] = result
 
     bank = _serialize_worlds(historical, synthetic)
+    world_bank_id = "world_bank_v1"
     _checkpoint_and_push(
-        "world_bank", {"evolution/state/world_bank.json": bank},
+        "world_bank", {f"evolution/state/{world_bank_id}.json": bank},
         "World bank generated: 3 historical + 16 synthetic worlds (handoff §11)",
     )
     base = status or read_status(STATUS_PATH)
     updated = with_updates(
-        base, updated_utc=_now_utc(), phase="world_bank", world_bank_id="world_bank_v1",
+        base, updated_utc=_now_utc(), phase="world_bank", world_bank_id=world_bank_id,
         synthetic_world_count=16, last_progress_utc=_now_utc(),
     )
     write_status(STATUS_PATH, updated)
@@ -226,29 +256,64 @@ def _worlds_from_bank(bank: dict) -> tuple[list[dict], dict]:
     return bank["historical"], bank["synthetic"]
 
 
+def _generation_checkpoint_path(seed: int, generation: int) -> Path:
+    return CHECKPOINT_DIR / f"campaign_{seed}_generation_{generation}.json"
+
+
+def _resume_campaign_state(status: dict, seed: int):
+    """Gap-1 crash/resume (handoff §58: "Never reconstruct completed
+    generations just because a process died. Resume from the latest durable
+    transactional checkpoint."). Returns (resume_from, population,
+    used_genome_ids, final_ranked) -- either a fresh Gen0 start, or state
+    reloaded from the last generation this campaign_seed durably
+    checkpointed, so the loop below never repeats an already-committed
+    generation."""
+    if status.get("campaign_seed") == seed and status.get("generation") is not None:
+        last_generation = status["generation"]
+        checkpoint = json.loads(_generation_checkpoint_path(seed, last_generation).read_text())
+        if last_generation < FINAL_GENERATION:
+            used_genome_ids = set(checkpoint["used_genome_ids"])
+            return last_generation + 1, checkpoint["next_population"], used_genome_ids, None
+        # Final generation already checkpointed (including its full ranked
+        # population + evaluations) -- only nomination/admission remain;
+        # the generation loop below runs zero times.
+        return FINAL_GENERATION + 1, None, None, checkpoint["final_ranked"]
+
+    population = initial_population(seed)
+    used_genome_ids = {m["genome_id"] for m in population}
+    return 0, population, used_genome_ids, None
+
+
 def _run_next_campaign(status: dict) -> dict:
-    bank = _load_world_bank()
+    bank = _load_world_bank(status["world_bank_id"])
     historical, synthetic = _worlds_from_bank(bank)
     reference_sharpes = {"execution": reference_passive_sharpes(historical)}
 
     seed = CAMPAIGN_SEEDS[status["campaigns_complete"]]
-    population = initial_population(seed)
-    used_genome_ids = {m["genome_id"] for m in population}
-    final_ranked = None
+    resume_from, population, used_genome_ids, final_ranked = _resume_campaign_state(status, seed)
 
-    for generation in range(FINAL_GENERATION + 1):
+    for generation in range(resume_from, FINAL_GENERATION + 1):
         result = run_generation(
             seed, generation, population, historical, synthetic, reference_sharpes, used_genome_ids,
         )
+        artifact = {
+            "generation": generation,
+            "ranked_genome_ids": result["ranked_genome_ids"],
+            "best_cross_family_fitness": result["best_cross_family_fitness"],
+            "median_cross_family_fitness": result["median_cross_family_fitness"],
+            "control_anchor_fitness": result["control_anchor_fitness"],
+        }
+        # Enough state to resume at generation+1 (or, at the final
+        # generation, to nominate/admit) without ever recomputing an
+        # already-checkpointed generation -- see _resume_campaign_state.
+        if generation < FINAL_GENERATION:
+            artifact["next_population"] = result["next_population"]
+            artifact["used_genome_ids"] = sorted(used_genome_ids)
+        else:
+            artifact["final_ranked"] = result["final_ranked"]
         _checkpoint_and_push(
             f"campaign_{seed}_gen{generation}",
-            {f"evolution/state/campaign_{seed}_generation_{generation}.json": {
-                "generation": generation,
-                "ranked_genome_ids": result["ranked_genome_ids"],
-                "best_cross_family_fitness": result["best_cross_family_fitness"],
-                "median_cross_family_fitness": result["median_cross_family_fitness"],
-                "control_anchor_fitness": result["control_anchor_fitness"],
-            }},
+            {f"evolution/state/campaign_{seed}_generation_{generation}.json": artifact},
             f"Campaign {seed} generation {generation}: evaluated, ranked, "
             f"{'final' if generation == FINAL_GENERATION else 'bred next population'}",
         )
@@ -311,11 +376,13 @@ def _finalize_or_expand(status: dict) -> dict:
             "clears_all_gates": record["clears_all_gates"],
         })
     admission = decide_admission(nominees, predeclared_n=len(CAMPAIGN_SEEDS))
+    world_bank_generation = status.get("synthetic_world_count", 16)
 
     _checkpoint_and_push(
-        "admission_decision", {"evolution/state/admission_decision.json": admission},
-        f"5-campaign admission decision: {admission['ratio']}, "
-        f"admitted={admission['admitted']} (handoff §47)",
+        f"admission_decision_{world_bank_generation}",
+        {f"evolution/state/admission_decision_{world_bank_generation}synthetic.json": admission},
+        f"5-campaign admission decision ({world_bank_generation} synthetic worlds): "
+        f"{admission['ratio']}, admitted={admission['admitted']} (handoff §47)",
     )
     updated = with_updates(
         read_status(STATUS_PATH), updated_utc=_now_utc(), phase="champion_decision",
@@ -323,7 +390,90 @@ def _finalize_or_expand(status: dict) -> dict:
         negative_result=not admission["admitted"], last_progress_utc=_now_utc(),
     )
     write_status(STATUS_PATH, updated)
-    return {"action": "decided_admission", "admission": admission}
+    return _expand_or_hold(updated, admission)
+
+
+def _expand_or_hold(status: dict, admission: dict) -> dict:
+    """Handoff §50: after every completed 5-campaign batch, unconditionally
+    -- "do not adapt world-bank difficulty based on candidate
+    success/failure" -- add exactly one more world per family, continuing
+    each family's own deterministic seed stream, until the frozen 32-
+    synthetic-world ceiling. This function closes that mechanical step.
+
+    It deliberately stops there. What the frozen text does NOT say is
+    whether the next 5-campaign batch against the expanded bank reuses the
+    same frozen CAMPAIGN_SEEDS, whether an admitted champion here still
+    keeps expanding to the ceiling, or how campaign/generation checkpoints
+    should be namespaced across more than one bank generation -- and
+    AGENTS.md's own rule is to stop, not invent, when a contract ambiguity
+    materially changes selection. See
+    FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md."""
+    bank = _load_world_bank(status["world_bank_id"])
+    historical, synthetic = _worlds_from_bank(bank)
+    protocol = load_complete_protocol()
+    pool = load_real_development_pool()
+    tau, reference, builder = _world_bank_build_context(protocol, pool, historical)
+
+    admitted_vectors = [
+        world_descriptor_vector(scored_only(world), tau)
+        for family in SYNTHETIC_FAMILIES for world in synthetic[family]
+    ]
+    synthetic_state = bank["synthetic_state"]
+    expanded = dict(synthetic)
+
+    try:
+        for family in SYNTHETIC_FAMILIES:
+            state = synthetic_state[family]
+            prior_state = {
+                "worlds": expanded[family], "consumed_indices": state["consumed_indices"],
+                "used_seeds": state["used_seeds"], "attempts": state.get("attempts", []),
+            }
+            result = expand_family(family, prior_state, builder(family), reference, admitted_vectors, tau)
+            expanded[family] = result["worlds"]
+            synthetic_state = {
+                **synthetic_state,
+                family: {
+                    "consumed_indices": result["consumed_indices"],
+                    "used_seeds": result["used_seeds"], "attempts": result["attempts"],
+                },
+            }
+    except ExpansionHeld as held:
+        updated = with_updates(
+            status, updated_utc=_now_utc(), state="hold", phase="terminal_hold", stop_code=None,
+            stop_reason=(
+                "World bank reached the frozen 32-synthetic-world ceiling "
+                f"(handoff §50): {held}. Holding pending a new Rick GO."
+            ),
+            last_progress_utc=_now_utc(),
+        )
+        write_status(STATUS_PATH, updated)
+        return {"action": "expansion_held", "detail": str(held), "admission": admission}
+
+    new_bank = {"historical": historical, "synthetic": expanded, "synthetic_state": synthetic_state}
+    new_count = sum(len(worlds) for worlds in expanded.values())
+    new_world_bank_id = f"world_bank_v1_expansion_{new_count}synthetic"
+    _checkpoint_and_push(
+        f"world_bank_expansion_{new_count}",
+        {f"evolution/state/{new_world_bank_id}.json": new_bank},
+        f"World bank expanded to {new_count} synthetic worlds (handoff §50: "
+        "+1 per family after the completed campaign batch)",
+    )
+    updated = with_updates(
+        status, updated_utc=_now_utc(), state="hold", phase="expansion", stop_code=None,
+        world_bank_id=new_world_bank_id,
+        synthetic_world_count=new_count, last_progress_utc=_now_utc(),
+        stop_reason=(
+            f"World bank expanded to {new_count} synthetic worlds (handoff §50). Holding "
+            "here, not auto-launching the next 5-campaign batch: the frozen text does not "
+            "say whether campaign seeds are reused for the next batch against the expanded "
+            "bank, or what happens to campaign/generation checkpoint namespacing or an "
+            "already-admitted champion across batches. See "
+            "FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md; needs a Rick decision, "
+            "not an invented rule (AGENTS.md)."
+        ),
+    )
+    write_status(STATUS_PATH, updated)
+    return {"action": "expanded_world_bank", "synthetic_world_count": new_count, "admission": admission}
 
 
 # ---------------------------------------------------------------------------

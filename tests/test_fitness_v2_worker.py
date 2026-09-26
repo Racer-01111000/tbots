@@ -272,5 +272,260 @@ class CrashRecovery(WorkerHarness):
         return _git(self.work, "rev-parse", "HEAD")
 
 
+class MidCampaignResume(WorkerHarness):
+    """Gap 1 (handoff §58, "Never reconstruct completed generations just
+    because a process died. Resume from the latest durable transactional
+    checkpoint."): proves the worker now resumes at generation N+1 rather
+    than the deterministic-Gen0-redo fallback CrashRecovery above
+    documents -- and that the resumed campaign is byte-identical to an
+    uninterrupted reference run of the same seed and worlds."""
+
+    SEED = 2066557696
+
+    def _seed_world_bank(self):
+        from test_fitness_v2_campaign import _tiny_world_bank
+        historical, synthetic = _tiny_world_bank(scored_length=40)
+        bank = {
+            "historical": historical,
+            "synthetic": synthetic,
+            "synthetic_state": {
+                family: {"consumed_indices": [], "used_seeds": []} for family in synthetic
+            },
+        }
+        worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+        (worker.CHECKPOINT_DIR / "world_bank_v1.json").write_text(json.dumps(bank))
+        _git(self.work, "add", "evolution/state/world_bank_v1.json")
+        _git(self.work, "commit", "-m", "world bank")
+        _git(self.work, "push", "origin", BRANCH)
+        return historical, synthetic
+
+    def test_resume_after_simulated_crash_never_repeats_a_completed_generation(self):
+        historical, synthetic = self._seed_world_bank()
+        self._write_status(_base_status(
+            audit_window_ends_utc="2020-01-01T00:00:00Z",
+            world_bank_id="world_bank_v1", campaigns_complete=0,
+        ))
+
+        calls: list[int] = []
+        original_run_generation = worker.run_generation
+
+        def crash_before_generation_3(*args, **kwargs):
+            generation = args[1]
+            calls.append(generation)
+            if generation == 3:
+                raise RuntimeError("simulated crash before generation 3")
+            return original_run_generation(*args, **kwargs)
+
+        worker.run_generation = crash_before_generation_3
+        try:
+            with self.assertRaises(RuntimeError):
+                worker.run_one_step()
+        finally:
+            worker.run_generation = original_run_generation
+
+        self.assertEqual(calls, [0, 1, 2, 3])  # 0-2 completed & checkpointed; 3 attempted, then "died"
+        pre_crash_status = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(pre_crash_status["generation"], 2)
+        self.assertEqual(pre_crash_status["campaign_seed"], self.SEED)
+        gen2_checkpoint = json.loads(
+            worker._generation_checkpoint_path(self.SEED, 2).read_text()
+        )
+        gen2_head_before_resume = self._git_head()
+
+        calls.clear()
+        worker.run_generation = lambda *a, **kw: (calls.append(a[1]) or original_run_generation(*a, **kw))
+        try:
+            result = worker.run_one_step()
+        finally:
+            worker.run_generation = original_run_generation
+
+        self.assertEqual(calls, [3, 4, 5, 6, 7, 8, 9, 10])  # never re-ran 0-2
+        self.assertEqual(result["action"], "completed_campaign")
+
+        # Completed generations survived interruption unchanged -- no
+        # duplicate/rewritten evidence for a generation already durable
+        # before the crash.
+        self.assertEqual(
+            json.loads(worker._generation_checkpoint_path(self.SEED, 2).read_text()),
+            gen2_checkpoint,
+        )
+        self._git(self.work, "log", "--oneline", gen2_head_before_resume, "-1")  # still reachable
+
+        status = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(status["campaigns_complete"], 1)
+
+        # Population identity + RNG/seed-state fidelity: an uninterrupted
+        # reference run of the identical seed/worlds must land on the exact
+        # same nominee and fitness -- the resume path is not merely
+        # "different but plausible", it reproduces the one true continuation.
+        from fitness_v2_campaign import run_campaign
+        reference_sharpes = {"execution": worker.reference_passive_sharpes(historical)}
+        reference = run_campaign(self.SEED, historical, synthetic, reference_sharpes)
+        resumed_nominee = json.loads(
+            (worker.CHECKPOINT_DIR / f"campaign_{self.SEED}_nominee.json").read_text()
+        )
+        self.assertEqual(
+            resumed_nominee["genome_id"],
+            reference["final_admission_nominee"]["genome_id"],
+        )
+        self.assertEqual(
+            resumed_nominee["cross_family_fitness"],
+            reference["final_admission_nominee"]["evaluation"]["cross_family_fitness"],
+        )
+
+    def _git(self, cwd, *args):
+        return _git(cwd, *args)
+
+    def _git_head(self) -> str:
+        return _git(self.work, "rev-parse", "HEAD")
+
+
+class WorldBankExpansion(WorkerHarness):
+    """Gap 2 (handoff §50): wires fitness_v2_world_bank.expand_family into
+    the worker's finalize/expand step. expand_family's own mechanics
+    (ceiling, idempotent stream continuation, real diversity-distance
+    admission) are already proven in
+    tests/test_fitness_v2_world_bank.py::FamilyExpansion, at real world
+    scale -- these tests stub expand_family/world_descriptor_vector/
+    scored_only/_world_bank_build_context to cheap fakes so they can prove
+    what's actually new here fast and deterministically: _expand_or_hold's
+    OWN orchestration -- reconstructing the cross-family admitted-vector
+    accumulation state from a persisted bank, calling expand_family once
+    per family in order, advancing world_bank_id/synthetic_world_count,
+    holding (not looping) at the frozen 32-world ceiling, and -- per the
+    deliberately-unresolved ambiguity recorded in
+    FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md -- never
+    auto-launching the next campaign batch on its own."""
+
+    def setUp(self):
+        super().setUp()
+        self._originals2 = {
+            name: getattr(worker, name)
+            for name in (
+                "load_complete_protocol", "load_real_development_pool",
+                "_world_bank_build_context", "world_descriptor_vector", "scored_only", "expand_family",
+            )
+        }
+        worker.load_complete_protocol = lambda: {}
+        worker.load_real_development_pool = lambda: {}
+        worker._world_bank_build_context = lambda protocol, pool, historical: (
+            0.02, {}, lambda family: (lambda seed: f"{family}_candidate_{seed}")
+        )
+        # scored_only/world_descriptor_vector run once per ALREADY-admitted
+        # world (to reconstruct admitted_reference_vectors) -- these fakes
+        # just need to be cheap and to round-trip a world identity through,
+        # not compute anything real (real descriptor math is proven
+        # elsewhere, at real world scale).
+        worker.scored_only = lambda world: world
+        worker.world_descriptor_vector = lambda world, tau: {"descriptor_of": world}
+
+        self.expand_calls: list[tuple] = []
+
+        def fake_expand_family(family, prior_state, build_candidate, reference, admitted_reference_vectors, tau):
+            from fitness_v2_world_bank import ExpansionHeld
+            self.expand_calls.append((family, len(admitted_reference_vectors)))
+            existing = prior_state["worlds"]
+            if len(existing) >= 8:  # MAX_WORLDS_PER_FAMILY
+                raise ExpansionHeld(f"{family} at ceiling")
+            new_world = f"{family}_world_{len(existing)}"
+            admitted_reference_vectors.append({"descriptor_of": new_world})
+            return {
+                "worlds": [*existing, new_world],
+                "consumed_indices": [*prior_state["consumed_indices"], len(existing) + 1],
+                "used_seeds": [*prior_state["used_seeds"], 900 + len(existing)],
+                "attempts": [*prior_state["attempts"], {"accepted": True, "world": new_world}],
+            }
+
+        worker.expand_family = fake_expand_family
+
+    def tearDown(self):
+        for name, value in self._originals2.items():
+            setattr(worker, name, value)
+        super().tearDown()
+
+    def _seed_bank(self, worlds_per_family=4):
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        synthetic = {f: [f"{f}_world_{i}" for i in range(worlds_per_family)] for f in SYNTHETIC_FAMILIES}
+        synthetic_state = {
+            f: {
+                "consumed_indices": list(range(1, worlds_per_family + 1)),
+                "used_seeds": list(range(100, 100 + worlds_per_family)), "attempts": [],
+            }
+            for f in SYNTHETIC_FAMILIES
+        }
+        bank = {"historical": ["H1", "H2", "H3"], "synthetic": synthetic, "synthetic_state": synthetic_state}
+        worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+        (worker.CHECKPOINT_DIR / "world_bank_v1.json").write_text(json.dumps(bank))
+        _git(self.work, "add", "evolution/state/world_bank_v1.json")
+        _git(self.work, "commit", "-m", "world bank")
+        _git(self.work, "push", "origin", BRANCH)
+        return synthetic
+
+    def _status_after_batch(self, **overrides):
+        return _base_status(
+            audit_window_ends_utc="2020-01-01T00:00:00Z", world_bank_id="world_bank_v1",
+            synthetic_world_count=16, campaigns_complete=5, **overrides,
+        )
+
+    def test_expansion_calls_expand_family_once_per_family_with_accumulating_vectors(self):
+        synthetic = self._seed_bank()
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        result = worker._expand_or_hold(status, admission={"admitted": False})
+
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        self.assertEqual([c[0] for c in self.expand_calls], list(SYNTHETIC_FAMILIES))
+        # admitted_reference_vectors starts with all 16 pre-existing worlds'
+        # descriptors (reconstructed from the persisted bank) and grows by
+        # one for every family expanded so far this cycle -- proves the
+        # cross-family accumulation is threaded through in order, not
+        # reset per family or left incomplete.
+        self.assertEqual([c[1] for c in self.expand_calls], [16, 17, 18, 19])
+
+        self.assertEqual(result["action"], "expanded_world_bank")
+        self.assertEqual(result["synthetic_world_count"], 20)
+        written = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(written["state"], "hold")
+        self.assertEqual(written["phase"], "expansion")
+        self.assertIsNone(written["stop_code"])
+        self.assertEqual(written["synthetic_world_count"], 20)
+        self.assertNotEqual(written["world_bank_id"], "world_bank_v1")
+
+        new_bank = json.loads((worker.CHECKPOINT_DIR / f"{written['world_bank_id']}.json").read_text())
+        for family in synthetic:
+            self.assertEqual(len(new_bank["synthetic"][family]), 5)
+            # The original four worlds per family are preserved unchanged.
+            self.assertEqual(new_bank["synthetic"][family][:4], synthetic[family])
+
+        # A worker invocation after a "hold" must idle, never repeat or
+        # advance the expansion/campaign step on its own.
+        again = worker.run_one_step()
+        self.assertEqual(again["action"], "holding")
+
+    def test_expansion_holds_at_the_frozen_32_world_ceiling(self):
+        self._seed_bank()
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        result = None
+        for _ in range(4):  # 16 -> 20 -> 24 -> 28 -> 32
+            result = worker._expand_or_hold(status, admission={"admitted": False})
+            status = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(result["action"], "expanded_world_bank")
+        self.assertEqual(status["synthetic_world_count"], 32)
+
+        held = worker._expand_or_hold(status, admission={"admitted": False})
+        self.assertEqual(held["action"], "expansion_held")
+        final_status = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(final_status["state"], "hold")
+        self.assertEqual(final_status["phase"], "terminal_hold")
+        self.assertEqual(final_status["synthetic_world_count"], 32)  # unchanged -- no partial expansion
+
+        # And the hold guard idles here too, on the ceiling path specifically.
+        again = worker.run_one_step()
+        self.assertEqual(again["action"], "holding")
+
+
 if __name__ == "__main__":
     unittest.main()
