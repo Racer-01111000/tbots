@@ -1,0 +1,23 @@
+{
+  "acceptance_proven": false,
+  "artifact_sha256": {
+    "evolution/protocol/fitness_v2_execution_diversity_amendment_4ef367db44be987a59e41547b485decbfb8c7d9d0b75477490f9221a59b76fef.json": "c90db6a574b48eed695741abde887f34e0bdfd662b5340e1dbd2da8a80227cc8",
+    "evolution/protocol/fitness_v2_h1_warmup_coverage_9397ef5675ecc800771026689a84b1960d40558ea34a2de9b6664732060a1f57.json": "939c2c13408eb2a263165f5ccf66c7efbd61f610ad7f55febdb392ae0eff57dc",
+    "scripts/fitness_v2_admission.py": "35ab7575eefce19720f24eadff255f0912e3d143495ce03f2ca92920c0e4758b",
+    "tests/test_fitness_v2_admission.py": "bbc0e2439c63131a39d90d9ccb64faeda603d060fb5a1daacfd4f58307828af2"
+  },
+  "checkpoint": "9ff6582c9798e9fad70d5e3cf666238c04cf2e78",
+  "focused": {
+    "command": "python3 -m unittest discover -s tests -p 'test_fitness_v2*.py' -v",
+    "failed": 0,
+    "passed": 29
+  },
+  "full": {
+    "command": "python3 -m unittest discover -s tests -v",
+    "elapsed_seconds": 41.787,
+    "failed": 0,
+    "log_sha256": "16b5d24f24d5886f342c10e3bfebc7abdf49059e83009feac1384161b0196897",
+    "passed": 371
+  },
+  "readiness": "STOP_BEFORE_RESULTS_H1_WARMUP_CONFLICT"
+}

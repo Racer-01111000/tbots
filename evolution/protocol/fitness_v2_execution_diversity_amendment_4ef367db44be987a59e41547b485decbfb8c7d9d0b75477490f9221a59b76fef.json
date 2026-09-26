@@ -1,0 +1,33 @@
+{
+  "authority": "Rick: TBOTS CONTINUING GO \u2014 RESOLVE EXECUTION DIVERSITY CONFLICT AND START FITNESS V2 TRAINING",
+  "data_boundary": "No protected or post-2018 data; no change to generation/calibration permissions",
+  "date": "2026-09-26",
+  "distributional_sequence_shock": {
+    "exemption": false,
+    "minimum_market_path_distance": 0.75,
+    "references": "All historical anchors and all admitted synthetic worlds"
+  },
+  "execution": {
+    "base_market_path": "unchanged real DEVELOPMENT path",
+    "deterministic": true,
+    "market_path_distance_exempt": true,
+    "structural_validation": "All execution-family checks remain mandatory, including seeds, skipped-fill mechanics and calendar/horizon structure",
+    "uniquely_seeded": true
+  },
+  "extends_parameter_freeze": "fitness_v2_parameter_freeze_47aba93e384f50836713b7c4e4723ddf858d6c8eda8da363c391d9bbb261cfac",
+  "historical_anchors": "Immutable",
+  "manifest_id": "fitness_v2_execution_diversity_amendment_4ef367db44be987a59e41547b485decbfb8c7d9d0b75477490f9221a59b76fef",
+  "pre_result_state": {
+    "genomes_generated": 0,
+    "worlds_generated": 0
+  },
+  "preserved_conflict_receipt_commit": "9ff6582c9798e9fad70d5e3cf666238c04cf2e78",
+  "readiness": "Blocked on separately recorded H1 unchanged-path warm-up conflict; this amendment does not resolve it",
+  "schema_version": 1,
+  "scientific_interpretation": {
+    "distributional_sequence_shock": "Market-path robustness",
+    "execution": "Execution robustness on intentionally unchanged real market paths",
+    "historical": "Real DEVELOPMENT market paths"
+  },
+  "scope": "Market-path descriptor distance only; not complete world admission or executable protocol readiness"
+}
