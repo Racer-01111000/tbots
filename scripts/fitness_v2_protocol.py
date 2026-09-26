@@ -290,25 +290,33 @@ def validate_world_shape(world: Mapping[str, Mapping[str, Sequence]]) -> int:
     if len(lengths) != 1:
         raise FitnessV2Error("all eight assets must share one synchronized scored session index")
     n_sessions = lengths.pop()
-    if n_sessions < DESCRIPTOR_WINDOW:
-        raise FitnessV2Error("world is shorter than one complete 252-session descriptor window")
+    if n_sessions - 1 < DESCRIPTOR_WINDOW:
+        raise FitnessV2Error("world is shorter than one complete 252-return descriptor window")
     return n_sessions
 
 
 def _component_window_values(world: Mapping[str, Mapping[str, Sequence]], tau: float) -> dict:
-    """Rule #0: every complete 252-session window (stride 1), same code path
-    for candidates, historical anchors, and the DEVELOPMENT reference. Raises
-    (world/window rejection) rather than skipping/silently substituting."""
+    """Rule #0, corrected boundary: windows are 252 consecutive derived
+    observations (returns/gaps), never 252 consecutive sessions -- a return
+    or a gap at session t needs session t-1 as its base, so the first
+    derived observation is dated at the SECOND DEVELOPMENT session (base =
+    the first DEVELOPMENT session's own close). No row before the world's
+    own first session is ever read: adjusted_simple_returns/gap rows are
+    built only from prices already inside `assets[...]`, which the caller
+    populates from DEVELOPMENT_START onward and no earlier. A 252-window of
+    prices spans 253 prices (252 returns); trend and turnover use that
+    253-price span directly, since both need raw prices, not returns.
+    Same code path for candidates, historical anchors, and the reference."""
     assets = world["assets"]
     n_sessions = validate_world_shape(world)
-
+    n_returns = n_sessions - 1
     asset_returns = {
         symbol: adjusted_simple_returns(assets[symbol]["adjusted_close"])
         for symbol in ASSET_UNIVERSE
     }
     returns_matrix = [
         [asset_returns[symbol][i] for symbol in ASSET_UNIVERSE]
-        for i in range(n_sessions - 1)
+        for i in range(n_returns)
     ]
     gap_rows_by_asset = {
         symbol: [
@@ -323,9 +331,10 @@ def _component_window_values(world: Mapping[str, Mapping[str, Sequence]], tau: f
     }
 
     per_component: dict[str, list[float]] = {name: [] for name in COMPONENT_NAMES}
-    for start in range(0, n_sessions - DESCRIPTOR_WINDOW + 1):
-        end = start + DESCRIPTOR_WINDOW
-        window_returns = returns_matrix[start:end - 1]
+    for r_start in range(0, n_returns - DESCRIPTOR_WINDOW + 1):
+        r_end = r_start + DESCRIPTOR_WINDOW  # 252 consecutive returns [r_start, r_end)
+        price_end = r_end + 1                # the 253 prices spanning those returns
+        window_returns = returns_matrix[r_start:r_end]
         equity = equal_weight_portfolio_equity(window_returns)
 
         per_component["volatility_aggregate"].append(
@@ -337,7 +346,7 @@ def _component_window_values(world: Mapping[str, Mapping[str, Sequence]], tau: f
                 volatility_component(asset_window_returns)
             )
             per_component[f"trend_{symbol}"].append(
-                trend_strength(assets[symbol]["adjusted_close"][start:end])
+                trend_strength(assets[symbol]["adjusted_close"][r_start:price_end])
             )
             per_component[f"autocorrelation_{symbol}"].append(
                 autocorrelation_component(asset_window_returns)
@@ -351,19 +360,19 @@ def _component_window_values(world: Mapping[str, Mapping[str, Sequence]], tau: f
         per_component["drawdown_duration"].append(duration)
         per_component["turnover"].append(turnover_component([
             [assets[symbol]["adjusted_close"][idx] for symbol in ASSET_UNIVERSE]
-            for idx in range(start, end)
+            for idx in range(r_start, price_end)
         ]))
         window_gap_rows = [
-            gap_rows_by_asset[symbol][i - 1]
+            gap_rows_by_asset[symbol][r_start:r_end]
             for symbol in ASSET_UNIVERSE
-            for i in range(max(start, 1), end)
         ]
+        window_gap_rows = [row for rows in window_gap_rows for row in rows]
         frequency, magnitude = gap_component(window_gap_rows, tau)
         per_component["gap_frequency"].append(frequency)
         per_component["gap_magnitude"].append(magnitude)
 
     if not per_component[COMPONENT_NAMES[0]]:
-        raise FitnessV2Error("world produced zero complete 252-session descriptor windows")
+        raise FitnessV2Error("world produced zero complete 252-return descriptor windows")
     return per_component
 
 
@@ -605,11 +614,29 @@ def execution_skip_mask(rng, n_sessions: int, skip_probability: float = 0.05) ->
 # §4.3 -- canonical, content-addressed complete-protocol manifest
 # ---------------------------------------------------------------------------
 
+DEVELOPMENT_BOUNDARY_RULE = (
+    "No row before the world's own first DEVELOPMENT session is read, for any "
+    "purpose, ever, in calibration or descriptor computation. The Execution/"
+    "Shock real-warm-up amendment governs WORLD CONSTRUCTION only, not "
+    "calibration or descriptors -- it grants no exception here. The return "
+    "series for asset i begins at the world's second session (first return's "
+    "base = the world's own first-session close); an N-session world yields "
+    "exactly N-1 returns. A 252-window means 252 consecutive RETURNS (253 "
+    "consecutive prices), never 252 consecutive sessions -- an N-session "
+    "world yields exactly N-1-252+1 = N-252 complete 252-return windows "
+    "(H1: 1008 sessions -> 1007 returns -> 756 windows). Gaps need "
+    "close[t-1], so the first gap is also at the world's second session. "
+    "M63 turnover's first defined value is at the 64th session within a "
+    "window; leader-change denominators count only consecutive pairs where "
+    "both leaders are defined (§3 #6)."
+)
+
 RULE_SUMMARY = {
     "0_candidate_descriptor_horizon": (
-        "Component-wise median over every complete 252-session window (stride 1) "
+        "Component-wise median over every complete 252-return window (stride 1) "
         "of the world's own scored sessions; historical anchors and the "
-        "DEVELOPMENT reference use the identical procedure over their own shape."
+        "DEVELOPMENT reference use the identical procedure over their own shape. "
+        "See development_boundary_rule for the exact returns-vs-sessions boundary."
     ),
     "1_sample_standard_deviation": "Sample stdev, n-1; reject below 2 observations.",
     "2_returns": "Adjusted-close simple returns: adjusted[t]/adjusted[t-1]-1.",
@@ -651,12 +678,16 @@ def build_complete_protocol(
     *, tau: float, gap_extrema_bounds: tuple[float, float], reference: Mapping[str, dict],
     h_shape_dates: Mapping[str, Mapping[str, object]],
     h_shape_anchor_rows: Mapping[str, Mapping[str, Mapping[str, float]]],
+    stream_counts: Mapping[str, Mapping[str, object]],
+    boundary_proof: Mapping[str, Mapping[str, object]],
 ) -> dict:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "authority": (
             "Rick: GO — Claude Code on NODE: TBOTS Fitness V2 pre-result "
-            "protocol completion, 2026-09-26"
+            "protocol completion, 2026-09-26, and GO ADDENDUM A — Unattended "
+            "operation, 2026-09-26 (§2's blocking development-boundary "
+            "correction and §3's positive post-2018/pre-2007-02-07 filter proof)"
         ),
         "depends_on": {
             "parameter_freeze": PARAMETER_FREEZE_ID,
@@ -665,11 +696,14 @@ def build_complete_protocol(
             "execution_diversity_amendment": EXECUTION_DIVERSITY_AMENDMENT_ID,
         },
         "development_boundary": {"start": DEVELOPMENT_START, "end": DEVELOPMENT_END},
+        "development_boundary_rule": DEVELOPMENT_BOUNDARY_RULE,
         "h_shapes": {
             "declared_starts": H_SHAPE_STARTS,
             "dates": dict(h_shape_dates),
             "anchor_rows": dict(h_shape_anchor_rows),
+            "stream_counts": dict(stream_counts),
         },
+        "post_development_filter_proof": dict(boundary_proof),
         "asset_universe": list(ASSET_UNIVERSE),
         "component_names": list(COMPONENT_NAMES),
         "rules": RULE_SUMMARY,

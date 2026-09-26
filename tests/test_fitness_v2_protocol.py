@@ -223,6 +223,77 @@ class GapDescriptor(unittest.TestCase):
         self.assertAlmostEqual(magnitude, statistics.median([0.05, 0.10]))
 
 
+class NoNegativeIndexList(list):
+    """Raises on any negative-index read -- the only way `_component_window_
+    values` could ever read a row 'before' a world's own array start (there is
+    no data before index 0 to read; a negative index would silently wrap to
+    the array's own tail in plain Python instead of raising)."""
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            if (key.start is not None and key.start < 0) or (key.stop is not None and key.stop < 0):
+                raise AssertionError("negative slice index touched a pre-array row")
+        elif isinstance(key, int) and key < 0:
+            raise AssertionError("negative index touched a pre-array row")
+        return super().__getitem__(key)
+
+
+class DevelopmentBoundary(unittest.TestCase):
+    def test_no_component_ever_reads_a_negative_index(self):
+        n = proto.DESCRIPTOR_WINDOW + 1  # smallest valid world: exactly one window
+        world = flat_world(n, seed=55)
+        for symbol in proto.ASSET_UNIVERSE:
+            row = world["assets"][symbol]
+            for field in ("adjusted_close", "raw_open", "raw_close", "corporate_action"):
+                row[field] = NoNegativeIndexList(row[field])
+        tau = pooled_tau([world])
+        vector = proto.world_descriptor_vector(world, tau)
+        self.assertEqual(set(vector), set(proto.COMPONENT_NAMES))
+
+    def test_returns_series_first_value_uses_first_session_as_base_not_earlier(self):
+        # GO Addendum A #2: base = the world's own first session close; the
+        # first return is dated at the SECOND session. n sessions -> n-1
+        # returns, never n (which would require a session before index 0).
+        prices = [100.0, 102.0, 101.0, 103.5]
+        returns = proto.adjusted_simple_returns(prices)
+        self.assertEqual(len(returns), len(prices) - 1)
+        self.assertAlmostEqual(returns[0], 102.0 / 100.0 - 1.0)
+
+    def test_window_count_formula_matches_h1_worked_example(self):
+        # GO Addendum A #2 worked example: H1 has 1008 sessions -> 1007
+        # returns -> 1007-252+1 = 756 complete 252-return windows. Checked as
+        # pure arithmetic here; the formula itself is exercised against a
+        # real (small) world by the tests below.
+        n_sessions = 1008
+        n_returns = n_sessions - 1
+        expected_windows = n_returns - proto.DESCRIPTOR_WINDOW + 1
+        self.assertEqual(expected_windows, 756)
+
+    def test_window_count_matches_returns_not_sessions(self):
+        n_sessions = proto.DESCRIPTOR_WINDOW + 6  # 258 sessions -> 257 returns -> 6 windows
+        expected_windows = (n_sessions - 1) - proto.DESCRIPTOR_WINDOW + 1
+        self.assertEqual(expected_windows, 6)
+        world = flat_world(n_sessions, seed=77)
+        tau = pooled_tau([world])
+        windows = proto._component_window_values(world, tau)
+        self.assertEqual(len(windows["volatility_aggregate"]), expected_windows)
+        self.assertEqual(len(windows["gap_frequency"]), expected_windows)
+
+    def test_exactly_one_window_at_the_minimum_valid_length(self):
+        n = proto.DESCRIPTOR_WINDOW + 1
+        world = flat_world(n, seed=88)
+        tau = pooled_tau([world])
+        windows = proto._component_window_values(world, tau)
+        self.assertEqual(len(windows["volatility_aggregate"]), 1)
+
+    def test_rejects_world_at_the_old_incorrect_minimum(self):
+        # DESCRIPTOR_WINDOW sessions gives DESCRIPTOR_WINDOW-1 returns: one
+        # short of a single complete 252-return window.
+        world = flat_world(proto.DESCRIPTOR_WINDOW, seed=99)
+        with self.assertRaises(FitnessV2Error):
+            proto.world_descriptor_vector(world, tau=0.02)
+
+
 class WorldDescriptorVector(unittest.TestCase):
     def test_produces_all_32_components_and_is_deterministic(self):
         n = proto.DESCRIPTOR_WINDOW + 8
@@ -544,6 +615,22 @@ class CompleteProtocolManifest(unittest.TestCase):
                 "H3": {"start": "2015-02-09", "end": "2018-12-31", "n_sessions": 981},
             },
             h_shape_anchor_rows={"H1": {}, "H2": {}, "H3": {}},
+            stream_counts={
+                "H1": {"first_date": "2007-02-07", "last_date": "2011-02-04",
+                       "raw_sessions": 1008, "returns": 1007, "windows_252": 756},
+                "H2": {"first_date": "2011-02-07", "last_date": "2015-02-06",
+                       "raw_sessions": 1007, "returns": 1006, "windows_252": 755},
+                "H3": {"first_date": "2015-02-09", "last_date": "2018-12-31",
+                       "raw_sessions": 981, "returns": 980, "windows_252": 729},
+            },
+            boundary_proof={
+                symbol: {
+                    "raw_row_count": 5000, "raw_first": "2001-01-01", "raw_last": "2026-08-25",
+                    "post_filter_row_count": 2996, "post_filter_min": "2007-02-07",
+                    "post_filter_max": "2018-12-31",
+                }
+                for symbol in proto.ASSET_UNIVERSE
+            },
         )
 
     def test_round_trips_through_validation(self):
@@ -578,6 +665,13 @@ class CompleteProtocolManifest(unittest.TestCase):
              "execution_diversity_amendment"},
         )
         self.assertEqual(len(content["component_names"]), 32)
+
+    def test_records_development_boundary_rule_and_filter_proof(self):
+        envelope = proto.complete_protocol_manifest(**self._kwargs())
+        content = envelope["content"]
+        self.assertIn("252-return", content["development_boundary_rule"])
+        self.assertEqual(content["h_shapes"]["stream_counts"]["H1"]["windows_252"], 756)
+        self.assertEqual(len(content["post_development_filter_proof"]), 8)
 
 
 class ComponentNamesCanonical(unittest.TestCase):
