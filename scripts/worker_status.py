@@ -8,9 +8,16 @@ from pathlib import Path
 
 SCHEMA = "tbots-status-v1"
 
-VALID_STATES = {
-    "audit_window", "idle", "world_bank", "baseline", "campaign",
-    "admission", "terminal_hold", "stopped",
+# Exactly Addendum A section 4's schema comment -- state is coarse-grained
+# (what the worker's overall operational status is), phase is fine-grained
+# (what it is doing within "running"/"audit_window"). These are two
+# different axes; a state value must never be reused as a phase value or
+# vice versa (an earlier version of this module conflated them -- fixed
+# 2026-09-26 during the Addendum A reconciliation pass).
+VALID_STATES = {"running", "audit_window", "stopped", "hold", "complete"}
+VALID_PHASES = {
+    "protocol_freeze", "freeze_audit_window", "world_bank", "baseline",
+    "campaign", "admission", "champion_decision", "expansion", "terminal_hold",
 }
 VALID_STOP_CODES = {None, "A", "B", "C", "D", "E", "F", "G", "H", "R"}
 
@@ -39,6 +46,8 @@ def build_status(**fields) -> dict:
         raise StatusValidationError(f"unexpected schema: {fields['schema']!r}")
     if fields["state"] not in VALID_STATES:
         raise StatusValidationError(f"unknown state: {fields['state']!r}")
+    if fields["phase"] not in VALID_PHASES:
+        raise StatusValidationError(f"unknown phase: {fields['phase']!r}")
     if fields["stop_code"] not in VALID_STOP_CODES:
         raise StatusValidationError(f"unknown stop_code: {fields['stop_code']!r}")
     if fields["state"] == "stopped" and fields["stop_code"] is None:

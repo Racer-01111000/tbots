@@ -65,6 +65,47 @@ class BuildStatus(unittest.TestCase):
         for code in ("A", "B", "C", "D", "E", "F", "G", "H", "R"):
             build_status(**_base(state="stopped", stop_code=code))
 
+    def test_accepts_every_documented_state(self):
+        # Addendum A section 4's exact enum: "running | audit_window |
+        # stopped | hold | complete". "stopped" needs a stop_code; the
+        # rest must not have one.
+        for state in ("running", "audit_window", "hold", "complete"):
+            build_status(**_base(state=state, stop_code=None))
+        build_status(**_base(state="stopped", stop_code="A"))
+
+    def test_accepts_every_documented_phase(self):
+        for phase in (
+            "protocol_freeze", "freeze_audit_window", "world_bank", "baseline",
+            "campaign", "admission", "champion_decision", "expansion", "terminal_hold",
+        ):
+            build_status(**_base(phase=phase))
+
+    def test_rejects_unknown_phase(self):
+        with self.assertRaises(StatusValidationError):
+            build_status(**_base(phase="lunch_break"))
+
+    def test_state_and_phase_are_separate_axes_not_interchangeable(self):
+        # An earlier version of worker_status.py conflated the two --
+        # phase-only values (e.g. "world_bank") must never validate as a
+        # state, and state-only values (e.g. "hold") must never validate
+        # as a phase. Fixed 2026-09-26 during the Addendum A reconciliation.
+        phase_only_values = (
+            "world_bank", "baseline", "campaign", "admission",
+            "champion_decision", "expansion", "protocol_freeze",
+        )
+        for bad_state in phase_only_values:
+            with self.assertRaises(StatusValidationError):
+                build_status(**_base(state=bad_state, stop_code=None))
+        state_only_values = ("running", "hold", "complete")
+        for bad_phase in state_only_values:
+            with self.assertRaises(StatusValidationError):
+                build_status(**_base(phase=bad_phase))
+
+    def test_hold_state_does_not_require_a_stop_code(self):
+        status = build_status(**_base(state="hold", phase="terminal_hold", stop_code=None))
+        self.assertEqual(status["state"], "hold")
+        self.assertIsNone(status["stop_code"])
+
 
 class ReadWriteStatus(unittest.TestCase):
     def test_round_trips_through_disk(self, tmp_path=None):
