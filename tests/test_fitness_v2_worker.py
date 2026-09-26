@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "scripts" / "lib"))
 
 import fitness_v2_worker as worker
+from worker_checkpoint import ArtifactCollision, prepare_transaction, recover_pending_transaction
 from worker_lock import worker_lock
 from worker_status import build_status
 
@@ -199,6 +200,76 @@ class MainEntryPoint(WorkerHarness):
         first = worker.main()
         second = worker.main()
         self.assertEqual((first, second), (0, 0))
+
+
+class CrashRecovery(WorkerHarness):
+    """worker_checkpoint.py's own test suite already proves prepare_transaction/
+    recover_pending_transaction's generic crash-safety. What these tests add:
+    that fitness_v2_worker's OWN entry point (run_one_step -- called at the
+    top of every invocation, before any new work) actually benefits from
+    that guarantee for the artifact shapes and paths this worker really
+    uses, and that a fully-deterministic redo (the safe fallback this
+    worker's current design relies on for mid-campaign crashes -- see the
+    "not yet implemented" note in fitness_v2_worker.py's commit -- restarts a
+    campaign from Gen0 rather than resuming generation N) never corrupts or
+    duplicates an already-committed artifact."""
+
+    def test_pending_transaction_from_a_simulated_crash_is_recovered_before_new_work(self):
+        # Simulate: prepare_transaction wrote the manifest (durable proof of
+        # intent) but the process died before recover_pending_transaction's
+        # hardlink-commit step ran -- exactly worker_checkpoint's own crash
+        # window. The NEXT invocation's run_one_step() must resolve this
+        # before doing anything else.
+        artifacts = {"evolution/state/world_bank.json": {"historical": ["H1", "H2", "H3"]}}
+        prepare_transaction(worker.REPO_ROOT, "crash_test", artifacts, allowed_prefixes={"evolution"})
+        final_path = worker.REPO_ROOT / "evolution" / "state" / "world_bank.json"
+        self.assertFalse(final_path.exists())  # not yet committed -- this IS the crash window
+
+        self._write_status(_base_status())  # idle window: run_one_step does no new work either way
+        result = worker.run_one_step()
+
+        self.assertEqual(result["action"], "waiting_on_audit_window")
+        self.assertTrue(final_path.exists())
+        self.assertEqual(json.loads(final_path.read_text()), artifacts["evolution/state/world_bank.json"])
+        # The pending-transaction bookkeeping itself is gone -- recovered, not left dangling.
+        self.assertFalse((worker.REPO_ROOT / ".worker_checkpoint_transaction.json").exists())
+
+    def test_deterministic_redo_of_an_already_committed_generation_is_a_safe_no_op(self):
+        # Models the current worker's mid-campaign crash fallback: if the
+        # process dies partway through a campaign, the next invocation
+        # restarts that campaign from Gen0 (same campaign_seed => byte-
+        # identical generations) rather than resuming generation N. Proves
+        # that redoing generation 0's checkpoint with IDENTICAL content
+        # after it was already committed is a safe no-op, never a collision
+        # or a silent overwrite.
+        artifacts = {"evolution/state/campaign_1_generation_0.json": {"generation": 0, "best": 0.5}}
+        worker._checkpoint_and_push("gen0", artifacts, "generation 0")
+        first_head = self._git_head()
+
+        # "Restart from scratch": recompute and re-checkpoint the exact same
+        # content, exactly as a deterministic campaign redo would.
+        worker._checkpoint_and_push("gen0_redo", artifacts, "generation 0 (redo after crash)")
+
+        self.assertEqual(self._git_head(), first_head)  # nothing new to commit -- true no-op
+        recorded = json.loads(
+            (worker.REPO_ROOT / "evolution" / "state" / "campaign_1_generation_0.json").read_text()
+        )
+        self.assertEqual(recorded, artifacts["evolution/state/campaign_1_generation_0.json"])
+
+    def test_redo_with_genuinely_different_content_is_rejected_not_silently_overwritten(self):
+        # If determinism were ever violated (a real bug, not a crash), the
+        # checkpoint layer must fail closed rather than silently replace
+        # already-committed evidence with a different result.
+        first = {"evolution/state/campaign_1_generation_0.json": {"generation": 0, "best": 0.5}}
+        worker._checkpoint_and_push("gen0", first, "generation 0")
+
+        second = {"evolution/state/campaign_1_generation_0.json": {"generation": 0, "best": 0.999}}
+        with self.assertRaises(ArtifactCollision):
+            prepare_transaction(worker.REPO_ROOT, "gen0_conflict", second, allowed_prefixes={"evolution"})
+            recover_pending_transaction(worker.REPO_ROOT)
+
+    def _git_head(self) -> str:
+        return _git(self.work, "rev-parse", "HEAD")
 
 
 if __name__ == "__main__":
