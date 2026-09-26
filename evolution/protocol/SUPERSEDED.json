@@ -1,0 +1,13 @@
+{
+  "schema": "tbots-protocol-supersession-v1",
+  "updated_utc": "2026-09-26T07:20:00Z",
+  "superseded": [
+    {
+      "manifest_id": "fitness_v2_complete_protocol_14fe15dd4525ca1314a135b4e63a6a36ab22104e789385917d9e9e8958cd518d",
+      "superseded_by": "fitness_v2_complete_protocol_49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89",
+      "superseded_at_commit": "1c3b6b013c4a47dbaf74a8a9ef5cda09f43afcd2",
+      "reason": "Sequence warm-up accounting made explicit (anchor = warm-up bar 0) inside the post-freeze audit window, before any world generation.",
+      "production_used": false
+    }
+  ]
+}
