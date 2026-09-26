@@ -1,0 +1,57 @@
+{
+  "content": {
+    "authority": "Rick",
+    "distributional_sequence": {
+      "generated_prior_price_bars": 378,
+      "historical_warmup_exception": false,
+      "market_distance_exempt": false,
+      "scored": false,
+      "stream": "Same world transformation stream"
+    },
+    "execution": {
+      "eligibility": "Frozen S5A insufficient-history semantics; naturally satisfy lookback before eligibility",
+      "market_distance_exempt": true,
+      "only_stress": "Frozen deterministic skipped-fill behavior",
+      "scored_price_path": "Unchanged matching historical anchor",
+      "warmup": "Same available real historical warm-up as matching immutable historical anchor"
+    },
+    "extends_parameter_freeze": "fitness_v2_parameter_freeze_47aba93e384f50836713b7c4e4723ddf858d6c8eda8da363c391d9bbb261cfac",
+    "historical_warmup_exceptions": {
+      "applies_to": [
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "fabrication_interpolation_backfill_bootstrap": false,
+      "families": [
+        "execution",
+        "shock"
+      ],
+      "fewer_than_378_bars_permitted": true,
+      "protected_or_post_2018_sources": false
+    },
+    "preserved_receipt_commits": [
+      "9ff6582c9798e9fad70d5e3cf666238c04cf2e78",
+      "008b39ad9197b02cdf629e5818a1c0a2b94a7a06",
+      "69fa48db8e791ac8be8862f16dab6060f70a4acf"
+    ],
+    "resolution_status": {
+      "complete_executable_protocol_ready": false,
+      "execution_h1_stop": "Correct under then-unspecified rule; resolved by Rick",
+      "prior_receipts": "Preserved historical evidence, not erased or rewritten",
+      "scope": "Warm-up amendment only; full protocol blocked on separately recorded descriptor/OC1 definitions",
+      "shock_h1_stop": "Correct under then-unspecified rule; resolved by Rick"
+    },
+    "schema_version": 1,
+    "shock": {
+      "eligibility": "Frozen S5A insufficient-history semantics; naturally satisfy lookback before eligibility",
+      "gap_relocations_create_extra_history": false,
+      "market_distance_exempt": false,
+      "only_price_transformation": "Exactly three authorized DEVELOPMENT donor-gap relocations into three distinct eligible asset/session destinations, preserving destination intraday geometry",
+      "same_asset_donor_destination_restriction": false,
+      "scored_base_path": "Matching immutable historical anchor",
+      "warmup": "Same available real historical warm-up as matching immutable historical anchor"
+    }
+  },
+  "manifest_id": "fitness_v2_real_warmup_amendment_3053c6c4fe0c708307ba9bf0e0084b3fbd967567aa9514da07f8756ce061dfec"
+}

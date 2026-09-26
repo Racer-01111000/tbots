@@ -1,8 +1,9 @@
 """Pre-result market-distance gate; never a substitute for structural validation.
 
 Execution's exemption applies to this predicate alone. Callers must independently
-validate seeds, calendars, source isolation, and execution mechanics. The complete
-world builder remains blocked on the recorded H1 warm-up contract conflict.
+validate seeds, calendars, source isolation, and execution mechanics. Rick has
+resolved both Execution and Shock warm-up through historical-anchor exceptions.
+The coverage audit below remains historical evidence, not a readiness gate.
 """
 from __future__ import annotations
 

@@ -1,0 +1,53 @@
+{
+  "amendment_id": "fitness_v2_real_warmup_amendment_3053c6c4fe0c708307ba9bf0e0084b3fbd967567aa9514da07f8756ce061dfec",
+  "artifact_sha256": {
+    "FITNESS_V2_FORMULA_DEFINITION_STOP_20260926.md": "95a34b432678ff7c97d76cf7a2835868d4bfe065d937d40103626ac4cf81a9f0",
+    "FITNESS_V2_WARMUP_RESOLVED_FORMULAS_PENDING_20260926.md": "03ebaf4b157d2e5cb6140c643011217e7f7daba82c3f4bca16fe840470382eb7",
+    "evolution/protocol/fitness_v2_real_warmup_amendment_3053c6c4fe0c708307ba9bf0e0084b3fbd967567aa9514da07f8756ce061dfec.json": "81f7a5186e7e261ffee66cf01d07b8fd2dfa4030b0a7303b863116c09c8db202",
+    "scripts/fitness_v2_admission.py": "d08648807a0e04db6986f31b3bd15115849ac62a00fe437fa3a4df3bd819862e",
+    "scripts/fitness_v2_warmup.py": "2396ec8d03ca2ff2ffd17065b13ce1f344e2e30c22a399d11546c56dfd578a8b",
+    "tests/test_fitness_v2_warmup.py": "c9857e9aab1dfc6d76c3c8bfe8d918aa4cee44f1c75ace6cb5b26bcc1b2c2630"
+  },
+  "blocked": [
+    "Trend normalized linear-strength formula",
+    "OC1 zero-MAD family aggregation"
+  ],
+  "checkpoint": "69fa48db8e791ac8be8862f16dab6060f70a4acf",
+  "complete_protocol_ready": false,
+  "production_genomes_generated": 0,
+  "production_worlds_generated": 0,
+  "recorded_utc": "2026-09-26T01:46:07.559194+00:00",
+  "resolved": [
+    "Execution real-anchor warmup",
+    "Shock real-anchor warmup"
+  ],
+  "static_checks": {
+    "existing_tracked_changes": "Admission module docstring only; prior receipts/protocols and V1/S5D/S6B untouched",
+    "full_protocol_draft_absent": "PASS",
+    "git_diff_check": "PASS",
+    "manifest_content_identity_and_envelope": "PASS",
+    "prior_commits_ancestor_checks": "PASS"
+  },
+  "tests": {
+    "focused": {
+      "command": "python3 -m unittest discover -s tests -p 'test_fitness_v2*.py' -v",
+      "elapsed_seconds": 0.687,
+      "exit_code": 0,
+      "failures": 0,
+      "log": "experiments/fitness_v2_warmup_resolution_20260926/focused_suite.log",
+      "log_sha256": "9a919453188ac1c17f97719a0b5768646e7f03828d50598b64310a6afc9ae017",
+      "passed": 37
+    },
+    "full": {
+      "command": "python3 -m unittest discover -s tests -v",
+      "elapsed_seconds": 41.82,
+      "exit_code": 0,
+      "failures": 0,
+      "log": "experiments/fitness_v2_warmup_resolution_20260926/full_suite.log",
+      "log_sha256": "b9ad2b9c389ba30ffc051addd1b6ed068c8b7b49df44c936aac8342628e1cfff",
+      "passed": 379
+    }
+  },
+  "training_started": false,
+  "unattended_acceptance_proven": false
+}
