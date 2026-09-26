@@ -47,6 +47,11 @@ class DeriveSeed(unittest.TestCase):
         with self.assertRaises(SeedStreamError):
             derive_seed("momentum", 5)
 
+    def test_rejects_capitalized_family_names(self):
+        for bad_family in ("Distributional", "EXECUTION", "Sequence", "Shock", "SHOCK"):
+            with self.assertRaises(SeedStreamError):
+                derive_seed(bad_family, 5)
+
     def test_rejects_index_below_five(self):
         for bad_index in (0, 1, 2, 3, 4):
             with self.assertRaises(SeedStreamError):
@@ -158,6 +163,34 @@ class SimulatedExpansionSequence(unittest.TestCase):
             used_seeds.append(result["seed"])
         self.assertEqual(drawn_indices, [5, 6, 7, 8, 9])
         self.assertEqual(len(set(used_seeds)), 5)
+
+
+class PinnedIndexFiveValues(unittest.TestCase):
+    """Rick's decision, 2026-09-26 (FITNESS_V2_SEED_STREAM_CASING_DECISION_
+    20260926.md): the lowercase family identifiers already used throughout
+    fitness_v2_parameter_freeze are the ones this formula uses -- not a
+    recovered interpretation of Sable handoff section 48, Rick's own call
+    since section 48 does not specify a casing. These four literal values
+    were supplied by Rick as pinned evidence and independently verified
+    against this module before being committed here. Hardcoded (not
+    recomputed via _reference_seed) so a future accidental change to the
+    namespace string, the digest truncation, or the retry rule is caught
+    immediately rather than silently re-deriving a new "expected" value."""
+
+    PINNED = {
+        "distributional": 3728510749,
+        "execution": 2005964006,
+        "sequence": 687330419,
+        "shock": 3037866416,
+    }
+
+    def test_every_family_index_five_matches_ricks_pinned_value(self):
+        for family, expected_seed in self.PINNED.items():
+            with self.subTest(family=family):
+                self.assertEqual(derive_seed(family, 5)["seed"], expected_seed)
+
+    def test_pinned_values_are_pairwise_distinct(self):
+        self.assertEqual(len(set(self.PINNED.values())), 4)
 
 
 if __name__ == "__main__":
