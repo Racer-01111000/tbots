@@ -105,6 +105,35 @@ class SimulateWorldNoActivity(unittest.TestCase):
         self.assertFalse(result["halted"])
 
 
+class ScoredStartIndex(unittest.TestCase):
+    def test_rejects_out_of_range_scored_start(self):
+        world = _trending_world(n_sessions=300)
+        with self.assertRaises(SimulatorError):
+            simulate_world(world, CONTROL_GENOME, scored_start_index=300)
+        with self.assertRaises(SimulatorError):
+            simulate_world(world, CONTROL_GENOME, scored_start_index=-1)
+
+    def test_history_reaches_into_warmup_region_for_immediate_eligibility(self):
+        # 252 warmup bars + a short scored region. Without warmup lookback,
+        # CONTROL_GENOME's M252 could never become eligible inside the short
+        # scored region alone; with it, trading can start on day 1 of scoring.
+        world = _trending_world(n_sessions=252 + 60)
+        result = simulate_world(world, CONTROL_GENOME, scored_start_index=252)
+        self.assertGreater(result["order_count"], 0)
+
+    def test_warmup_region_itself_is_never_scored(self):
+        # Choose a scored_start_index well PAST the point (index 252) where
+        # CONTROL_GENOME's M252 first becomes eligible, so real, order-
+        # producing rebalances occur in indices 252..279 in the "whole" run
+        # -- and must be invisible to a run that scores only from index 280
+        # onward, even though both runs share the exact same underlying
+        # world array.
+        world = _trending_world(n_sessions=280 + 60)
+        whole = simulate_world(world, CONTROL_GENOME, scored_start_index=0)
+        tail_only = simulate_world(world, CONTROL_GENOME, scored_start_index=280)
+        self.assertNotEqual(whole["total_return"], tail_only["total_return"])
+
+
 class SimulateWorldWithActivity(unittest.TestCase):
     def setUp(self):
         self.world = _trending_world(n_sessions=300)

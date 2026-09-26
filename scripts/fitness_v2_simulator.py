@@ -11,6 +11,20 @@ which WorldView below reproduces exactly (same field whitelist, same
 bisect_right "include today" history() semantics, same "fewer rows than
 requested, never padded/backfilled" behavior on short lookback).
 
+Warmup vs. scored split: a world's real or generated warm-up bars (handoff
+§16 Distributional's 378 generated bars, §18/§21 Execution/Shock's real
+pre-anchor history) live at the FRONT of the array, before
+`scored_start_index`. simulate_world()/simulate_passive_comparator() never
+observe/decide/trade for those indices -- only history() (called from
+within the scored loop) can reach back into them for indicator lookback.
+This exactly mirrors s5a_evaluator/replay.ReplayEngine: episode_dates (the
+only dates ever observe()'d/advance()'d over) starts at the declared
+lane_start, while history() still bisects into earlier calendar dates.
+fitness_v2_protocol.DEVELOPMENT_BOUNDARY_RULE's stricter "never read a row
+before the world's own first session" applies only to descriptor/
+calibration computation (a separate code path, world_descriptor_vector),
+not to this module.
+
 Corporate-action format: a world's `corporate_action` array entry is the
 exact same value the real dataset uses (a JSON string like
 '{"dividend_amount": 1.23}', or ""/None) -- read directly by
@@ -138,14 +152,33 @@ def _current_raw_prices(assets, field: str, index: int) -> dict:
 
 def simulate_world(
     world: Mapping[str, Mapping[str, Sequence]], genome: Mapping[str, object], *,
-    skip_mask: Sequence[bool] | None = None,
+    scored_start_index: int = 0, skip_mask: Sequence[bool] | None = None,
 ) -> dict:
-    """Runs one genome through one world end to end (index 0 through the
-    world's last scored session), fresh capital, no state carried in or
-    out. `skip_mask[i] is True` means: a fill that would otherwise land at
-    the open of session i is deferred exactly one session instead (frozen
-    Execution stress, §17) -- never applied to any other family."""
+    """Runs one genome through one world's SCORED region (index
+    scored_start_index through the world's last session), fresh capital, no
+    state carried in or out. Indices before scored_start_index are never
+    observed/decided/traded -- they exist solely so WorldView.history() can
+    give indicators real lookback at the very first scored session, exactly
+    mirroring s5a's own ReplayEngine: episode_dates (the only dates ever
+    observe()'d/advance()'d over) starts at the declared lane_start, while
+    history() can still bisect into earlier, pre-episode calendar dates.
+    This is the intended treatment of a world's generated/real warm-up bars
+    (handoff §16 Distributional, §18/§21 Execution/Shock warm-up): they
+    supply lookback continuity for SIMULATION, while
+    fitness_v2_protocol.DEVELOPMENT_BOUNDARY_RULE's stricter "never read a
+    row before the world's own first session" applies only to descriptor/
+    calibration computation, a separate code path from this one.
+
+    `skip_mask[i] is True` (indexed relative to the SCORED region, i.e.
+    `skip_mask[0]` is scored_start_index) means: a fill that would otherwise
+    land at the open of that scored session is deferred exactly one session
+    instead (frozen Execution stress, §17) -- never applied to any other
+    family."""
     n_sessions = _validate_simulation_world_shape(world)
+    if not isinstance(scored_start_index, int) or isinstance(scored_start_index, bool):
+        raise SimulatorError("scored_start_index must be an int")
+    if not 0 <= scored_start_index < n_sessions:
+        raise SimulatorError("scored_start_index must be a valid index inside the world")
     assets = world["assets"]
     universe = genome["universe"]
     portfolio = execution.Portfolio(STARTING_CASH_CENTS)
@@ -155,7 +188,8 @@ def simulate_world(
     order_count = 0
     total_slippage_cents = 0
 
-    for index in range(n_sessions):
+    for index in range(scored_start_index, n_sessions):
+        scored_offset = index - scored_start_index
         raw_opens = _current_raw_prices(assets, "raw_open", index)
         raw_closes = _current_raw_prices(assets, "raw_close", index)
 
@@ -166,7 +200,7 @@ def simulate_world(
 
         arriving = pending or []
         pending = None
-        if skip_mask is not None and skip_mask[index] and arriving and deferred is None:
+        if skip_mask is not None and skip_mask[scored_offset] and arriving and deferred is None:
             deferred = arriving
             arriving = []
         elif deferred is not None:
@@ -187,7 +221,7 @@ def simulate_world(
         if drawdown <= -genome["drawdown_halt_pct"] - 1e-9 and not portfolio.halted:
             portfolio.halted = True
             target_weights = {}
-        elif not portfolio.halted and index % genome["rebalance_every_n_sessions"] == 0:
+        elif not portfolio.halted and scored_offset % genome["rebalance_every_n_sessions"] == 0:
             decision = control_agent.decide(view, genome)
             target_weights = decision["weights"]
 
@@ -271,14 +305,23 @@ def passive_comparator_genome(genome: Mapping[str, object]) -> dict:
     }
 
 
-def simulate_passive_comparator(world: Mapping[str, Mapping[str, Sequence]], genome: Mapping[str, object]) -> dict:
-    """Runs the exposure-matched passive comparator through the SAME world.
-    Uses a fixed, deterministic equal-weight decision at index 0 rather than
-    routing through control_agent/indicators (which select by momentum/
-    trend, not "hold everything equal-weight") -- the passive comparator is
-    not evaluated by the strategy's own agent logic, only by the same
+def simulate_passive_comparator(
+    world: Mapping[str, Mapping[str, Sequence]], genome: Mapping[str, object], *,
+    scored_start_index: int = 0,
+) -> dict:
+    """Runs the exposure-matched passive comparator through the SAME world's
+    SCORED region (see simulate_world's docstring for the warmup/scored
+    split rationale -- identical treatment here). Uses a fixed, deterministic
+    equal-weight decision at the first scored session rather than routing
+    through control_agent/indicators (which select by momentum/trend, not
+    "hold everything equal-weight") -- the passive comparator is not
+    evaluated by the strategy's own agent logic, only by the same
     execution/accounting mechanics."""
     n_sessions = _validate_simulation_world_shape(world)
+    if not isinstance(scored_start_index, int) or isinstance(scored_start_index, bool):
+        raise SimulatorError("scored_start_index must be an int")
+    if not 0 <= scored_start_index < n_sessions:
+        raise SimulatorError("scored_start_index must be a valid index inside the world")
     assets = world["assets"]
     universe = ASSET_UNIVERSE
     target_weight = genome["target_max_exposure"] / len(universe)
@@ -286,7 +329,8 @@ def simulate_passive_comparator(world: Mapping[str, Mapping[str, Sequence]], gen
     pending: list[dict] | None = None
     equity_curve: list[int] = []
 
-    for index in range(n_sessions):
+    for index in range(scored_start_index, n_sessions):
+        scored_offset = index - scored_start_index
         raw_opens = _current_raw_prices(assets, "raw_open", index)
         raw_closes = _current_raw_prices(assets, "raw_close", index)
         for symbol in universe:
@@ -301,7 +345,7 @@ def simulate_passive_comparator(world: Mapping[str, Mapping[str, Sequence]], gen
         mark_prices = {s: _dollars_to_cents(raw_closes[s]) for s in universe}
         equity_cents = portfolio.equity_cents(mark_prices)
         portfolio.update_peak_and_drawdown(equity_cents)
-        if index == 0:
+        if scored_offset == 0:
             sizing_prices = {s: _dollars_to_cents(raw_closes[s]) for s in universe}
             current_shares = {s: portfolio.shares_of(s) for s in universe if portfolio.shares_of(s) > 0}
             pending = execution.compute_orders(
