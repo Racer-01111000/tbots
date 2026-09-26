@@ -477,6 +477,35 @@ class SequenceJoins(unittest.TestCase):
         joined_ratio = joined[1 + 5]["raw_close"] / joined[1 + 4]["raw_close"]
         self.assertAlmostEqual(original_ratio, joined_ratio)
 
+    def test_warmup_length_is_exactly_378_counting_the_anchor(self):
+        # Rick, post-freeze audit settlement: anchor is warm-up bar 0 for
+        # Sequence exactly as for Distributional; anchor + 377 joined bars
+        # = 378 warm-up bars, a pure index that need not land on a segment
+        # boundary (378-1=377 is not a multiple of 63, so the 6th segment
+        # straddles the warm-up/scored split -- that is expected).
+        anchor = {"raw_open": 100.0, "raw_high": 100.5, "raw_low": 99.5,
+                   "raw_close": 100.0, "adjusted_close": 50.0}
+        segments = [self._rows(500.0 + 100 * i, 63) for i in range(8)]  # 8*63=504 rows
+        joined = proto.join_sequence_segments(segments, anchor)
+        self.assertEqual(len(joined), 1 + 8 * 63)
+        warmup, scored = proto.sequence_warmup_and_scored(joined)
+        self.assertEqual(len(warmup), proto.SEQUENCE_WARMUP_BARS)
+        self.assertEqual(len(warmup), 378)
+        self.assertEqual(warmup[0], joined[0])  # the anchor row is bar 0
+        self.assertEqual(scored[0], joined[378])
+        self.assertEqual(len(warmup) + len(scored), len(joined))
+        # The warm-up cut (index 378) falls inside the 6th segment (rows
+        # 1+5*63=316 .. 1+6*63=379), not on a segment boundary.
+        sixth_segment_start, sixth_segment_end = 1 + 5 * 63, 1 + 6 * 63
+        self.assertTrue(sixth_segment_start < 378 < sixth_segment_end)
+
+    def test_rejects_sequence_world_shorter_than_warmup(self):
+        anchor = {"raw_open": 100.0, "raw_high": 100.5, "raw_low": 99.5,
+                   "raw_close": 100.0, "adjusted_close": 50.0}
+        joined = proto.join_sequence_segments([self._rows(500.0, 63)], anchor)
+        with self.assertRaises(FitnessV2Error):
+            proto.sequence_warmup_and_scored(joined)
+
     def test_start_index_zero_is_eligible(self):
         rng = random.Random(1)
         seen_zero = False
@@ -672,6 +701,12 @@ class CompleteProtocolManifest(unittest.TestCase):
         self.assertIn("252-return", content["development_boundary_rule"])
         self.assertEqual(content["h_shapes"]["stream_counts"]["H1"]["windows_252"], 756)
         self.assertEqual(len(content["post_development_filter_proof"]), 8)
+
+    def test_records_sequence_warmup_rule(self):
+        envelope = proto.complete_protocol_manifest(**self._kwargs())
+        content = envelope["content"]
+        self.assertEqual(content["sequence_warmup_bars"], 378)
+        self.assertIn("warm-up bar 0", content["sequence_warmup_rule"])
 
 
 class ComponentNamesCanonical(unittest.TestCase):

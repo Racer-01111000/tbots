@@ -1,12 +1,67 @@
 # Fitness V2 Complete Protocol Freeze — 2026-09-26
 
 Authority: Rick's GO "TBOTS Fitness V2 pre-result protocol completion"
-(2026-09-26), and GO Addendum A — Unattended operation (2026-09-26), whose
-§2 development-boundary correction and §3 post-2018/pre-2007-02-07 filter
-proof are both incorporated below and into the manifest itself.
+(2026-09-26), GO Addendum A — Unattended operation (2026-09-26, §2
+development-boundary correction and §3 post-2018/pre-2007-02-07 filter
+proof), and Rick's post-freeze-audit Sequence warm-up settlement
+(2026-09-26, §0 below) — all incorporated into the manifest itself.
 
-Manifest: `evolution/protocol/fitness_v2_complete_protocol_14fe15dd4525ca1314a135b4e63a6a36ab22104e789385917d9e9e8958cd518d.json`
-(`complete_protocol_ready: true`, schema_version 2).
+**Current manifest** (supersedes the one below):
+`evolution/protocol/fitness_v2_complete_protocol_49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89.json`
+(`complete_protocol_ready: true`, schema_version 3).
+
+Superseded, retained as provenance/audit trail (never used by production
+code): `evolution/protocol/fitness_v2_complete_protocol_14fe15dd4525ca1314a135b4e63a6a36ab22104e789385917d9e9e8958cd518d.json`
+(schema_version 2) — pushed at `e5d1923`/`bb7cbf9`, superseded within the
+same audit window before any world generation, per §0 below. Superseding it
+changed only the manifest's added fields (`sequence_warmup_rule`,
+`sequence_warmup_bars`, `schema_version`, `authority`) — tau, the reference
+median/MAD vector, the H-shape anchors, and every other §3 rule are
+identical, since the Sequence warm-up decision does not touch H1/H2/H3
+calibration at all (real historical anchors have no warm-up/segment
+structure). Rebuilt from the same cached calibration result with no
+recomputation.
+
+## 0. Post-freeze-audit Sequence warm-up settlement
+
+Rick's freeze audit (independently reverified 465/465, manifest rehash,
+sample n-1, strict `>` tau, Sequence start-0, no zero-MAD, filter proof,
+boundary arithmetic — all confirmed, no hold file) found one remaining gap
+before generation: `join_sequence_segments` emits the anchor as the
+Sequence world's own session 0, but rule #9 only defines the anchor as
+Distributional's "generated warm-up bar 0" explicitly; rule #10 only says
+the anchor "stands in as segment 0" for Sequence's join mechanics, without
+saying whether that row counts inside the 378 warm-up bars or before them.
+Left unsettled, that becomes a post-freeze convention choice made silently
+by whichever world-builder gets written later — the exact failure mode the
+freeze exists to prevent.
+
+**Settled, inside the 6-hour audit window, before any world generation**:
+the anchor row is warm-up bar 0 for Sequence exactly as for Distributional.
+Anchor (bar 0) + 377 bars from the Sequence transformation stream = 378
+warm-up bars (joined-sequence indices 0..377); the scored horizon begins at
+index 378. The warm-up/scored split is a pure index into the already-joined
+sequence — segments (63 intact rows each, per §10) are never split or
+realigned at this boundary; a single segment may straddle indices 377/378,
+which is expected, not an error (verified directly:
+`SequenceJoins::test_warmup_length_is_exactly_378_counting_the_anchor`
+builds an 8-segment, 505-row joined world and confirms the cut falls inside
+the sixth segment, at row 316–379, not on a 63-row boundary).
+
+Frozen as `SEQUENCE_WARMUP_RULE` / `SEQUENCE_WARMUP_BARS = 378` in
+`scripts/fitness_v2_protocol.py`, exposed as `sequence_warmup_and_scored()`,
+embedded verbatim in the manifest's `sequence_warmup_rule` /
+`sequence_warmup_bars` fields, and exercised by two new tests
+(`test_warmup_length_is_exactly_378_counting_the_anchor`,
+`test_rejects_sequence_world_shorter_than_warmup`) plus a manifest test
+(`test_records_sequence_warmup_rule`). 79 tests in
+`tests/test_fitness_v2_protocol.py` (was 76); full suite re-verified.
+
+The manifest hash changed as a direct, expected consequence
+(`14fe15dd…` → `49c71da1…`) — content-addressed identity means any real
+content change must produce a new hash; this is correct, not a defect. Per
+Rick's instruction, the 6-hour post-freeze audit window restarts from this
+new push (§6 below).
 
 ## 1. Reboot recovery
 
@@ -109,7 +164,28 @@ the next trading Monday.
 | H3 | 981 | 980 | 729 | 2015-02-09 | 2018-12-31 |
 
 Pooled reference calibration used 756+755+729 = 2240 windows across the
-three historical anchors.
+three historical anchors, rather than one continuous 2007-02-07..2018-12-31
+252-return stream (~2744 windows, including roughly 504 that straddle the
+H1/H2/H3 anniversary cuts).
+
+**Rationale for pooled-per-shape over one continuous stream** (Rick's
+review flagged that the choice is documented in the counts but not
+justified anywhere; recorded here per his instruction — receipt-only, the
+manifest hash is unaffected by this section): rule #0 requires the
+DEVELOPMENT reference and every candidate/anchor to be computed by the
+identical procedure, and every candidate the reference will ever be
+compared against is itself a single-shape world — Distributional and
+Sequence worlds are generated to match one H-shape's own length (§3 #9),
+Shock's base is one matching historical anchor, and Execution's base path
+is one unchanged historical anchor. A reference pooled from a continuous
+stream would include ~504 windows that straddle an H1/H2/H3 boundary —
+observations no single-shape candidate could ever produce, since no real
+candidate world spans two H-shapes end to end. Pooling those in would
+compare the candidate against a reference partly built from a structurally
+different kind of object, which is exactly what rule #0's "identical
+procedure" requirement is written to prevent. Pooled-per-shape keeps the
+reference and every candidate drawn from the same population of window
+shapes; it is not changed.
 
 Gap threshold (§3 #8), pooled across all eight assets and all three anchors,
 linear interpolation (numpy default / Hyndman-Fan type 7), from 23510 pooled
@@ -125,34 +201,59 @@ code path. Full values are recorded in the manifest's `reference_median`,
 
 Wall-clock: reference calibration 1862.6s (~31 min); anchor vectors +
 total 3720.4s (~62 min). Pure-Python nested 252/63-window computation; noted
-as a performance characteristic to watch during world-bank generation
-(§5), not a defect — correctness was prioritized per "measure before tune."
+as a performance characteristic to watch during world-bank generation (the
+GO's §5), not a defect — correctness was prioritized per "measure before
+tune."
+
+**Perf note (Rick, not blocking, deferred to the worker-build phase)**: the
+anchor-vector pass (1857.8s) recomputes `_component_window_values` over the
+same H1/H2/H3 data the pooled reference pass (1862.6s) already computed —
+calling it once per world and reusing those per-window lists for both the
+pooled reference and the per-world median would roughly halve total
+calibration time, and the same duplication will recur at scale during
+world-bank generation (~10 min/descriptor vector × 16 initial candidates
+plus rejected seeds is 3h+; expansion to 32 synthetic worlds is another
+~3h). Permitted post-freeze as implementation, not convention, but any such
+change (caching, numpy, incremental window statistics) must be proven
+bit-identical against this receipt's frozen `reference_median`/
+`reference_mad` before being relied on. Not applied in this freeze; picked
+up when the world-bank generator is built.
 
 ## 5. Tests and full suite
 
 `tests/test_fitness_v2_protocol.py`: 79 tests (65 initial + 4 manifest +
-5 `DevelopmentBoundary` boundary-correction tests + 5 manifest-boundary
-additions), fixtures/algebra only, never touching `data/normalized/*.csv`.
-Covers every §3 rule (#0-#12, including #3b) and its reject path: sample-
-stdev <2 observations, correlation/autocorrelation zero-variance, gap zero-
-exceedances, world-shorter-than-one-window, desynchronized/missing assets,
-§3 #12's zero-MAD abort, content-address tamper detection, determinism of
-every seeded draw (stationary bootstrap, sequence segment starts, shock
-event draws), Shock's exactly-three-gaps-differ and same-asset composition
-invariants, Sequence's zero-join-gap and start-index-0 eligibility, and the
-`DevelopmentBoundary` class above.
+6 `DevelopmentBoundary` boundary-correction tests + 2 Sequence-warmup tests
++ 2 manifest-boundary/warmup additions), fixtures/algebra only, never
+touching `data/normalized/*.csv`. Covers every §3 rule (#0-#12, including
+#3b) and its reject path: sample-stdev <2 observations, correlation/
+autocorrelation zero-variance, gap zero-exceedances, world-shorter-than-
+one-window, desynchronized/missing assets, §3 #12's zero-MAD abort,
+content-address tamper detection, determinism of every seeded draw
+(stationary bootstrap, sequence segment starts, shock event draws),
+Shock's exactly-three-gaps-differ and same-asset composition invariants,
+Sequence's zero-join-gap, start-index-0 eligibility and 378-bar warm-up
+accounting, and the `DevelopmentBoundary` class above.
 
 Full suite: **468/468 pass, 0 fail, 0 unexplained skip** (389 pre-existing +
-79 new). Confirmed on a clean run after the boundary correction.
+79 new). Confirmed on a clean run after both the boundary correction and
+the Sequence warm-up settlement.
 
 ## 6. Git
 
-Local commit `a8a1c5e` (protocol module + tests + reboot receipt +
-STATUS.json, pre-boundary-fix) was pushed immediately per Addendum A §1.
-This freeze commit (module/tests with the boundary correction, the real
-manifest, this receipt, and an updated STATUS.json) follows and is pushed
-immediately after, per the same instruction — push after every commit, not
-at the end.
+- `a8a1c5e` — protocol module + tests + reboot receipt + STATUS.json
+  (pre-boundary-fix). Pushed immediately per Addendum A §1.
+- `e5d1923` — protocol freeze: development-boundary fix + real calibration
+  (schema_version 2 manifest, now superseded per §0). Pushed immediately.
+- `bb7cbf9` — STATUS.json: freeze pushed, began the first 6-hour audit
+  window. Pushed immediately.
+- This commit — Sequence warm-up settlement (schema_version 3 manifest,
+  current), this receipt's §0/§4 updates, and a STATUS.json update
+  restarting the 6-hour audit window from this new push, per Rick's
+  instruction. Pushed immediately, not batched with anything after it.
+
+Every commit above was pushed before the next one started, per Addendum A
+§1's "push after every commit, not at the end" — verified local == remote
+after each push.
 
 ## 7. Scope boundary, restated
 

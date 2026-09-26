@@ -532,6 +532,34 @@ def join_sequence_segments(
     return joined
 
 
+SEQUENCE_WARMUP_BARS = 378
+
+SEQUENCE_WARMUP_RULE = (
+    "Rick, 2026-09-26 (settled inside the post-freeze audit window, before "
+    "any world generation): the anchor row emitted by join_sequence_segments "
+    "is warm-up bar 0 for Sequence exactly as rule #9 already makes it for "
+    "Distributional. Anchor (bar 0) + 377 bars from the Sequence "
+    "transformation stream = 378 warm-up bars (joined-sequence indices "
+    "0..377); the scored horizon begins at joined-sequence index 378. The "
+    "warm-up/scored split is a pure index into the already-joined sequence "
+    "-- segments (63 intact rows each, per §10) are never split or "
+    "realigned at this boundary; a single segment may straddle indices "
+    "377/378 and that is expected, not an error."
+)
+
+
+def sequence_warmup_and_scored(
+    joined_rows: Sequence[Mapping[str, float]]
+) -> tuple[list[dict], list[dict]]:
+    """Split a Sequence world's joined output (anchor + intact segments, from
+    join_sequence_segments) into (warm-up, scored) per SEQUENCE_WARMUP_RULE."""
+    if len(joined_rows) <= SEQUENCE_WARMUP_BARS:
+        raise FitnessV2Error(
+            "sequence world is shorter than the required 378 warm-up bars"
+        )
+    return list(joined_rows[:SEQUENCE_WARMUP_BARS]), list(joined_rows[SEQUENCE_WARMUP_BARS:])
+
+
 def draw_sequence_segment_starts(
     rng, source_length: int, segment_length: int, n_segments: int
 ) -> list[int]:
@@ -659,7 +687,8 @@ RULE_SUMMARY = {
     "10_sequence_joins": (
         "Intact 63-session segments, one scale constant per segment; the anchor "
         "stands in as segment 0 so every segment (including the first) is "
-        "scaled to zero join gap; start index 0 eligible; overlap allowed."
+        "scaled to zero join gap; start index 0 eligible; overlap allowed. "
+        "See sequence_warmup_rule for the anchor's warm-up-bar-0 accounting."
     ),
     "11_shock_transformation": (
         "Exactly three donor-gap relocations from the DEVELOPMENT exceedance "
@@ -682,12 +711,14 @@ def build_complete_protocol(
     boundary_proof: Mapping[str, Mapping[str, object]],
 ) -> dict:
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "authority": (
             "Rick: GO — Claude Code on NODE: TBOTS Fitness V2 pre-result "
-            "protocol completion, 2026-09-26, and GO ADDENDUM A — Unattended "
+            "protocol completion, 2026-09-26; GO ADDENDUM A — Unattended "
             "operation, 2026-09-26 (§2's blocking development-boundary "
-            "correction and §3's positive post-2018/pre-2007-02-07 filter proof)"
+            "correction and §3's positive post-2018/pre-2007-02-07 filter "
+            "proof); and the post-freeze-audit Sequence warm-up settlement, "
+            "2026-09-26 (before any world generation)"
         ),
         "depends_on": {
             "parameter_freeze": PARAMETER_FREEZE_ID,
@@ -697,6 +728,8 @@ def build_complete_protocol(
         },
         "development_boundary": {"start": DEVELOPMENT_START, "end": DEVELOPMENT_END},
         "development_boundary_rule": DEVELOPMENT_BOUNDARY_RULE,
+        "sequence_warmup_rule": SEQUENCE_WARMUP_RULE,
+        "sequence_warmup_bars": SEQUENCE_WARMUP_BARS,
         "h_shapes": {
             "declared_starts": H_SHAPE_STARTS,
             "dates": dict(h_shape_dates),
