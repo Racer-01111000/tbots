@@ -1,0 +1,22 @@
+[Unit]
+Description=Periodically invoke the TBOTS Fitness V2 autonomous worker
+Documentation=file:///opt/evolutionary-markets/AGENTS.md
+
+[Timer]
+# Fires once shortly after boot (so a reboot mid-experiment resumes on its
+# own -- worker_checkpoint's crash-safety plus STATUS.json's persisted
+# phase/campaign/generation are what make that resumption correct, not
+# this timer), then every 5 minutes thereafter. Type=oneshot on the service
+# plus OnUnitActiveSec (measured from the END of the last run, not a fixed
+# wall-clock cadence) means a still-running generation is never joined by a
+# second, overlapping one -- the next firing simply waits until the current
+# invocation's own next OnUnitActiveSec elapses after it exits.
+OnBootSec=2min
+OnUnitActiveSec=5min
+# Missed firings (machine was off) run once on the next boot instead of
+# silently being skipped.
+Persistent=true
+AccuracySec=30sec
+
+[Install]
+WantedBy=timers.target

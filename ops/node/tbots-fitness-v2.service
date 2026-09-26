@@ -1,0 +1,31 @@
+[Unit]
+Description=TBOTS Fitness V2 autonomous worker (one unit of work per run)
+Documentation=file:///opt/evolutionary-markets/AGENTS.md
+After=network-online.target
+Wants=network-online.target
+# Never runs concurrently with itself: Type=oneshot serializes back-to-back
+# timer firings (a slow generation delays, never overlaps, the next one),
+# and fitness_v2_worker.py's own worker_lock is a second, independent,
+# non-blocking guard against any other manual or concurrent invocation --
+# belt and suspenders, not a substitute for either.
+
+[Service]
+Type=oneshot
+User=rick
+WorkingDirectory=/opt/evolutionary-markets
+ExecStart=/usr/bin/python3 /opt/evolutionary-markets/scripts/fitness_v2_worker.py
+# No Restart= directive: a stop (raised WorkerStop, already recorded into
+# STATUS.json by the worker itself) or a crash both simply end this run: the
+# next timer firing decides whether to retry, not systemd. Never
+# RestartSec-loop against a real STOP condition.
+# Generous, not tight: one invocation can run a full 11-generation campaign
+# at real world-bank scale, and the complete-protocol freeze receipt already
+# measured real calibration at ~30-60 min per pass on this pure-Python
+# implementation -- a real campaign's total runtime is not yet measured.
+# 24h is a crash/hang backstop, not an expected duration.
+TimeoutStartSec=86400
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
