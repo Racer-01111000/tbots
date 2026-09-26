@@ -256,11 +256,37 @@ def _worlds_from_bank(bank: dict) -> tuple[list[dict], dict]:
     return bank["historical"], bank["synthetic"]
 
 
-def _generation_checkpoint_path(seed: int, generation: int) -> Path:
-    return CHECKPOINT_DIR / f"campaign_{seed}_generation_{generation}.json"
+def _expansion_batch_id(synthetic_world_count: int) -> int:
+    """Handoff §50 / Rick's 2026-09-26 multi-batch freeze: batch 0 runs
+    against the initial 16-world bank, batch 1 against 20, ... batch 4
+    against the terminal 32. Derived from synthetic_world_count (already
+    durably persisted in STATUS.json) rather than kept as a separate field,
+    so there is exactly one source of truth for "which batch is this" --
+    every checkpoint path below is namespaced by calling this, never by
+    re-deriving the arithmetic inline."""
+    if (synthetic_world_count - 16) % 4 != 0 or synthetic_world_count < 16:
+        raise ValueError(f"synthetic_world_count {synthetic_world_count} is not a valid batch boundary")
+    return (synthetic_world_count - 16) // 4
 
 
-def _resume_campaign_state(status: dict, seed: int):
+def _generation_checkpoint_path(batch_id: int, seed: int, generation: int) -> Path:
+    # protocol_id -> world_bank_id -> expansion_batch_id -> campaign_seed ->
+    # generation (Rick's namespace freeze): the protocol/world-bank identity
+    # is already load-bearing via world_bank_id's own filename; batch_id
+    # here is what makes an identical (seed, generation) pair collision-proof
+    # across batches, since CAMPAIGN_SEEDS are deliberately reused every batch.
+    return CHECKPOINT_DIR / f"batch{batch_id}_campaign_{seed}_generation_{generation}.json"
+
+
+def _nominee_checkpoint_path(batch_id: int, seed: int) -> Path:
+    return CHECKPOINT_DIR / f"batch{batch_id}_campaign_{seed}_nominee.json"
+
+
+def _admission_decision_path(batch_id: int) -> Path:
+    return CHECKPOINT_DIR / f"batch{batch_id}_admission_decision.json"
+
+
+def _resume_campaign_state(status: dict, batch_id: int, seed: int):
     """Gap-1 crash/resume (handoff §58: "Never reconstruct completed
     generations just because a process died. Resume from the latest durable
     transactional checkpoint."). Returns (resume_from, population,
@@ -270,7 +296,7 @@ def _resume_campaign_state(status: dict, seed: int):
     generation."""
     if status.get("campaign_seed") == seed and status.get("generation") is not None:
         last_generation = status["generation"]
-        checkpoint = json.loads(_generation_checkpoint_path(seed, last_generation).read_text())
+        checkpoint = json.loads(_generation_checkpoint_path(batch_id, seed, last_generation).read_text())
         if last_generation < FINAL_GENERATION:
             used_genome_ids = set(checkpoint["used_genome_ids"])
             return last_generation + 1, checkpoint["next_population"], used_genome_ids, None
@@ -285,12 +311,13 @@ def _resume_campaign_state(status: dict, seed: int):
 
 
 def _run_next_campaign(status: dict) -> dict:
+    batch_id = _expansion_batch_id(status["synthetic_world_count"])
     bank = _load_world_bank(status["world_bank_id"])
     historical, synthetic = _worlds_from_bank(bank)
     reference_sharpes = {"execution": reference_passive_sharpes(historical)}
 
     seed = CAMPAIGN_SEEDS[status["campaigns_complete"]]
-    resume_from, population, used_genome_ids, final_ranked = _resume_campaign_state(status, seed)
+    resume_from, population, used_genome_ids, final_ranked = _resume_campaign_state(status, batch_id, seed)
 
     for generation in range(resume_from, FINAL_GENERATION + 1):
         result = run_generation(
@@ -311,10 +338,11 @@ def _run_next_campaign(status: dict) -> dict:
             artifact["used_genome_ids"] = sorted(used_genome_ids)
         else:
             artifact["final_ranked"] = result["final_ranked"]
+        generation_path = _generation_checkpoint_path(batch_id, seed, generation)
         _checkpoint_and_push(
-            f"campaign_{seed}_gen{generation}",
-            {f"evolution/state/campaign_{seed}_generation_{generation}.json": artifact},
-            f"Campaign {seed} generation {generation}: evaluated, ranked, "
+            f"batch{batch_id}_campaign_{seed}_gen{generation}",
+            {str(generation_path.relative_to(REPO_ROOT)): artifact},
+            f"Batch {batch_id} campaign {seed} generation {generation}: evaluated, ranked, "
             f"{'final' if generation == FINAL_GENERATION else 'bred next population'}",
         )
         updated = with_updates(
@@ -345,10 +373,11 @@ def _run_next_campaign(status: dict) -> dict:
     }
 
     campaigns_complete = status["campaigns_complete"] + 1
+    nominee_path = _nominee_checkpoint_path(batch_id, seed)
     _checkpoint_and_push(
-        f"campaign_{seed}_nominee",
-        {f"evolution/state/campaign_{seed}_nominee.json": full_nominee},
-        f"Campaign {seed}: rank-1 nominee evaluated against full 19-world admission set "
+        f"batch{batch_id}_campaign_{seed}_nominee",
+        {str(nominee_path.relative_to(REPO_ROOT)): full_nominee},
+        f"Batch {batch_id} campaign {seed}: rank-1 nominee evaluated against full admission set "
         f"(clears_all_gates={full_nominee['clears_all_gates']})",
     )
     updated = with_updates(
@@ -367,22 +396,24 @@ def _run_next_campaign(status: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 def _finalize_or_expand(status: dict) -> dict:
+    batch_id = _expansion_batch_id(status["synthetic_world_count"])
     nominees = []
     for seed in CAMPAIGN_SEEDS:
-        path = CHECKPOINT_DIR / f"campaign_{seed}_nominee.json"
-        record = json.loads(path.read_text())
+        record = json.loads(_nominee_checkpoint_path(batch_id, seed).read_text())
         nominees.append({
             "genome_id": record["genome_id"], "evolution_seed": record["evolution_seed"],
             "clears_all_gates": record["clears_all_gates"],
         })
     admission = decide_admission(nominees, predeclared_n=len(CAMPAIGN_SEEDS))
-    world_bank_generation = status.get("synthetic_world_count", 16)
 
+    admission_path = _admission_decision_path(batch_id)
     _checkpoint_and_push(
-        f"admission_decision_{world_bank_generation}",
-        {f"evolution/state/admission_decision_{world_bank_generation}synthetic.json": admission},
-        f"5-campaign admission decision ({world_bank_generation} synthetic worlds): "
-        f"{admission['ratio']}, admitted={admission['admitted']} (handoff §47)",
+        f"batch{batch_id}_admission_decision",
+        {str(admission_path.relative_to(REPO_ROOT)): admission},
+        f"Batch {batch_id} 5-campaign admission decision ({status['synthetic_world_count']} synthetic "
+        f"worlds): {admission['ratio']}, admitted={admission['admitted']} (handoff §47). "
+        f"Preserved as batch {batch_id}'s own immutable result -- a later batch's outcome "
+        "never discards or overwrites it (Rick's 2026-09-26 multi-batch freeze).",
     )
     updated = with_updates(
         read_status(STATUS_PATH), updated_utc=_now_utc(), phase="champion_decision",
@@ -390,24 +421,22 @@ def _finalize_or_expand(status: dict) -> dict:
         negative_result=not admission["admitted"], last_progress_utc=_now_utc(),
     )
     write_status(STATUS_PATH, updated)
-    return _expand_or_hold(updated, admission)
+    return _expand_and_continue(updated, admission)
 
 
-def _expand_or_hold(status: dict, admission: dict) -> dict:
-    """Handoff §50: after every completed 5-campaign batch, unconditionally
-    -- "do not adapt world-bank difficulty based on candidate
-    success/failure" -- add exactly one more world per family, continuing
-    each family's own deterministic seed stream, until the frozen 32-
-    synthetic-world ceiling. This function closes that mechanical step.
-
-    It deliberately stops there. What the frozen text does NOT say is
-    whether the next 5-campaign batch against the expanded bank reuses the
-    same frozen CAMPAIGN_SEEDS, whether an admitted champion here still
-    keeps expanding to the ceiling, or how campaign/generation checkpoints
-    should be namespaced across more than one bank generation -- and
-    AGENTS.md's own rule is to stop, not invent, when a contract ambiguity
-    materially changes selection. See
-    FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md."""
+def _expand_and_continue(status: dict, admission: dict) -> dict:
+    """Handoff §50 + Rick's 2026-09-26 multi-batch freeze
+    (FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_FREEZE_20260926.md, resolving
+    FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md): after every
+    completed 5-campaign batch, unconditionally -- "do not adapt world-bank
+    difficulty based on candidate success/failure" -- add exactly one more
+    world per family, continuing each family's own deterministic seed
+    stream. A qualifying champion does NOT end the program early: every
+    batch's admission decision (already checkpointed by _finalize_or_expand
+    at its own immutable batch-namespaced path) stands regardless, and the
+    worker resets campaign progress and proceeds straight into the next
+    batch using the SAME frozen CAMPAIGN_SEEDS -- never a HOLD -- until the
+    32-synthetic-world ceiling, which alone is the terminal HOLD."""
     bank = _load_world_bank(status["world_bank_id"])
     historical, synthetic = _worlds_from_bank(bank)
     protocol = load_complete_protocol()
@@ -442,7 +471,7 @@ def _expand_or_hold(status: dict, admission: dict) -> dict:
             status, updated_utc=_now_utc(), state="hold", phase="terminal_hold", stop_code=None,
             stop_reason=(
                 "World bank reached the frozen 32-synthetic-world ceiling "
-                f"(handoff §50): {held}. Holding pending a new Rick GO."
+                f"(handoff §50): {held}. Terminal HOLD pending a new Rick GO."
             ),
             last_progress_utc=_now_utc(),
         )
@@ -451,26 +480,21 @@ def _expand_or_hold(status: dict, admission: dict) -> dict:
 
     new_bank = {"historical": historical, "synthetic": expanded, "synthetic_state": synthetic_state}
     new_count = sum(len(worlds) for worlds in expanded.values())
-    new_world_bank_id = f"world_bank_v1_expansion_{new_count}synthetic"
+    new_batch_id = _expansion_batch_id(new_count)
+    new_world_bank_id = f"world_bank_v1_batch{new_batch_id}"
     _checkpoint_and_push(
         f"world_bank_expansion_{new_count}",
         {f"evolution/state/{new_world_bank_id}.json": new_bank},
         f"World bank expanded to {new_count} synthetic worlds (handoff §50: "
-        "+1 per family after the completed campaign batch)",
+        f"+1 per family after batch {_expansion_batch_id(status['synthetic_world_count'])}); "
+        f"beginning batch {new_batch_id}",
     )
     updated = with_updates(
-        status, updated_utc=_now_utc(), state="hold", phase="expansion", stop_code=None,
-        world_bank_id=new_world_bank_id,
-        synthetic_world_count=new_count, last_progress_utc=_now_utc(),
-        stop_reason=(
-            f"World bank expanded to {new_count} synthetic worlds (handoff §50). Holding "
-            "here, not auto-launching the next 5-campaign batch: the frozen text does not "
-            "say whether campaign seeds are reused for the next batch against the expanded "
-            "bank, or what happens to campaign/generation checkpoint namespacing or an "
-            "already-admitted champion across batches. See "
-            "FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md; needs a Rick decision, "
-            "not an invented rule (AGENTS.md)."
-        ),
+        status, updated_utc=_now_utc(), state="running", phase="campaign", stop_code=None,
+        world_bank_id=new_world_bank_id, synthetic_world_count=new_count,
+        campaign=None, campaign_seed=None, generation=None,
+        campaigns_complete=0, rank1_qualifiers=0,
+        last_progress_utc=_now_utc(),
     )
     write_status(STATUS_PATH, updated)
     return {"action": "expanded_world_bank", "synthetic_world_count": new_count, "admission": admission}

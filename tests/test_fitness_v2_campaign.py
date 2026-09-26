@@ -149,6 +149,73 @@ class ReferencePassiveSharpes(unittest.TestCase):
         self.assertEqual(len(sharpes), 3)
         self.assertTrue(all(isinstance(s, float) for s in sharpes))
 
+    def test_uses_the_standalone_passive_envelope_not_control_genome(self):
+        # Handoff §37 / FITNESS_V2_OC1_REFERENCE_FREEZE_20260926.md: OC1's
+        # reference is the standalone 80% PASSIVE_ENVELOPE, never
+        # CONTROL_GENOME -- numerically identical today only because
+        # CONTROL_GENOME also happens to declare target_max_exposure=0.80.
+        # Prove the DEPENDENCY, not just the coincidence: swap in a genome
+        # object with a materially different exposure and confirm
+        # reference_passive_sharpes is unaffected.
+        import fitness_v2_campaign as campaign_module
+        historical, _ = _tiny_world_bank(scored_length=60)
+        before = reference_passive_sharpes(historical)
+
+        original_control_genome = campaign_module.CONTROL_GENOME
+        campaign_module.CONTROL_GENOME = {**original_control_genome, "target_max_exposure": 0.05}
+        try:
+            after = reference_passive_sharpes(historical)
+        finally:
+            campaign_module.CONTROL_GENOME = original_control_genome
+        self.assertEqual(before, after)
+
+    def test_calls_simulate_passive_comparator_with_the_frozen_envelope(self):
+        import fitness_v2_campaign as campaign_module
+        from fitness_v2_oc1_reference import PASSIVE_ENVELOPE
+        historical, _ = _tiny_world_bank(scored_length=60)
+
+        seen_genomes = []
+        original = campaign_module.simulate_passive_comparator
+
+        def spy(world, genome, **kwargs):
+            seen_genomes.append(genome)
+            return original(world, genome, **kwargs)
+
+        campaign_module.simulate_passive_comparator = spy
+        try:
+            reference_passive_sharpes(historical)
+        finally:
+            campaign_module.simulate_passive_comparator = original
+        self.assertEqual(len(seen_genomes), 3)
+        self.assertTrue(all(g is PASSIVE_ENVELOPE for g in seen_genomes))
+
+    def test_per_candidate_exposure_matched_sharpe_uses_the_candidates_own_genome(self):
+        # §37's "do not collapse these into one concept": evaluate_genome_
+        # against_worlds's own exposure_matched_passive_sharpe (the
+        # family_signal_deltas input) must call simulate_passive_comparator
+        # with the CANDIDATE's genome, never the OC1 PASSIVE_ENVELOPE.
+        import fitness_v2_campaign as campaign_module
+        from fitness_v2_oc1_reference import PASSIVE_ENVELOPE
+        historical, synthetic = _tiny_world_bank(scored_length=60)
+        worlds = training_world_set(0, historical, synthetic)
+        reference = {"execution": reference_passive_sharpes(historical)}
+
+        seen_genomes = []
+        original = campaign_module.simulate_passive_comparator
+
+        def spy(world, genome, **kwargs):
+            seen_genomes.append(genome)
+            return original(world, genome, **kwargs)
+
+        campaign_module.simulate_passive_comparator = spy
+        try:
+            evaluate_genome_against_worlds(CONTROL_GENOME, worlds, reference)
+        finally:
+            campaign_module.simulate_passive_comparator = original
+        self.assertTrue(seen_genomes)
+        self.assertTrue(all(g is CONTROL_GENOME for g in seen_genomes))
+        self.assertNotIn(PASSIVE_ENVELOPE, seen_genomes)
+
 
 class TrainingWorldSetRotation(unittest.TestCase):
     def test_rotation_selects_two_of_three_non_withheld_slots(self):

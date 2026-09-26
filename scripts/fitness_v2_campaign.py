@@ -16,16 +16,17 @@ pattern exactly (final_ranked = ranked population at generation ==
 FINAL_GENERATION, frozen via _freeze_top10). Not invented here; already
 recorded in fitness_v2_evolution_protocol.EVOLUTION_PROTOCOL.
 
-OC1 reference passive Sharpes (delegated-authority implementation decision,
-not found frozen anywhere in the handoff or existing manifests): computed
-once, from CONTROL_GENOME's own exposure-matched passive comparator run on
-the three real historical worlds -- a fixed reference baseline reused by
-every candidate's OC1 check, exactly mirroring how the 32-descriptor
-reference is also computed once from the three historical worlds
-(development_reference_calibration). A candidate's own passive Sharpe (for
-family_signal_deltas) still uses the CANDIDATE's own exposure cap (handoff
-§37, "exposure-matched"); only the OC1 baseline is fixed. If Rick specifies
-a different reference methodology, this is the one place to change.
+OC1 reference passive Sharpes (handoff §37, frozen by Rick's 2026-09-26
+ruling -- see fitness_v2_oc1_reference.py and
+FITNESS_V2_OC1_REFERENCE_FREEZE_20260926.md): computed once, from the
+standalone 80% PASSIVE_ENVELOPE run on the three real historical worlds --
+a fixed reference baseline reused by every candidate's OC1 check, exactly
+mirroring how the 32-descriptor reference is also computed once from the
+three historical worlds (development_reference_calibration). A candidate's
+own passive Sharpe (for family_signal_deltas) still uses the CANDIDATE's own
+exposure cap (handoff §37, "exposure-matched primary passive comparator");
+only the OC1 baseline uses the fixed envelope -- the two must never be
+collapsed into one concept.
 """
 from __future__ import annotations
 
@@ -36,6 +37,7 @@ from collections.abc import Mapping, Sequence
 from fitness_v2 import FitnessV2Error, decide_admission, evaluate_candidate, nominate_campaign
 from fitness_v2_evolution_protocol import EVOLUTION_PROTOCOL, derive_seed, rotation_slots
 from fitness_v2_formula_definitions import family_oc1
+from fitness_v2_oc1_reference import PASSIVE_ENVELOPE
 from fitness_v2_simulator import simulate_passive_comparator, simulate_world, world_metrics
 from genome_control import CONTROL_GENOME
 from lib.ids import genome_id
@@ -143,15 +145,16 @@ def select_survivors(ranked: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def reference_passive_sharpes(historical_worlds: Sequence[Mapping[str, object]]) -> list[float]:
-    """See module docstring: CONTROL_GENOME's own passive comparator on the
-    three real historical worlds, computed once and reused by every
-    candidate's OC1 check. Simulated over the FULL world (warm-up prefix
+    """See module docstring: the standalone 80% PASSIVE_ENVELOPE's passive
+    comparator on the three real historical worlds, computed once and reused
+    by every candidate's OC1 check -- never CONTROL_GENOME, never a
+    candidate's own exposure. Simulated over the FULL world (warm-up prefix
     included) via its own scored_start_index -- never scored_only(), which
     would delete the warm-up prefix simulate_passive_comparator's own
     indicator-free mechanics don't need but which keeps this call symmetric
     with evaluate_genome_against_worlds and the frozen world shape."""
     return [
-        simulate_passive_comparator(world, CONTROL_GENOME, scored_start_index=world["scored_start_index"])["sharpe"]
+        simulate_passive_comparator(world, PASSIVE_ENVELOPE, scored_start_index=world["scored_start_index"])["sharpe"]
         for world in historical_worlds
     ]
 

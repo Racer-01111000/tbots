@@ -303,7 +303,7 @@ class MidCampaignResume(WorkerHarness):
         historical, synthetic = self._seed_world_bank()
         self._write_status(_base_status(
             audit_window_ends_utc="2020-01-01T00:00:00Z",
-            world_bank_id="world_bank_v1", campaigns_complete=0,
+            world_bank_id="world_bank_v1", synthetic_world_count=16, campaigns_complete=0,
         ))
 
         calls: list[int] = []
@@ -328,7 +328,7 @@ class MidCampaignResume(WorkerHarness):
         self.assertEqual(pre_crash_status["generation"], 2)
         self.assertEqual(pre_crash_status["campaign_seed"], self.SEED)
         gen2_checkpoint = json.loads(
-            worker._generation_checkpoint_path(self.SEED, 2).read_text()
+            worker._generation_checkpoint_path(0, self.SEED, 2).read_text()
         )
         gen2_head_before_resume = self._git_head()
 
@@ -346,7 +346,7 @@ class MidCampaignResume(WorkerHarness):
         # duplicate/rewritten evidence for a generation already durable
         # before the crash.
         self.assertEqual(
-            json.loads(worker._generation_checkpoint_path(self.SEED, 2).read_text()),
+            json.loads(worker._generation_checkpoint_path(0, self.SEED, 2).read_text()),
             gen2_checkpoint,
         )
         self._git(self.work, "log", "--oneline", gen2_head_before_resume, "-1")  # still reachable
@@ -361,9 +361,7 @@ class MidCampaignResume(WorkerHarness):
         from fitness_v2_campaign import run_campaign
         reference_sharpes = {"execution": worker.reference_passive_sharpes(historical)}
         reference = run_campaign(self.SEED, historical, synthetic, reference_sharpes)
-        resumed_nominee = json.loads(
-            (worker.CHECKPOINT_DIR / f"campaign_{self.SEED}_nominee.json").read_text()
-        )
+        resumed_nominee = json.loads(worker._nominee_checkpoint_path(0, self.SEED).read_text())
         self.assertEqual(
             resumed_nominee["genome_id"],
             reference["final_admission_nominee"]["genome_id"],
@@ -381,21 +379,21 @@ class MidCampaignResume(WorkerHarness):
 
 
 class WorldBankExpansion(WorkerHarness):
-    """Gap 2 (handoff §50): wires fitness_v2_world_bank.expand_family into
-    the worker's finalize/expand step. expand_family's own mechanics
-    (ceiling, idempotent stream continuation, real diversity-distance
-    admission) are already proven in
+    """Gap 2 (handoff §50) + Rick's 2026-09-26 multi-batch freeze
+    (FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_FREEZE_20260926.md): wires
+    fitness_v2_world_bank.expand_family into the worker's finalize/expand
+    step. expand_family's own mechanics (ceiling, idempotent stream
+    continuation, real diversity-distance admission) are already proven in
     tests/test_fitness_v2_world_bank.py::FamilyExpansion, at real world
     scale -- these tests stub expand_family/world_descriptor_vector/
     scored_only/_world_bank_build_context to cheap fakes so they can prove
-    what's actually new here fast and deterministically: _expand_or_hold's
-    OWN orchestration -- reconstructing the cross-family admitted-vector
-    accumulation state from a persisted bank, calling expand_family once
-    per family in order, advancing world_bank_id/synthetic_world_count,
-    holding (not looping) at the frozen 32-world ceiling, and -- per the
-    deliberately-unresolved ambiguity recorded in
-    FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_STOP_20260926.md -- never
-    auto-launching the next campaign batch on its own."""
+    what's actually new here fast and deterministically: _expand_and_
+    continue's OWN orchestration -- reconstructing the cross-family
+    admitted-vector accumulation state from a persisted bank, calling
+    expand_family once per family in order, advancing world_bank_id/
+    synthetic_world_count, resetting campaign progress and continuing
+    straight into the next batch (never holding) unless the frozen 32-world
+    ceiling is reached, which alone is the terminal HOLD."""
 
     def setUp(self):
         super().setUp()
@@ -472,7 +470,7 @@ class WorldBankExpansion(WorkerHarness):
         status = self._status_after_batch()
         self._write_status(status)
 
-        result = worker._expand_or_hold(status, admission={"admitted": False})
+        result = worker._expand_and_continue(status, admission={"admitted": False})
 
         from fitness_v2_world_bank import SYNTHETIC_FAMILIES
         self.assertEqual([c[0] for c in self.expand_calls], list(SYNTHETIC_FAMILIES))
@@ -486,11 +484,19 @@ class WorldBankExpansion(WorkerHarness):
         self.assertEqual(result["action"], "expanded_world_bank")
         self.assertEqual(result["synthetic_world_count"], 20)
         written = json.loads(worker.STATUS_PATH.read_text())
-        self.assertEqual(written["state"], "hold")
-        self.assertEqual(written["phase"], "expansion")
+        # Rick's multi-batch freeze: expansion RESETS and CONTINUES straight
+        # into the next batch -- it never holds (that's reserved for the
+        # 32-world ceiling alone).
+        self.assertEqual(written["state"], "running")
+        self.assertEqual(written["phase"], "campaign")
         self.assertIsNone(written["stop_code"])
         self.assertEqual(written["synthetic_world_count"], 20)
         self.assertNotEqual(written["world_bank_id"], "world_bank_v1")
+        self.assertEqual(written["campaigns_complete"], 0)
+        self.assertIsNone(written["campaign"])
+        self.assertIsNone(written["campaign_seed"])
+        self.assertIsNone(written["generation"])
+        self.assertEqual(written["rank1_qualifiers"], 0)
 
         new_bank = json.loads((worker.CHECKPOINT_DIR / f"{written['world_bank_id']}.json").read_text())
         for family in synthetic:
@@ -498,10 +504,33 @@ class WorldBankExpansion(WorkerHarness):
             # The original four worlds per family are preserved unchanged.
             self.assertEqual(new_bank["synthetic"][family][:4], synthetic[family])
 
-        # A worker invocation after a "hold" must idle, never repeat or
-        # advance the expansion/campaign step on its own.
-        again = worker.run_one_step()
-        self.assertEqual(again["action"], "holding")
+        # A worker invocation after a reset campaigns_complete=0 must
+        # dispatch straight back into _run_next_campaign for the new batch,
+        # never idle -- unlike the terminal-ceiling case below.
+        calls = []
+        original_run_next_campaign = worker._run_next_campaign
+        worker._run_next_campaign = lambda status: calls.append(status["synthetic_world_count"]) or {"action": "stubbed"}
+        try:
+            again = worker.run_one_step()
+        finally:
+            worker._run_next_campaign = original_run_next_campaign
+        self.assertEqual(calls, [20])
+        self.assertEqual(again["action"], "stubbed")
+
+    def test_a_qualifying_champion_does_not_stop_expansion(self):
+        # Rick's multi-batch freeze: "A qualifying research champion in an
+        # earlier batch does not terminate the expansion program."
+        self._seed_bank()
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        result = worker._expand_and_continue(
+            status, admission={"admitted": True, "selected_genome_id": "gen_champion"},
+        )
+        self.assertEqual(result["action"], "expanded_world_bank")
+        written = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(written["state"], "running")  # not "hold" -- the champion changes nothing here
+        self.assertEqual(written["synthetic_world_count"], 20)
 
     def test_expansion_holds_at_the_frozen_32_world_ceiling(self):
         self._seed_bank()
@@ -510,12 +539,13 @@ class WorldBankExpansion(WorkerHarness):
 
         result = None
         for _ in range(4):  # 16 -> 20 -> 24 -> 28 -> 32
-            result = worker._expand_or_hold(status, admission={"admitted": False})
+            result = worker._expand_and_continue(status, admission={"admitted": False})
             status = json.loads(worker.STATUS_PATH.read_text())
         self.assertEqual(result["action"], "expanded_world_bank")
         self.assertEqual(status["synthetic_world_count"], 32)
+        self.assertEqual(status["state"], "running")  # batch 4 still runs against the 32-world bank
 
-        held = worker._expand_or_hold(status, admission={"admitted": False})
+        held = worker._expand_and_continue(status, admission={"admitted": False})
         self.assertEqual(held["action"], "expansion_held")
         final_status = json.loads(worker.STATUS_PATH.read_text())
         self.assertEqual(final_status["state"], "hold")
@@ -525,6 +555,73 @@ class WorldBankExpansion(WorkerHarness):
         # And the hold guard idles here too, on the ceiling path specifically.
         again = worker.run_one_step()
         self.assertEqual(again["action"], "holding")
+
+
+class CheckpointNamespaceAcrossBatches(WorkerHarness):
+    """Rick's 2026-09-26 freeze: "Every durable runtime identity must
+    include enough information to make expansion batches collision-proof
+    ... protocol_id -> world_bank_id -> expansion_batch_id -> campaign_seed/
+    campaign_index -> generation. A checkpoint from one world-bank/batch
+    combination must never satisfy or overwrite a checkpoint belonging to
+    another." CAMPAIGN_SEEDS are deliberately reused every batch (same
+    freeze), so this is exactly the collision worker_checkpoint's
+    ArtifactCollision guard would otherwise be relied on to catch --
+    proving the namespace means it never has to."""
+
+    def test_batch_id_is_derived_from_synthetic_world_count(self):
+        self.assertEqual(worker._expansion_batch_id(16), 0)
+        self.assertEqual(worker._expansion_batch_id(20), 1)
+        self.assertEqual(worker._expansion_batch_id(24), 2)
+        self.assertEqual(worker._expansion_batch_id(28), 3)
+        self.assertEqual(worker._expansion_batch_id(32), 4)
+        with self.assertRaises(ValueError):
+            worker._expansion_batch_id(17)
+
+    def test_same_seed_and_generation_in_different_batches_never_collide(self):
+        seed = 2066557696
+        generation = 0
+        batch0_path = worker._generation_checkpoint_path(0, seed, generation)
+        batch1_path = worker._generation_checkpoint_path(1, seed, generation)
+        self.assertNotEqual(batch0_path, batch1_path)
+
+        worker._checkpoint_and_push(
+            "batch0_artifact", {str(batch0_path.relative_to(worker.REPO_ROOT)): {"generation": 0, "batch": 0}},
+            "batch 0 generation 0",
+        )
+        # Same (seed, generation) pair, materially DIFFERENT content (as a
+        # real second batch against an enlarged world bank would produce) --
+        # must not raise ArtifactCollision, and must not touch batch 0's file.
+        worker._checkpoint_and_push(
+            "batch1_artifact", {str(batch1_path.relative_to(worker.REPO_ROOT)): {"generation": 0, "batch": 1}},
+            "batch 1 generation 0",
+        )
+
+        self.assertEqual(json.loads(batch0_path.read_text()), {"generation": 0, "batch": 0})
+        self.assertEqual(json.loads(batch1_path.read_text()), {"generation": 0, "batch": 1})
+
+    def test_nominee_and_admission_paths_also_namespaced_by_batch(self):
+        seed = 2066557696
+        self.assertNotEqual(
+            worker._nominee_checkpoint_path(0, seed), worker._nominee_checkpoint_path(1, seed),
+        )
+        self.assertNotEqual(
+            worker._admission_decision_path(0), worker._admission_decision_path(1),
+        )
+
+    def test_campaign_seed_selection_does_not_depend_on_batch_id(self):
+        # Rick's freeze: "reuse exactly the existing five frozen Fitness V2
+        # campaign seeds ... Do not generate replacement/new campaign seeds
+        # for later expansion batches." _run_next_campaign selects
+        # CAMPAIGN_SEEDS[campaigns_complete] -- inspect the source to prove
+        # batch_id/synthetic_world_count never enters that expression, only
+        # the checkpoint paths built from it.
+        import inspect
+        source = inspect.getsource(worker._run_next_campaign)
+        seed_line = next(line for line in source.splitlines() if "seed = CAMPAIGN_SEEDS[" in line)
+        self.assertEqual(seed_line.strip(), "seed = CAMPAIGN_SEEDS[status[\"campaigns_complete\"]]")
+        self.assertEqual(worker.CAMPAIGN_SEEDS, [
+            2066557696, 604610261, 3608585586, 3251376561, 1894202052,
+        ])
 
 
 if __name__ == "__main__":
