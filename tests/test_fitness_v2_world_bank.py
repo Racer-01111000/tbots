@@ -14,11 +14,14 @@ sys.path.insert(0, str(ROOT / "scripts" / "lib"))
 from fitness_v2 import FitnessV2Error
 from fitness_v2_protocol import ASSET_UNIVERSE
 from fitness_v2_world_bank import (
+    MAX_WORLDS_PER_FAMILY,
+    ExpansionHeld,
     WorldBankError,
     _development_pool_for_reconstruction,
     build_synthetic_family,
     distributional_world,
     execution_world,
+    expand_family,
     historical_world,
     scored_only,
     sequence_world,
@@ -290,6 +293,71 @@ class SyntheticFamilyAdmission(unittest.TestCase):
         self.assertFalse(result["attempts"][0]["accepted"])
         self.assertTrue(result["attempts"][1]["accepted"])
         self.assertEqual(result["attempts"][1]["stream_index"], 2)
+
+
+class FamilyExpansion(unittest.TestCase):
+    """build_synthetic_family computes a full descriptor vector on every
+    attempt even for a distance-exempt family (needed so admitted_reference_
+    vectors stays consistent for OTHER families' later distance checks) --
+    genuinely expensive even at small scale. setUpClass (shared once across
+    every test method, never per-test) plus the minimum viable session count
+    (253, one single 252-window) keeps this class's real cost down to what
+    it actually needs to prove: the expand_family/seed-stream bookkeeping,
+    not repeated descriptor computation at unrelated world sizes."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pool = _fake_pool(n=1000)
+        cls.protocol = _fake_protocol_for(cls.pool, "H1", start_offset=400, n_sessions=253)
+        cls.anchor = historical_world(cls.pool, "H1", cls.protocol)
+        cls.tau = 0.02
+        from fitness_v2_protocol import COMPONENT_NAMES
+        cls.reference = {
+            "median": {name: 0.0 for name in COMPONENT_NAMES},
+            "mad": {name: 0.1 for name in COMPONENT_NAMES},
+        }
+
+    def setUp(self):
+        self.initial = build_synthetic_family(
+            "execution", slot_count=4, initial_seeds=[111, 222, 333, 444],
+            build_candidate=lambda seed: execution_world(self.anchor),
+            reference=self.reference, admitted_reference_vectors=[], tau=self.tau,
+        )
+
+    def test_expansion_adds_exactly_one_world_continuing_the_stream(self):
+        result = expand_family(
+            "execution", self.initial, lambda seed: execution_world(self.anchor),
+            self.reference, admitted_reference_vectors=[], tau=self.tau,
+        )
+        self.assertEqual(len(result["worlds"]), 5)
+        # The four initial worlds are preserved unchanged, not rebuilt.
+        self.assertEqual(result["worlds"][:4], self.initial["worlds"])
+        # Continues from index 5 (the first non-frozen index), never reuses 1-4.
+        new_attempts = [a for a in result["attempts"] if a not in self.initial["attempts"]]
+        self.assertTrue(any(a["accepted"] and a["stream_index"] == 5 for a in new_attempts))
+
+    def test_expansion_is_idempotent_in_state_not_seeds(self):
+        # Expanding twice in a row (two separate batches) must continue to
+        # index 6 the second time, never redraw index 5.
+        once = expand_family(
+            "execution", self.initial, lambda seed: execution_world(self.anchor),
+            self.reference, admitted_reference_vectors=[], tau=self.tau,
+        )
+        twice = expand_family(
+            "execution", once, lambda seed: execution_world(self.anchor),
+            self.reference, admitted_reference_vectors=[], tau=self.tau,
+        )
+        self.assertEqual(len(twice["worlds"]), 6)
+        self.assertEqual(sorted(twice["consumed_indices"]), [1, 2, 3, 4, 5, 6])
+
+    def test_expansion_holds_at_the_frozen_ceiling(self):
+        state = self.initial
+        build = lambda seed: execution_world(self.anchor)
+        for _ in range(MAX_WORLDS_PER_FAMILY - 4):
+            state = expand_family("execution", state, build, self.reference, [], self.tau)
+        self.assertEqual(len(state["worlds"]), MAX_WORLDS_PER_FAMILY)
+        with self.assertRaises(ExpansionHeld):
+            expand_family("execution", state, build, self.reference, [], self.tau)
 
 
 if __name__ == "__main__":

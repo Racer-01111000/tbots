@@ -39,6 +39,8 @@ INITIAL_WORLDS_PER_FAMILY = 4
 WITHHELD_SLOT = 4
 SEQUENCE_SEGMENT_LENGTH = 63
 SHOCK_EVENT_COUNT = 3
+MAX_TOTAL_SYNTHETIC_WORLDS = 32  # handoff §50
+MAX_WORLDS_PER_FAMILY = MAX_TOTAL_SYNTHETIC_WORLDS // len(SYNTHETIC_FAMILIES)
 
 COMPLETE_PROTOCOL_PATH = (
     Path(__file__).resolve().parents[1] / "evolution" / "protocol"
@@ -409,18 +411,31 @@ def build_synthetic_family(
     family: str, *, slot_count: int, initial_seeds: Sequence[int],
     build_candidate, reference: Mapping[str, dict], admitted_reference_vectors: list[list[float]],
     tau: float,
+    consumed_indices: Sequence[int] | None = None, used_seeds: Sequence[int] | None = None,
+    accepted: Sequence[dict] | None = None, attempts: Sequence[dict] | None = None,
 ) -> dict:
     """Attempts each of the family's frozen initial seeds in order (indices
     1-4); on structural or diversity rejection, advances the deterministic
     replacement stream (world_seed_stream.draw_next) and retries -- never
     performance-driven, exactly the frozen replacement rule. Returns the
     accepted worlds plus a full attempt log (accepted and rejected) --
-    rejected attempts are evidence, never deleted."""
-    accepted: list[dict] = []
-    attempts: list[dict] = []
-    consumed_indices: list[int] = list(FROZEN_INDICES)
-    used_seeds: list[int] = list(initial_seeds)
-    remaining_initial = list(enumerate(initial_seeds, start=1))
+    rejected attempts are evidence, never deleted.
+
+    Resumable for expansion (handoff §50): pass `consumed_indices`/
+    `used_seeds`/`accepted` from a prior call's own return values (and
+    `initial_seeds=[]`, since those are already consumed) with a larger
+    `slot_count` to add more worlds continuing the SAME deterministic
+    stream, rather than re-deriving the family from scratch."""
+    accepted = list(accepted) if accepted is not None else []
+    attempts = list(attempts) if attempts is not None else []
+    if consumed_indices is None:
+        consumed_indices = list(FROZEN_INDICES)
+        used_seeds = list(initial_seeds)
+        remaining_initial = list(enumerate(initial_seeds, start=1))
+    else:
+        consumed_indices = list(consumed_indices)
+        used_seeds = list(used_seeds) if used_seeds is not None else []
+        remaining_initial = []
 
     while len(accepted) < slot_count:
         if remaining_initial:
@@ -458,4 +473,42 @@ def build_synthetic_family(
         accepted.append(candidate)
         admitted_reference_vectors.append(vector)
 
-    return {"family": family, "worlds": accepted, "attempts": attempts}
+    return {
+        "family": family, "worlds": accepted, "attempts": attempts,
+        "consumed_indices": consumed_indices, "used_seeds": used_seeds,
+    }
+
+
+class ExpansionHeld(WorldBankError):
+    """Raised when a family has already reached the frozen expansion
+    ceiling -- handoff §50: "Continue until: 32 synthetic worlds. Then hold
+    further world-bank expansion pending later Rick GO." Not a structural or
+    diversity rejection; the caller must not treat this as retryable."""
+
+
+def expand_family(
+    family: str, prior_state: Mapping[str, object], build_candidate,
+    reference: Mapping[str, dict], admitted_reference_vectors: list[list[float]], tau: float,
+) -> dict:
+    """One expansion step (handoff §50): after a complete campaign batch,
+    add exactly one more world to `family`, continuing its existing
+    deterministic seed stream from `prior_state` (a previous build_synthetic_
+    family() or expand_family() return value) rather than re-deriving the
+    family from scratch. Never performance-driven -- expansion happens
+    unconditionally after a batch completes, not because a family "needs"
+    more worlds. Raises ExpansionHeld, not a structural rejection, once the
+    family already holds MAX_WORLDS_PER_FAMILY (8, i.e. 32 total / 4
+    families) -- world-bank growth then holds pending a new Rick GO."""
+    existing = prior_state["worlds"]
+    if len(existing) >= MAX_WORLDS_PER_FAMILY:
+        raise ExpansionHeld(
+            f"{family} already holds the frozen ceiling of {MAX_WORLDS_PER_FAMILY} "
+            "synthetic worlds; expansion holds pending a new Rick GO"
+        )
+    return build_synthetic_family(
+        family, slot_count=len(existing) + 1, initial_seeds=[],
+        build_candidate=build_candidate, reference=reference,
+        admitted_reference_vectors=admitted_reference_vectors, tau=tau,
+        consumed_indices=prior_state["consumed_indices"], used_seeds=prior_state["used_seeds"],
+        accepted=existing, attempts=prior_state["attempts"],
+    )
