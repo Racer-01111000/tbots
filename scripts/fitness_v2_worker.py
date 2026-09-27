@@ -213,8 +213,31 @@ def _generate_world_bank(status: dict | None) -> dict:
     historical = [historical_world(pool, shape, protocol) for shape in ("H1", "H2", "H3")]
     tau, reference, builder = _world_bank_build_context(protocol, pool, historical)
 
+    # Handoff §24: "Candidate synthetic worlds must be sufficiently distant
+    # from historical anchors AND earlier admitted synthetic market worlds."
+    # Historical anchors are part of the diversity population from the
+    # first synthetic candidate onward, not just a seed for calibration --
+    # admitted_vectors must therefore start with H1/H2/H3's own descriptor
+    # vectors, never [].
+    #
+    # Before this fix it started at [], and "distributional" (the first of
+    # SYNTHETIC_FAMILIES and not distance-exempt) deadlocked: every
+    # candidate hit market_distance_passes' own fail-closed "not references"
+    # guard (fitness_v2_admission.py -- unchanged here, still proven by
+    # test_fitness_v2_admission.py's test_invalid_descriptors_fail_closed_
+    # for_market_families), which raises rather than admits when references
+    # is empty. Since only a *successful* admission ever grows the list,
+    # and every attempt at length zero was structurally rejected regardless
+    # of its actual vector, admitted_vectors could never leave [] -- an
+    # unrecoverable deadlock, not a slow search. Live NODE invocation
+    # (started 2026-09-27T08:12:01+07, killed 2026-09-27T16:07:00+07 by
+    # Rick's GO after independent SIGINT-traceback confirmation) burned
+    # ~7h54m of CPU this way before being stopped; no world bank was ever
+    # produced (world_bank_id stayed null the entire time).
     synthetic = {}
-    admitted_vectors: list[list[float]] = []
+    admitted_vectors: list[list[float]] = [
+        world_descriptor_vector(scored_only(world), tau) for world in historical
+    ]
     for family in SYNTHETIC_FAMILIES:
         result = build_synthetic_family(
             family, slot_count=4, initial_seeds=freeze["synthetic_families"][family]["seeds"],

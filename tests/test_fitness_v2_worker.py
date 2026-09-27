@@ -400,6 +400,151 @@ class MidCampaignResume(WorkerHarness):
         return _git(self.work, "rev-parse", "HEAD")
 
 
+class WorldBankGeneration(WorkerHarness):
+    """2026-09-27 incident: _generate_world_bank seeded admitted_reference_
+    vectors at [] and only grew it on a *successful* admission. Since
+    "distributional" (SYNTHETIC_FAMILIES[0]) is not distance-exempt, every
+    one of its candidates hit market_distance_passes' own fail-closed "not
+    references" guard (fitness_v2_admission.py, unchanged by this repair --
+    still proven by test_fitness_v2_admission.py::test_invalid_descriptors_
+    fail_closed_for_market_families's ([0], []) case), which raises rather
+    than admits. That guard is correct on its own terms; the bug was calling
+    it from a state (zero references) that can only ever raise, with no way
+    out, since only a non-raising admission grows the list. This is an
+    unrecoverable deadlock, not a slow-but-valid search -- proven live: NODE
+    invocation 08:12 2026-09-27 burned ~7h54m of CPU this way before Rick's
+    GO to stop it, and produced no world bank (world_bank_id stayed null the
+    entire time; see FITNESS_V2_STALLED_WORKER_REPAIR_20260927.md).
+
+    Handoff §24 requires diversity against historical anchors too
+    ("sufficiently distant from historical anchors and earlier admitted
+    synthetic market worlds"), so the fix seeds admitted_vectors with the 3
+    historical worlds' own descriptor vectors before the family loop starts
+    -- the same reconstruction _expand_and_continue already does from a
+    persisted bank's synthetic worlds, just extended to include historical.
+
+    These tests run the REAL build_synthetic_family / market_distance_passes
+    / world_distance_admission / draw_next end to end unmocked -- only the
+    expensive, real-data-dependent loaders and the ~10-min-per-vector
+    descriptor math are faked (at 1 float component instead of 32), so
+    termination and genuine threshold enforcement are proven, not assumed."""
+
+    def setUp(self):
+        super().setUp()
+        import fitness_v2_world_bank as wb
+        from fitness_v2_protocol import COMPONENT_NAMES
+        self._wb = wb
+        self._originals2 = {
+            name: getattr(worker, name)
+            for name in (
+                "load_complete_protocol", "load_parameter_freeze", "load_real_development_pool",
+                "historical_world", "_world_bank_build_context", "world_descriptor_vector", "scored_only",
+            )
+        }
+        self._wb_originals = {name: getattr(wb, name) for name in ("world_descriptor_vector", "scored_only")}
+
+        worker.load_complete_protocol = lambda: {}
+        worker.load_real_development_pool = lambda: {}
+        worker.load_parameter_freeze = lambda: {
+            "synthetic_families": {
+                # Seed 0.0 is deliberately identical to H1's fake anchor
+                # position below -- it must be REJECTED by the real 0.75
+                # threshold once seeded, proving the historical vectors are
+                # genuinely enforced, not just present. The remaining seeds
+                # (100/200/300) are far enough apart to admit in one pass.
+                "distributional": {"seeds": [0.0, 100.0, 200.0, 300.0]},
+                "execution": {"seeds": [1000.0, 1001.0, 1002.0, 1003.0]},
+                "sequence": {"seeds": [2000.0, 2001.0, 2002.0, 2003.0]},
+                "shock": {"seeds": [3000.0, 3001.0, 3002.0, 3003.0]},
+            }
+        }
+        worker.historical_world = lambda pool, shape, protocol: {
+            "x": {"H1": 0.0, "H2": 10.0, "H3": 20.0}[shape]
+        }
+        # normalized_descriptor_vector (fitness_v2_protocol.py) always
+        # iterates the real, fixed 32-name COMPONENT_NAMES -- not whatever
+        # keys a vector happens to have -- so median/mad and every fake
+        # descriptor vector must carry all 32, not just one "x" key. Every
+        # component is set to the SAME scalar (world["x"]), which collapses
+        # the real RMS-normalized-Euclidean-distance formula to plain
+        # |a - b|: exactly the simple 1-D distances this test reasons about.
+        worker._world_bank_build_context = lambda protocol, pool, historical: (
+            0.02,
+            {"median": {name: 0.0 for name in COMPONENT_NAMES}, "mad": {name: 1.0 for name in COMPONENT_NAMES}},
+            lambda family: (lambda seed: {"x": seed}),
+        )
+        fake_descriptor = lambda world, tau: {name: world["x"] for name in COMPONENT_NAMES}
+        fake_scored = lambda world: world
+        worker.world_descriptor_vector = fake_descriptor
+        worker.scored_only = fake_scored
+        # build_synthetic_family runs unmocked and calls fitness_v2_world_
+        # bank's OWN bindings of these two names (imported there separately
+        # from fitness_v2_protocol) -- patching only worker's copies would
+        # leave the real, ~10-min-per-vector math running inside it.
+        wb.world_descriptor_vector = fake_descriptor
+        wb.scored_only = fake_scored
+
+    def tearDown(self):
+        for name, value in self._originals2.items():
+            setattr(worker, name, value)
+        for name, value in self._wb_originals.items():
+            setattr(self._wb, name, value)
+        super().tearDown()
+
+    def test_first_distributional_candidate_is_seeded_with_historical_vectors_not_empty(self):
+        self._write_status(_base_status(audit_window_ends_utc="2020-01-01T00:00:00Z"))
+
+        result = worker.run_one_step()
+
+        self.assertEqual(result["action"], "generated_world_bank")
+        bank = json.loads((worker.CHECKPOINT_DIR / "world_bank_v1.json").read_text())
+
+        # The deadlock this reproduces: with the old admitted_vectors = [],
+        # this family's search could never terminate. Proof it now does:
+        # exactly slot_count=4 worlds were admitted, not zero and not stuck.
+        self.assertEqual(len(bank["synthetic"]["distributional"]), 4)
+
+        # Anti-weakening proof: seed 0.0 collides exactly with H1's seeded
+        # vector (distance 0 < 0.75) and must be rejected by the real
+        # threshold check -- not waved through because it happens to be the
+        # very first candidate ever attempted.
+        attempts = bank["synthetic_state"]["distributional"]["attempts"]
+        first = attempts[0]
+        self.assertEqual(first["seed"], 0.0)
+        self.assertFalse(first["accepted"])
+        self.assertEqual(first["reason"], "failed_market_distance_admission")
+
+        # And the other three initial seeds (100/200/300), each far from
+        # every seeded historical vector, were admitted without needing the
+        # replacement stream.
+        accepted_seeds = [a["seed"] for a in attempts if a["accepted"]]
+        self.assertEqual(accepted_seeds[:3], [100.0, 200.0, 300.0])
+
+        status = json.loads(worker.STATUS_PATH.read_text())
+        self.assertEqual(status["world_bank_id"], "world_bank_v1")
+        self.assertEqual(status["synthetic_world_count"], 16)
+
+    def test_admitted_vectors_start_from_all_three_historical_worlds_before_any_family_runs(self):
+        # Direct proof of the fix's own precondition, independent of the
+        # end-to-end admission outcome above: the very first
+        # build_synthetic_family call for the first family must already see
+        # 3 references (H1/H2/H3), never 0.
+        self._write_status(_base_status(audit_window_ends_utc="2020-01-01T00:00:00Z"))
+        original = self._wb.build_synthetic_family
+        seen_lengths = []
+
+        def spy(*args, **kwargs):
+            seen_lengths.append(len(kwargs["admitted_reference_vectors"]))
+            return original(*args, **kwargs)
+
+        worker.build_synthetic_family = spy
+        try:
+            worker.run_one_step()
+        finally:
+            worker.build_synthetic_family = original
+        self.assertEqual(seen_lengths[0], 3)
+
+
 class WorldBankExpansion(WorkerHarness):
     """Gap 2 (handoff §50) + Rick's 2026-09-26 multi-batch freeze
     (FITNESS_V2_EXPANSION_CAMPAIGN_CYCLE_FREEZE_20260926.md): wires
