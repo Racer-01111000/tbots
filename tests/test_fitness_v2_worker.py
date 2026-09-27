@@ -59,6 +59,28 @@ def _base_status(**overrides) -> dict:
     return build_status(**fields)
 
 
+class RealParameterFreezeArtifact(unittest.TestCase):
+    """Exercises load_parameter_freeze() against the REAL, committed
+    evolution/protocol/fitness_v2_parameter_freeze_*.json -- not a fixture.
+    Every other loader in this codebase (evolution_protocol, formula_
+    definitions) wraps its frozen content as {"manifest_id":...,
+    "content": {...}}; the parameter-freeze file is flat (manifest_id sits
+    alongside the actual fields) and validate_parameter_freeze (fitness_v2.py)
+    is written for that flat shape. load_parameter_freeze() previously
+    assumed the wrapped shape and did `return envelope["content"]`, which
+    raised KeyError against the real file -- caught only by the first real
+    NODE invocation (2026-09-27), since every _generate_world_bank-adjacent
+    test uses fixture data and never called this loader for real. This test
+    exists so that class of drift is caught locally next time, not live."""
+
+    def test_returns_the_flat_manifest_synthetic_families_are_read_from(self):
+        freeze = worker.load_parameter_freeze()
+        self.assertIn("synthetic_families", freeze)
+        for family in ("distributional", "execution", "sequence", "shock"):
+            self.assertIn(family, freeze["synthetic_families"])
+            self.assertIn("seeds", freeze["synthetic_families"][family])
+
+
 class WorkerHarness(unittest.TestCase):
     """Points every fitness_v2_worker module-level path constant at a
     scratch git repo pair for the duration of one test, then restores them --

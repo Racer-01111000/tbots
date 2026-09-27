@@ -73,9 +73,15 @@ class WorkerStop(Exception):
 
 
 def load_parameter_freeze() -> dict:
-    envelope = json.loads(PARAMETER_FREEZE_PATH.read_text())
-    validate_parameter_freeze(envelope)  # fails closed on any drift from Rick's freeze
-    return envelope["content"]
+    # Unlike fitness_v2_evolution_protocol/fitness_v2_formula_definitions's
+    # {"manifest_id": ..., "content": {...}} envelope convention, the
+    # parameter-freeze file is flat: manifest_id sits alongside the actual
+    # fields (synthetic_families, campaign_batch, ...), and
+    # validate_parameter_freeze (fitness_v2.py) content-addresses it that
+    # way -- there is no separate "content" key to unwrap.
+    manifest = json.loads(PARAMETER_FREEZE_PATH.read_text())
+    validate_parameter_freeze(manifest)  # fails closed on any drift from Rick's freeze
+    return manifest
 
 
 def _checkpoint_and_push(label: str, artifacts: dict, message: str) -> None:

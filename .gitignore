@@ -37,3 +37,4 @@ reports/*
 !reports/.gitkeep
 !reports/s5c_championship_08325c0_result.json
 evolution/s6b_runs/
+.tbots.lock
