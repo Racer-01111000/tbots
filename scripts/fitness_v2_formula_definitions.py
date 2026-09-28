@@ -85,7 +85,11 @@ def trend_window_strengths(prices):
         if all(value == y[0] for value in y):
             result.append(0.0)
             continue
-        mean = statistics.mean(y)
+        # math.fsum(...)/len(...) instead of statistics.mean(): this runs
+        # inside a tens-of-millions-of-calls-per-candidate hot path (perf
+        # incident 2026-09-28); no accuracy benefit from exact-Fraction
+        # summation on ordinary float log-price data here.
+        mean = math.fsum(y) / len(y)
         centered = [value - mean for value in y]
         yy = math.fsum(value * value for value in centered)
         numerator = math.fsum(a * b for a, b in zip(x, centered))

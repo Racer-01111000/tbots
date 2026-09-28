@@ -117,7 +117,11 @@ def cross_sectional_dispersion_series(returns_matrix: Sequence[Sequence[float]])
 # ---------------------------------------------------------------------------
 
 def _pearson_or_none(x: Sequence[float], y: Sequence[float]) -> float | None:
-    mx, my = statistics.mean(x), statistics.mean(y)
+    # math.fsum(...)/len(...) instead of statistics.mean(): this runs inside
+    # a tens-of-millions-of-calls-per-candidate hot path (perf incident
+    # 2026-09-28), and statistics.mean()'s exact-Fraction summation buys no
+    # accuracy benefit over fsum on ordinary float return data here.
+    mx, my = math.fsum(x) / len(x), math.fsum(y) / len(y)
     cx = [v - mx for v in x]
     cy = [v - my for v in y]
     sx = math.fsum(v * v for v in cx)
