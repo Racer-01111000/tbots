@@ -641,12 +641,16 @@ class WorldBankExpansion(WorkerHarness):
 
         from fitness_v2_world_bank import SYNTHETIC_FAMILIES
         self.assertEqual([c[0] for c in self.expand_calls], list(SYNTHETIC_FAMILIES))
-        # admitted_reference_vectors starts with all 16 pre-existing worlds'
-        # descriptors (reconstructed from the persisted bank) and grows by
-        # one for every family expanded so far this cycle -- proves the
-        # cross-family accumulation is threaded through in order, not
-        # reset per family or left incomplete.
-        self.assertEqual([c[1] for c in self.expand_calls], [16, 17, 18, 19])
+        # admitted_reference_vectors starts with the 3 historical worlds'
+        # descriptors plus all 16 pre-existing synthetic worlds' descriptors
+        # (reconstructed from the persisted bank) and grows by one for every
+        # family expanded so far this cycle -- proves the cross-family
+        # accumulation is threaded through in order, not reset per family or
+        # left incomplete, AND that historical anchors are seeded in too
+        # (the expansion-path counterpart of WorldBankGeneration's fix above;
+        # real distance-admission proof against real historical/synthetic
+        # collisions lives in WorldBankExpansionDiversity below).
+        self.assertEqual([c[1] for c in self.expand_calls], [19, 20, 21, 22])
 
         self.assertEqual(result["action"], "expanded_world_bank")
         self.assertEqual(result["synthetic_world_count"], 20)
@@ -722,6 +726,207 @@ class WorldBankExpansion(WorkerHarness):
         # And the hold guard idles here too, on the ceiling path specifically.
         again = worker.run_one_step()
         self.assertEqual(again["action"], "holding")
+
+
+class WorldBankExpansionDiversity(WorkerHarness):
+    """Gap recorded alongside the admission-deadlock repair (commit
+    364f6340, 2026-09-27): _expand_and_continue's admitted_vectors started
+    from prior synthetic worlds only, never including H1/H2/H3. Handoff §24
+    requires diversity against BOTH "historical anchors AND earlier admitted
+    synthetic market worlds" -- the same rule _generate_world_bank was fixed
+    to honor (see WorldBankGeneration above). Unlike the initial-generation
+    bug this was never a deadlock (synthetic[] is never empty by the time
+    expansion runs), but a silent under-enforcement: an expansion candidate
+    identical to a historical anchor could be admitted undetected. Fixed the
+    same way -- fold the historical worlds' own descriptor vectors in ahead
+    of the prior synthetic ones.
+
+    Runs the REAL expand_family / build_synthetic_family / market_distance_
+    passes / world_distance_admission / draw_next end to end unmocked --
+    only _world_bank_build_context's candidate builder and the descriptor
+    math are faked (1 float component instead of 32), exactly as
+    WorldBankGeneration does above for the initial-generation path. The
+    FamilyExpansion tests in test_fitness_v2_world_bank.py only exercise
+    expand_family directly, and only with "execution" (distance-exempt) --
+    they never prove _expand_and_continue's own admitted_vectors
+    reconstruction against a real, non-exempt distance check. Replacement
+    seeds are computed with the real world_seed_stream.derive_seed rather
+    than hardcoded, so these tests stay correct if the stream formula ever
+    changes."""
+
+    def setUp(self):
+        super().setUp()
+        import fitness_v2_world_bank as wb
+        from fitness_v2_protocol import COMPONENT_NAMES
+        self._wb = wb
+        self._component_names = COMPONENT_NAMES
+        self._originals2 = {
+            name: getattr(worker, name)
+            for name in (
+                "load_complete_protocol", "load_real_development_pool",
+                "_world_bank_build_context", "world_descriptor_vector", "scored_only",
+            )
+        }
+        self._wb_originals = {name: getattr(wb, name) for name in ("world_descriptor_vector", "scored_only")}
+
+        worker.load_complete_protocol = lambda: {}
+        worker.load_real_development_pool = lambda: {}
+        worker._world_bank_build_context = lambda protocol, pool, historical: (
+            0.02,
+            {"median": {name: 0.0 for name in COMPONENT_NAMES}, "mad": {name: 1.0 for name in COMPONENT_NAMES}},
+            lambda family: (lambda seed: {"x": seed}),
+        )
+        fake_descriptor = lambda world, tau: {name: world["x"] for name in COMPONENT_NAMES}
+        fake_scored = lambda world: world
+        worker.world_descriptor_vector = fake_descriptor
+        worker.scored_only = fake_scored
+        wb.world_descriptor_vector = fake_descriptor
+        wb.scored_only = fake_scored
+
+    def tearDown(self):
+        for name, value in self._originals2.items():
+            setattr(worker, name, value)
+        for name, value in self._wb_originals.items():
+            setattr(self._wb, name, value)
+        super().tearDown()
+
+    def _seed_bank(self, historical_x, synthetic_x, used_seeds_by_family):
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        historical = [{"x": x} for x in historical_x]
+        synthetic = {f: [{"x": x} for x in synthetic_x[f]] for f in SYNTHETIC_FAMILIES}
+        synthetic_state = {
+            f: {
+                "consumed_indices": list(range(1, len(synthetic_x[f]) + 1)),
+                "used_seeds": list(used_seeds_by_family[f]),
+                "attempts": [],
+            }
+            for f in SYNTHETIC_FAMILIES
+        }
+        bank = {"historical": historical, "synthetic": synthetic, "synthetic_state": synthetic_state}
+        worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+        (worker.CHECKPOINT_DIR / "world_bank_v1.json").write_text(json.dumps(bank))
+        _git(self.work, "add", "evolution/state/world_bank_v1.json")
+        _git(self.work, "commit", "-m", "world bank")
+        _git(self.work, "push", "origin", BRANCH)
+        return bank
+
+    def _status_after_batch(self, **overrides):
+        return _base_status(
+            audit_window_ends_utc="2020-01-01T00:00:00Z", world_bank_id="world_bank_v1",
+            synthetic_world_count=16, campaigns_complete=5, **overrides,
+        )
+
+    def test_admitted_vectors_for_first_expanding_family_start_with_historical_then_prior_synthetic(self):
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        historical_x = [0.0, 10.0, 20.0]
+        synthetic_x = {f: [100.0, 200.0, 300.0, 400.0] for f in SYNTHETIC_FAMILIES}
+        used_seeds = {f: [11, 22, 33, 44] for f in SYNTHETIC_FAMILIES}
+        self._seed_bank(historical_x, synthetic_x, used_seeds)
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        original = self._wb.build_synthetic_family
+        seen = []
+
+        def spy(*args, **kwargs):
+            seen.append(list(kwargs["admitted_reference_vectors"]))
+            return original(*args, **kwargs)
+
+        self._wb.build_synthetic_family = spy
+        try:
+            worker._expand_and_continue(status, admission={"admitted": False})
+        finally:
+            self._wb.build_synthetic_family = original
+
+        first_family_vectors = seen[0]
+        # 3 historical + 16 prior synthetic (4 per family) -- not 16 alone,
+        # which is exactly the gap this repairs.
+        self.assertEqual(len(first_family_vectors), 19)
+        component = self._component_names[0]
+        self.assertEqual([v[component] for v in first_family_vectors[:3]], historical_x)
+
+    def test_candidate_identical_to_historical_anchor_is_rejected_then_replacement_admits(self):
+        from world_seed_stream import derive_seed
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        used = [11, 22, 33, 44]
+        s1 = derive_seed("distributional", 5, used_seeds=used)["seed"]
+        s2 = derive_seed("distributional", 6, used_seeds=[*used, s1])["seed"]
+
+        historical_x = [float(s1), 10.0, 20.0]  # H1 sits exactly where the next draw lands
+        synthetic_x = {f: [100.0, 200.0, 300.0, 400.0] for f in SYNTHETIC_FAMILIES}
+        used_seeds = {f: list(used) for f in SYNTHETIC_FAMILIES}
+        self._seed_bank(historical_x, synthetic_x, used_seeds)
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        worker._expand_and_continue(status, admission={"admitted": False})
+
+        written = json.loads(worker.STATUS_PATH.read_text())
+        bank = json.loads((worker.CHECKPOINT_DIR / f"{written['world_bank_id']}.json").read_text())
+        attempts = bank["synthetic_state"]["distributional"]["attempts"]
+        self.assertEqual(len(attempts), 2)
+        self.assertEqual(attempts[0]["seed"], s1)
+        self.assertFalse(attempts[0]["accepted"])
+        self.assertEqual(attempts[0]["reason"], "failed_market_distance_admission")
+        self.assertEqual(attempts[1]["seed"], s2)
+        self.assertTrue(attempts[1]["accepted"])
+
+        self.assertEqual(bank["synthetic"]["distributional"][-1]["x"], s2)
+        self.assertEqual(
+            sorted(bank["synthetic_state"]["distributional"]["consumed_indices"]), [1, 2, 3, 4, 5, 6],
+        )
+        self.assertEqual(bank["synthetic_state"]["distributional"]["used_seeds"], [*used, s1, s2])
+
+    def test_candidate_identical_to_prior_synthetic_world_is_rejected_then_replacement_admits(self):
+        from world_seed_stream import derive_seed
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        used = [11, 22, 33, 44]
+        s1 = derive_seed("distributional", 5, used_seeds=used)["seed"]
+        s2 = derive_seed("distributional", 6, used_seeds=[*used, s1])["seed"]
+
+        historical_x = [0.0, 10.0, 20.0]  # far away -- not the collision under test here
+        synthetic_x = {f: [100.0, 200.0, 300.0, 400.0] for f in SYNTHETIC_FAMILIES}
+        synthetic_x["distributional"][0] = float(s1)  # a prior admitted world sits exactly there
+        used_seeds = {f: list(used) for f in SYNTHETIC_FAMILIES}
+        self._seed_bank(historical_x, synthetic_x, used_seeds)
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        worker._expand_and_continue(status, admission={"admitted": False})
+
+        written = json.loads(worker.STATUS_PATH.read_text())
+        bank = json.loads((worker.CHECKPOINT_DIR / f"{written['world_bank_id']}.json").read_text())
+        attempts = bank["synthetic_state"]["distributional"]["attempts"]
+        self.assertEqual(len(attempts), 2)
+        self.assertEqual(attempts[0]["seed"], s1)
+        self.assertFalse(attempts[0]["accepted"])
+        self.assertEqual(attempts[0]["reason"], "failed_market_distance_admission")
+        self.assertEqual(attempts[1]["seed"], s2)
+        self.assertTrue(attempts[1]["accepted"])
+        self.assertEqual(bank["synthetic"]["distributional"][-1]["x"], s2)
+
+    def test_valid_far_candidate_admits_immediately_across_every_family(self):
+        from fitness_v2_world_bank import SYNTHETIC_FAMILIES
+        historical_x = [0.0, 10.0, 20.0]
+        synthetic_x = {f: [100.0, 200.0, 300.0, 400.0] for f in SYNTHETIC_FAMILIES}
+        used_seeds = {f: [11, 22, 33, 44] for f in SYNTHETIC_FAMILIES}
+        self._seed_bank(historical_x, synthetic_x, used_seeds)
+        status = self._status_after_batch()
+        self._write_status(status)
+
+        result = worker._expand_and_continue(status, admission={"admitted": False})
+
+        self.assertEqual(result["action"], "expanded_world_bank")
+        written = json.loads(worker.STATUS_PATH.read_text())
+        bank = json.loads((worker.CHECKPOINT_DIR / f"{written['world_bank_id']}.json").read_text())
+        for family in SYNTHETIC_FAMILIES:
+            attempts = bank["synthetic_state"][family]["attempts"]
+            # Every family's existing/historical worlds are far from the
+            # freshly drawn seed -- the real distance gate admits on the
+            # very first draw, no replacement needed.
+            self.assertEqual(len(attempts), 1)
+            self.assertTrue(attempts[0]["accepted"])
+            self.assertEqual(len(bank["synthetic"][family]), 5)
 
 
 class CheckpointNamespaceAcrossBatches(WorkerHarness):

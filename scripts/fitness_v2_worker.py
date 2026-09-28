@@ -472,7 +472,16 @@ def _expand_and_continue(status: dict, admission: dict) -> dict:
     pool = load_real_development_pool()
     tau, reference, builder = _world_bank_build_context(protocol, pool, historical)
 
+    # Handoff §24 (same rule _generate_world_bank enforces -- see its own
+    # comment above): diversity is required against historical anchors AND
+    # earlier admitted synthetic worlds, here too. This previously started
+    # from synthetic worlds alone, omitting H1/H2/H3 -- never a deadlock
+    # here (synthetic[] is never empty once expansion runs), but a silent
+    # under-enforcement: an expansion candidate identical to a historical
+    # anchor could be admitted undetected.
     admitted_vectors = [
+        world_descriptor_vector(scored_only(world), tau) for world in historical
+    ] + [
         world_descriptor_vector(scored_only(world), tau)
         for family in SYNTHETIC_FAMILIES for world in synthetic[family]
     ]
