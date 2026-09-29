@@ -1,12 +1,19 @@
 {
   "schema": "tbots-protocol-supersession-v1",
-  "updated_utc": "2026-09-26T07:20:00Z",
+  "updated_utc": "2026-09-29T03:31:29Z",
   "superseded": [
     {
       "manifest_id": "fitness_v2_complete_protocol_14fe15dd4525ca1314a135b4e63a6a36ab22104e789385917d9e9e8958cd518d",
       "superseded_by": "fitness_v2_complete_protocol_49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89",
       "superseded_at_commit": "1c3b6b013c4a47dbaf74a8a9ef5cda09f43afcd2",
       "reason": "Sequence warm-up accounting made explicit (anchor = warm-up bar 0) inside the post-freeze audit window, before any world generation.",
+      "production_used": false
+    },
+    {
+      "manifest_id": "fitness_v2_complete_protocol_49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89",
+      "superseded_by": "fitness_v2_complete_protocol_a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea",
+      "superseded_at_commit": "efa731187cda13985330b4044b0b4e360df93de2",
+      "reason": "Shock market-distance amendment (Rick, 2026-09-29): added depends_on.shock_distance_amendment and bumped schema_version 3->4 so the frozen manifest agrees with market_distance_passes() exempting Shock from the >=0.75 threshold. No calibration value, H-shape, or other dependency changed.",
       "production_used": false
     }
   ]
