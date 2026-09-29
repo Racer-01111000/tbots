@@ -1,0 +1,2616 @@
+{
+  "best_cross_family_fitness": 0.07854941661709529,
+  "control_anchor_fitness": -0.3789930590410348,
+  "generation": 1,
+  "median_cross_family_fitness": -0.42612923072591424,
+  "next_population": [
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": 0.07854941661709529,
+        "eligible": false,
+        "family_concentration": 0.0793978726325062,
+        "family_dispersion": 0.4356963912938964,
+        "family_scores": {
+          "distributional": 0.6171804435044229,
+          "execution": 0.6630640798744755,
+          "historical": -0.1655532638721699,
+          "sequence": -0.11536038063215968,
+          "shock": 0.6795264456033195
+        },
+        "family_signal_deltas": {
+          "distributional": 0.6986802572267021,
+          "execution": 0.3846851893981106,
+          "historical": 0.1719355540764798,
+          "sequence": -0.39172890159736107,
+          "shock": 0.38346870069993577
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.38346870069993577,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 44,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": 0.025411546225766447,
+        "eligible": false,
+        "family_concentration": 0.14575161249453647,
+        "family_dispersion": 0.38196641646816165,
+        "family_scores": {
+          "distributional": 0.004383902202279286,
+          "execution": 0.6699420460688739,
+          "historical": -0.1472640721584118,
+          "sequence": 0.29965979670786114,
+          "shock": 0.6992962547283961
+        },
+        "family_signal_deltas": {
+          "distributional": 0.48505599865781873,
+          "execution": 0.5291330144461162,
+          "historical": 0.30465863140995986,
+          "sequence": -0.21653705370078777,
+          "shock": 0.5239539715867856
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.48505599865781873,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": true
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 39,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "is_control": false,
+      "magnitude": 0.094339622642,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 39,
+          "before": 44,
+          "delta": -5
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.0750891384341322,
+        "eligible": false,
+        "family_concentration": 0.14280272372917457,
+        "family_dispersion": 1.1845701843173349,
+        "family_scores": {
+          "distributional": -0.8779084523880395,
+          "execution": 1.889268196398639,
+          "historical": -0.12408625042053639,
+          "sequence": 0.2214580391285797,
+          "shock": 1.653613438942348
+        },
+        "family_signal_deltas": {
+          "distributional": -0.31669660299583136,
+          "execution": 0.8738986101065331,
+          "historical": 0.11143593868656962,
+          "sequence": -0.4952094317095336,
+          "shock": 0.7788704917271995
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.11143593868656962,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.23,
+        "max_positions": 5,
+        "momentum_lookbacks": [
+          28,
+          116,
+          159
+        ],
+        "rebalance_every_n_sessions": 47,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.84,
+        "trend_filter_window": 223,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 107
+      },
+      "genome_id": "gen_18313309e8694c8a86bf95df81d20c5e9141932db7c28ca22ccabb8053ee699a",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.1595710729632917,
+        "eligible": false,
+        "family_concentration": 0.03727873561630318,
+        "family_dispersion": 0.3821690526418895,
+        "family_scores": {
+          "distributional": -0.09400418803694989,
+          "execution": 0.34315343114012276,
+          "historical": -0.46553518046236975,
+          "sequence": 0.42756583577440055,
+          "shock": 0.3469789385641585
+        },
+        "family_signal_deltas": {
+          "distributional": 0.2566445431897699,
+          "execution": 0.3517875170698739,
+          "historical": -0.33697545126957995,
+          "sequence": -0.042983289880795195,
+          "shock": 0.3419688988701324
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.2566445431897699,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.19,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          88,
+          134,
+          179
+        ],
+        "rebalance_every_n_sessions": 46,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.58,
+        "trend_filter_window": 189,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 111
+      },
+      "genome_id": "gen_62507c29873b86c2bc2a0cc517290b8a108cd3128663c00fed68b4fc36a72fc0",
+      "is_control": false,
+      "magnitude": 0.25,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 1,
+          "delta": 1
+        }
+      },
+      "parent_genome_id": "gen_24fc31ee407ed11bd33f0a2e3ba396286185af35de5ab8e4a505ca91293c43de",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.16743447775583398,
+        "eligible": false,
+        "family_concentration": 0.051795360230416226,
+        "family_dispersion": 0.44753403267280734,
+        "family_scores": {
+          "distributional": 0.15069699285576374,
+          "execution": 0.5797164038715237,
+          "historical": -0.5872806133050551,
+          "sequence": 0.22905729231540328,
+          "shock": 0.40854662792802166
+        },
+        "family_signal_deltas": {
+          "distributional": 0.48432650032901187,
+          "execution": 0.5889726622703402,
+          "historical": -0.748524644875753,
+          "sequence": -0.16229237214368583,
+          "shock": 0.4777477060367507
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.4777477060367507,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": true
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.17304455837417243,
+        "eligible": false,
+        "family_concentration": 0.07205668435521687,
+        "family_dispersion": 0.45671826624486184,
+        "family_scores": {
+          "distributional": -0.02565101825405143,
+          "execution": 0.5477390310224887,
+          "historical": -0.5363625652443329,
+          "sequence": 0.27915107951275964,
+          "shock": 0.5479089244410347
+        },
+        "family_signal_deltas": {
+          "distributional": 0.2211309082818167,
+          "execution": 0.5661636299352214,
+          "historical": -0.6196319338556973,
+          "sequence": -0.17443662405750765,
+          "shock": 0.5549168241979126
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.2211309082818167,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          60,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 246,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_bbf31f8ad1ff82381007af93070e313639f55a9e7ede4ad6443d7b3a90e24cbd",
+      "is_control": false,
+      "magnitude": 0.238537208838,
+      "mutation": {
+        "momentum_fast": {
+          "after": 60,
+          "before": 39,
+          "delta": 21
+        },
+        "trend_filter_window": {
+          "after": 246,
+          "before": 272,
+          "delta": -26
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.18753011007363657,
+        "eligible": false,
+        "family_concentration": 0.0587026021478684,
+        "family_dispersion": 0.5611734078714449,
+        "family_scores": {
+          "distributional": 0.19461038711850207,
+          "execution": 0.6879943907128919,
+          "historical": -0.685933063977034,
+          "sequence": 0.20588329175413317,
+          "shock": 0.6880838822825119
+        },
+        "family_signal_deltas": {
+          "distributional": 0.5516665219940841,
+          "execution": 0.7003928932834176,
+          "historical": -0.9103321840872316,
+          "sequence": -0.17861010930739218,
+          "shock": 0.6890728793734263
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.5516665219940841,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": true
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          97,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.87,
+        "trend_filter_window": 281,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+      "is_control": false,
+      "magnitude": 0.137287635262,
+      "mutation": {
+        "momentum_medium": {
+          "after": 97,
+          "before": 77,
+          "delta": 20
+        },
+        "target_max_exposure": {
+          "after": 0.87,
+          "before": 0.9,
+          "delta": -0.030000000000000027
+        },
+        "trend_filter_window": {
+          "after": 281,
+          "before": 272,
+          "delta": 9
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.20770792444022035,
+        "eligible": false,
+        "family_concentration": 0.034045041185599215,
+        "family_dispersion": 0.7702789655543021,
+        "family_scores": {
+          "distributional": -0.9348874911669521,
+          "execution": 0.8393106171771926,
+          "historical": -0.25970008520584337,
+          "sequence": 0.5207738790151203,
+          "shock": 0.8021793513163586
+        },
+        "family_signal_deltas": {
+          "distributional": -0.5780555550268989,
+          "execution": 0.6027220719496698,
+          "historical": -0.04139715977854082,
+          "sequence": -0.1191154366811405,
+          "shock": 0.5672449655709805
+        },
+        "historical_floor": false,
+        "median_signal_delta": -0.04139715977854082,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": true,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.19,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          116,
+          189,
+          208
+        ],
+        "rebalance_every_n_sessions": 30,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.57,
+        "trend_filter_window": 146,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 115
+      },
+      "genome_id": "gen_1959c275d15afdd3e5652bbdedef7a22d232e322d08cd1b0a9832ce070c6689a",
+      "is_control": false,
+      "magnitude": 0.132075471698,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 30,
+          "before": 23,
+          "delta": 7
+        }
+      },
+      "parent_genome_id": "gen_94ccbe37337ce4a36708664f0c6e97b9cca37da0b97f6d91ecc355391592c191",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.20820239219505524,
+        "eligible": false,
+        "family_concentration": 0.04899463519354351,
+        "family_dispersion": 0.4581083249634429,
+        "family_scores": {
+          "distributional": 0.11923996274129037,
+          "execution": 0.43239502323589196,
+          "historical": -0.655946665444269,
+          "sequence": 0.3265994566884235,
+          "shock": 0.43254849484993574
+        },
+        "family_signal_deltas": {
+          "distributional": 0.44640668909236014,
+          "execution": 0.4889253128830494,
+          "historical": -0.8341716106953504,
+          "sequence": -0.06869334745727898,
+          "shock": 0.4776737612349883
+        },
+        "historical_floor": false,
+        "median_signal_delta": 0.44640668909236014,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": false,
+        "structurally_inactive": false,
+        "synthetic_floor": true
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          35,
+          92,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_4cf2e7a92216888770b0bc81cb031f2268d8d74e5bab855658cffbc041a6b5d4",
+      "is_control": false,
+      "magnitude": 0.088034442056,
+      "mutation": {
+        "momentum_fast": {
+          "after": 35,
+          "before": 39,
+          "delta": -4
+        },
+        "momentum_medium": {
+          "after": 92,
+          "before": 77,
+          "delta": 15
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "evaluation": {
+        "activity_rate": 1.0,
+        "cross_family_fitness": -0.3789930590410348,
+        "eligible": false,
+        "family_concentration": 0.042191994046921234,
+        "family_dispersion": 0.9077002709472097,
+        "family_scores": {
+          "distributional": -0.7984834011849042,
+          "execution": 1.1322995755196104,
+          "historical": -0.7045958353098841,
+          "sequence": 0.21071804298360453,
+          "shock": 0.985623787929502
+        },
+        "family_signal_deltas": {
+          "distributional": -0.0005582542959902126,
+          "execution": 0.6244779780263094,
+          "historical": -0.011160122822750806,
+          "sequence": -0.18279548893182215,
+          "shock": 0.5542167781514088
+        },
+        "historical_floor": false,
+        "median_signal_delta": -0.0005582542959902126,
+        "oc1_eligible": false,
+        "oc2_eligible": false,
+        "passive_parity_or_worse": true,
+        "structurally_inactive": false,
+        "synthetic_floor": false
+      },
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          63,
+          126,
+          252
+        ],
+        "rebalance_every_n_sessions": 21,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.8,
+        "trend_filter_window": 200,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 63
+      },
+      "genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "is_control": true,
+      "role": "control_anchor"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.2,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          93,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 300,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_2599ee120f699a57e0d72b443a2d993f98232fa237cb8301ceda040dd5d94dd3",
+      "is_control": false,
+      "magnitude": 0.176666627051,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.2,
+          "before": 0.18,
+          "delta": 0.020000000000000018
+        },
+        "momentum_medium": {
+          "after": 93,
+          "before": 77,
+          "delta": 16
+        },
+        "trend_filter_window": {
+          "after": 300,
+          "before": 272,
+          "delta": 28
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          60,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 203,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_0b03837a6c67f5826aeecf090eecae3ffbde4f1913857187845cc448ef979899",
+      "is_control": false,
+      "magnitude": 0.329734741876,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 1,
+          "delta": 1
+        },
+        "trend_filter_window": {
+          "after": 203,
+          "before": 246,
+          "delta": -43
+        }
+      },
+      "parent_genome_id": "gen_bbf31f8ad1ff82381007af93070e313639f55a9e7ede4ad6443d7b3a90e24cbd",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.34,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 44,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.58,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_75a2768c6d3f440d31044a1280d2587f201ecf34e3a06bf483e3f610979a97ee",
+      "is_control": false,
+      "magnitude": 0.224227067451,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.34,
+          "before": 0.29,
+          "delta": 0.050000000000000044
+        },
+        "target_max_exposure": {
+          "after": 0.58,
+          "before": 0.52,
+          "delta": 0.05999999999999994
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.26,
+        "max_positions": 5,
+        "momentum_lookbacks": [
+          28,
+          116,
+          159
+        ],
+        "rebalance_every_n_sessions": 47,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.84,
+        "trend_filter_window": 223,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 107
+      },
+      "genome_id": "gen_251a7b7872e8d8c4f2a248cdedecd25ac278caa62b95611d1d50a3bcc2ce0526",
+      "is_control": false,
+      "magnitude": 0.1,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.26,
+          "before": 0.23,
+          "delta": 0.03
+        }
+      },
+      "parent_genome_id": "gen_18313309e8694c8a86bf95df81d20c5e9141932db7c28ca22ccabb8053ee699a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          63,
+          126,
+          252
+        ],
+        "rebalance_every_n_sessions": 21,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.87,
+        "trend_filter_window": 200,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 63
+      },
+      "genome_id": "gen_85a75d74c4dafe739afc51edc4df933cb0a58f8c4598da56081984028abe3264",
+      "is_control": false,
+      "magnitude": 0.175,
+      "mutation": {
+        "target_max_exposure": {
+          "after": 0.87,
+          "before": 0.8,
+          "delta": 0.06999999999999995
+        }
+      },
+      "parent_genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.36,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          63,
+          88,
+          252
+        ],
+        "rebalance_every_n_sessions": 21,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.8,
+        "trend_filter_window": 200,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 63
+      },
+      "genome_id": "gen_421e8053f10851cab044fea9d041003403061b6996fef407360708ccdc9d4ee6",
+      "is_control": false,
+      "magnitude": 0.322545363203,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.36,
+          "before": 0.35,
+          "delta": 0.010000000000000009
+        },
+        "max_positions": {
+          "after": 2,
+          "before": 3,
+          "delta": -1
+        },
+        "momentum_medium": {
+          "after": 88,
+          "before": 126,
+          "delta": -38
+        }
+      },
+      "parent_genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 32,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 109
+      },
+      "genome_id": "gen_32cc4f4198e8a9734f2c796eafec4b99fdc3d1dbcc7525741fb30c5a35428e44",
+      "is_control": false,
+      "magnitude": 0.162831891867,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 32,
+          "before": 39,
+          "delta": -7
+        },
+        "volatility_window": {
+          "after": 109,
+          "before": 119,
+          "delta": -10
+        }
+      },
+      "parent_genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 44,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.57,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_c813c4b27eaabea5ba8ae152b93ce8e5ae98019bae2739cae93629d9a53e0aca",
+      "is_control": false,
+      "magnitude": 0.279508497187,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 3,
+          "delta": -1
+        },
+        "target_max_exposure": {
+          "after": 0.57,
+          "before": 0.52,
+          "delta": 0.04999999999999993
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          159,
+          166
+        ],
+        "rebalance_every_n_sessions": 39,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 114
+      },
+      "genome_id": "gen_e5fabda80800c0de97bc11deca913576fab60daf1123f8345ec665af255eebf1",
+      "is_control": false,
+      "magnitude": 0.097847841317,
+      "mutation": {
+        "momentum_medium": {
+          "after": 159,
+          "before": 153,
+          "delta": 6
+        },
+        "momentum_slow": {
+          "after": 166,
+          "before": 186,
+          "delta": -20
+        },
+        "volatility_window": {
+          "after": 114,
+          "before": 119,
+          "delta": -5
+        }
+      },
+      "parent_genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.23,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          77,
+          150
+        ],
+        "rebalance_every_n_sessions": 42,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_67e1315173587ebf51131d26dca4c19265bd0e9e82b707ba0c0622c4a8f0063a",
+      "is_control": false,
+      "magnitude": 0.175432254838,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.23,
+          "before": 0.18,
+          "delta": 0.05000000000000002
+        },
+        "momentum_slow": {
+          "after": 150,
+          "before": 140,
+          "delta": 10
+        },
+        "rebalance_every_n_sessions": {
+          "after": 42,
+          "before": 40,
+          "delta": 2
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          32,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 44,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_d08d8fcef973e19035143830020055d3e843c8840b3fa20d3da128c1f988df59",
+      "is_control": false,
+      "magnitude": 0.104761904762,
+      "mutation": {
+        "momentum_fast": {
+          "after": 32,
+          "before": 21,
+          "delta": 11
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 44,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.57,
+        "trend_filter_window": 169,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_4e89932f6a6589b1e4975f37ae4a0e6854de057a8f7b2c5207b3e9b50a2cef27",
+      "is_control": false,
+      "magnitude": 0.288140590684,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 3,
+          "delta": -1
+        },
+        "target_max_exposure": {
+          "after": 0.57,
+          "before": 0.52,
+          "delta": 0.04999999999999993
+        },
+        "trend_filter_window": {
+          "after": 169,
+          "before": 155,
+          "delta": 14
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.22,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          57,
+          77,
+          135
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_e73bbf5aff8c86818d7cd569327e9afd61f50d7a503eaa7bfcaf1e17dad27c2e",
+      "is_control": false,
+      "magnitude": 0.218080739335,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.22,
+          "before": 0.18,
+          "delta": 0.04000000000000001
+        },
+        "momentum_fast": {
+          "after": 57,
+          "before": 39,
+          "delta": 18
+        },
+        "momentum_slow": {
+          "after": 135,
+          "before": 140,
+          "delta": -5
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 42,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_0cb12f1b3bb924f8d4e970bea8e0facb19b4f02c0f137886690cbf438fd2d7d5",
+      "is_control": false,
+      "magnitude": 0.037735849057,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 42,
+          "before": 40,
+          "delta": 2
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.15,
+        "max_positions": 4,
+        "momentum_lookbacks": [
+          105,
+          189,
+          208
+        ],
+        "rebalance_every_n_sessions": 30,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.57,
+        "trend_filter_window": 146,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 115
+      },
+      "genome_id": "gen_d9e5ccb4b6aff3ed9cdc5101e6712d48893d0fc30de07435e2b9e0608f2b483f",
+      "is_control": false,
+      "magnitude": 0.302080840947,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.15,
+          "before": 0.19,
+          "delta": -0.04000000000000001
+        },
+        "max_positions": {
+          "after": 4,
+          "before": 3,
+          "delta": 1
+        },
+        "momentum_fast": {
+          "after": 105,
+          "before": 116,
+          "delta": -11
+        }
+      },
+      "parent_genome_id": "gen_1959c275d15afdd3e5652bbdedef7a22d232e322d08cd1b0a9832ce070c6689a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          35,
+          92,
+          192
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.88,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_1a17fc151bc7faec53b5668165e72e3af1eca31ea84c75fcec46d3bc3c15ad0e",
+      "is_control": false,
+      "magnitude": 0.212320500567,
+      "mutation": {
+        "momentum_slow": {
+          "after": 192,
+          "before": 140,
+          "delta": 52
+        },
+        "target_max_exposure": {
+          "after": 0.88,
+          "before": 0.9,
+          "delta": -0.020000000000000018
+        }
+      },
+      "parent_genome_id": "gen_4cf2e7a92216888770b0bc81cb031f2268d8d74e5bab855658cffbc041a6b5d4",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          60,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 35,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 246,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_ad745757919331f4ddee55d88c85dd2d4b51966faef528bbb432d502501ad5c9",
+      "is_control": false,
+      "magnitude": 0.094339622642,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 35,
+          "before": 40,
+          "delta": -5
+        }
+      },
+      "parent_genome_id": "gen_bbf31f8ad1ff82381007af93070e313639f55a9e7ede4ad6443d7b3a90e24cbd",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          21,
+          128,
+          186
+        ],
+        "rebalance_every_n_sessions": 39,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 103
+      },
+      "genome_id": "gen_530ae083d009b105711286380c7f8154390a665bef98978ad59c4f0bc84100cc",
+      "is_control": false,
+      "magnitude": 0.321273505392,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 3,
+          "delta": -1
+        },
+        "momentum_medium": {
+          "after": 128,
+          "before": 153,
+          "delta": -25
+        },
+        "volatility_window": {
+          "after": 103,
+          "before": 119,
+          "delta": -16
+        }
+      },
+      "parent_genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          53,
+          92,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 277,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_40b904f194284a7cc13a4e26929a9d39dfccaa5c5b014eb1c98042ff00a1552d",
+      "is_control": false,
+      "magnitude": 0.173241897652,
+      "mutation": {
+        "momentum_fast": {
+          "after": 53,
+          "before": 35,
+          "delta": 18
+        },
+        "trend_filter_window": {
+          "after": 277,
+          "before": 272,
+          "delta": 5
+        }
+      },
+      "parent_genome_id": "gen_4cf2e7a92216888770b0bc81cb031f2268d8d74e5bab855658cffbc041a6b5d4",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 4,
+        "momentum_lookbacks": [
+          22,
+          174,
+          186
+        ],
+        "rebalance_every_n_sessions": 39,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_06131ebc5cf2cd2bbd00776d2b1890959c17bd741f0a06fbdc2e3f491fff75e4",
+      "is_control": false,
+      "magnitude": 0.273745103993,
+      "mutation": {
+        "max_positions": {
+          "after": 4,
+          "before": 3,
+          "delta": 1
+        },
+        "momentum_fast": {
+          "after": 22,
+          "before": 21,
+          "delta": 1
+        },
+        "momentum_medium": {
+          "after": 174,
+          "before": 153,
+          "delta": 21
+        }
+      },
+      "parent_genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          63,
+          126,
+          252
+        ],
+        "rebalance_every_n_sessions": 21,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.75,
+        "trend_filter_window": 223,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 63
+      },
+      "genome_id": "gen_85cfb55593858561d101914ded4af4280f912c14494be708af9194c7cbec2174",
+      "is_control": false,
+      "magnitude": 0.169852877515,
+      "mutation": {
+        "target_max_exposure": {
+          "after": 0.75,
+          "before": 0.8,
+          "delta": -0.050000000000000044
+        },
+        "trend_filter_window": {
+          "after": 223,
+          "before": 200,
+          "delta": 23
+        }
+      },
+      "parent_genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          39,
+          97,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.87,
+        "trend_filter_window": 281,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_13cc32f77d2528c7747809dab943d2fb097c533bb613d8a001a415e84bf05d1a",
+      "is_control": false,
+      "magnitude": 0.25,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 1,
+          "delta": 1
+        }
+      },
+      "parent_genome_id": "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.19,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          116,
+          189,
+          208
+        ],
+        "rebalance_every_n_sessions": 30,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.57,
+        "trend_filter_window": 146,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 115
+      },
+      "genome_id": "gen_14b7cc22ef2cf268ac0b0240fd2035a12a382813d4a7f98b28b66b0ca56c7d01",
+      "is_control": false,
+      "magnitude": 0.25,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 3,
+          "delta": -1
+        }
+      },
+      "parent_genome_id": "gen_1959c275d15afdd3e5652bbdedef7a22d232e322d08cd1b0a9832ce070c6689a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          39,
+          77,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.9,
+        "trend_filter_window": 272,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_caa16dd32ad60620b2179f216020fa2247a9e9824c97f39e42cd18d3816bb2c0",
+      "is_control": false,
+      "magnitude": 0.25,
+      "mutation": {
+        "max_positions": {
+          "after": 2,
+          "before": 1,
+          "delta": 1
+        }
+      },
+      "parent_genome_id": "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.19,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          39,
+          97,
+          140
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.87,
+        "trend_filter_window": 281,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 34
+      },
+      "genome_id": "gen_fccbd019b3a65be85aa3dd2d690c9f75fe9fbe327e850a12a4dad1091a36c8fd",
+      "is_control": false,
+      "magnitude": 0.269594892191,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.19,
+          "before": 0.18,
+          "delta": 0.010000000000000009
+        },
+        "max_positions": {
+          "after": 2,
+          "before": 1,
+          "delta": 1
+        },
+        "volatility_window": {
+          "after": 34,
+          "before": 44,
+          "delta": -10
+        }
+      },
+      "parent_genome_id": "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          63,
+          126,
+          252
+        ],
+        "rebalance_every_n_sessions": 28,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.88,
+        "trend_filter_window": 200,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 63
+      },
+      "genome_id": "gen_5884052a289bd619b2250cff801fd9dff135aa5f2e52f987ba54594f5aee7cef",
+      "is_control": false,
+      "magnitude": 0.239674634086,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 28,
+          "before": 21,
+          "delta": 7
+        },
+        "target_max_exposure": {
+          "after": 0.88,
+          "before": 0.8,
+          "delta": 0.07999999999999996
+        }
+      },
+      "parent_genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.33,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 39,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_2c714e25eda4a1064e98c409267950ead475dffeb520708fbc617fedd9558bf1",
+      "is_control": false,
+      "magnitude": 0.133333333333,
+      "mutation": {
+        "max_asset_weight": {
+          "after": 0.33,
+          "before": 0.29,
+          "delta": 0.040000000000000036
+        }
+      },
+      "parent_genome_id": "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.29,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          21,
+          153,
+          186
+        ],
+        "rebalance_every_n_sessions": 47,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 155,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 119
+      },
+      "genome_id": "gen_b87a17004dafccdd9c8064d24365169b7d8b6642a2947d3e64cc9617a830c02f",
+      "is_control": false,
+      "magnitude": 0.056603773585,
+      "mutation": {
+        "rebalance_every_n_sessions": {
+          "after": 47,
+          "before": 44,
+          "delta": 3
+        }
+      },
+      "parent_genome_id": "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          63,
+          87,
+          252
+        ],
+        "rebalance_every_n_sessions": 14,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.8,
+        "trend_filter_window": 200,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 54
+      },
+      "genome_id": "gen_95b8ad2e43f6709d2b5131dcc29751cfa3c6afe3904ada51ae8f2db0df58bc87",
+      "is_control": false,
+      "magnitude": 0.259558979734,
+      "mutation": {
+        "momentum_medium": {
+          "after": 87,
+          "before": 126,
+          "delta": -39
+        },
+        "rebalance_every_n_sessions": {
+          "after": 14,
+          "before": 21,
+          "delta": -7
+        },
+        "volatility_window": {
+          "after": 54,
+          "before": 63,
+          "delta": -9
+        }
+      },
+      "parent_genome_id": "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          39,
+          97,
+          199
+        ],
+        "rebalance_every_n_sessions": 40,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.87,
+        "trend_filter_window": 281,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 44
+      },
+      "genome_id": "gen_d9be974b05c3f2e0ac5839f228cde0dd82ac4fe1d3a41d2b8078f4242ecd1ecc",
+      "is_control": false,
+      "magnitude": 0.234126984127,
+      "mutation": {
+        "momentum_slow": {
+          "after": 199,
+          "before": 140,
+          "delta": 59
+        }
+      },
+      "parent_genome_id": "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+      "role": "child"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.27,
+        "max_positions": 4,
+        "momentum_lookbacks": [
+          118,
+          152,
+          193
+        ],
+        "rebalance_every_n_sessions": 53,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.82,
+        "trend_filter_window": 137,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 33
+      },
+      "genome_id": "gen_add62c59e99cfc2d5a29d0b2c0c5c4763e5a0718f078e7f2a58ca08799ac1999",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.25,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          30,
+          132,
+          210
+        ],
+        "rebalance_every_n_sessions": 63,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.7,
+        "trend_filter_window": 131,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 72
+      },
+      "genome_id": "gen_36150d7cf7f332e4a2f7ecbc85bae788a9a7c545600ce80a68f272afeb7556d7",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.16,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          55,
+          74,
+          165
+        ],
+        "rebalance_every_n_sessions": 53,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.51,
+        "trend_filter_window": 145,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 30
+      },
+      "genome_id": "gen_609de8d41b62928fbabfadcec5ae6c7f5fd93dabb97ba02c24df2ad21cce696a",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.25,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          69,
+          161,
+          237
+        ],
+        "rebalance_every_n_sessions": 31,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.56,
+        "trend_filter_window": 250,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 26
+      },
+      "genome_id": "gen_501d52b04fe2ebc0a24dfc22f2941260108f3257cf8132af86598d5ea8fb4db2",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.21,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          98,
+          187,
+          266
+        ],
+        "rebalance_every_n_sessions": 11,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.6,
+        "trend_filter_window": 169,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 99
+      },
+      "genome_id": "gen_d42cb3d662cd6c84d0b0d5313fb240f2ab1d6391250d8a55964fae88ae59df62",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.35,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          62,
+          112,
+          163
+        ],
+        "rebalance_every_n_sessions": 17,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.52,
+        "trend_filter_window": 139,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 60
+      },
+      "genome_id": "gen_91e03009eae0caa80ad2ece9d989ffbab9b65dae5739d0e510516a271014b2b0",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.41,
+        "max_positions": 2,
+        "momentum_lookbacks": [
+          59,
+          225,
+          297
+        ],
+        "rebalance_every_n_sessions": 55,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.58,
+        "trend_filter_window": 172,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 92
+      },
+      "genome_id": "gen_d64e087f3aa20677ec719a9b62d7a25173bec2f355ab6342bca8fd44bf0ca388",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.36,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          115,
+          132,
+          336
+        ],
+        "rebalance_every_n_sessions": 25,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.89,
+        "trend_filter_window": 116,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 125
+      },
+      "genome_id": "gen_91d0368d38c067b59e35c633db2a58d98f354d5bb7c8084005ae2a69e3778226",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.18,
+        "max_positions": 1,
+        "momentum_lookbacks": [
+          74,
+          156,
+          242
+        ],
+        "rebalance_every_n_sessions": 61,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.76,
+        "trend_filter_window": 299,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 31
+      },
+      "genome_id": "gen_8bd6646385065fa9870a001a578fbc81d6b10c4ca3705db9039c315ace2ef4fd",
+      "is_control": false,
+      "role": "immigrant"
+    },
+    {
+      "genome": {
+        "direction": "long_only",
+        "drawdown_halt_pct": 0.12,
+        "leverage": "none",
+        "max_asset_weight": 0.22,
+        "max_positions": 3,
+        "momentum_lookbacks": [
+          120,
+          224,
+          335
+        ],
+        "rebalance_every_n_sessions": 53,
+        "shorting": "none",
+        "strategy_family": "trend",
+        "target_max_exposure": 0.53,
+        "trend_filter_window": 289,
+        "universe": [
+          "SPY",
+          "EFA",
+          "EEM",
+          "IEF",
+          "TLT",
+          "GLD",
+          "DBC",
+          "VNQ"
+        ],
+        "volatility_window": 52
+      },
+      "genome_id": "gen_a2972502f5326456d0a7c09e778310ef46b8e8778a72e82f42ff17f681925f78",
+      "is_control": false,
+      "role": "immigrant"
+    }
+  ],
+  "ranked_genome_ids": [
+    "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+    "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+    "gen_18313309e8694c8a86bf95df81d20c5e9141932db7c28ca22ccabb8053ee699a",
+    "gen_62507c29873b86c2bc2a0cc517290b8a108cd3128663c00fed68b4fc36a72fc0",
+    "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+    "gen_bbf31f8ad1ff82381007af93070e313639f55a9e7ede4ad6443d7b3a90e24cbd",
+    "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+    "gen_1959c275d15afdd3e5652bbdedef7a22d232e322d08cd1b0a9832ce070c6689a",
+    "gen_4cf2e7a92216888770b0bc81cb031f2268d8d74e5bab855658cffbc041a6b5d4",
+    "gen_8a0ee0dd98ae29beb83a9e3edc4353d1b51b3c27ea0035f19d95e1368eec56b1",
+    "gen_c215c581055e7506ef30d4491205def6c176cc74d219cd1d2285e2e36f40ca09",
+    "gen_c06fcc92a21cbbd2512b8034c745eb9881a0c42757fa556fc99b24249f592ba3",
+    "gen_94ccbe37337ce4a36708664f0c6e97b9cca37da0b97f6d91ecc355391592c191",
+    "gen_c11c6bbe305b4205f140b90e2f340a82ede4ee565f17bb2ef501bc96acded0a6",
+    "gen_8ae260ea877a2d80ffe9e92933736a81f993d5cfaa72c51164d3862fc64336fd",
+    "gen_1490058f3032686694afb3be818b04e6b968ea65d5946184da009dc1fe2ba994",
+    "gen_0eee79460e51aa6c3c8fef6e1a0aab7f71fd19c7e4e8829cd1c6f22f5df69611",
+    "gen_65918b33bcdbef5701c739fb37dff096af3311a3b88d3d80205ac0d6fd3b3a85",
+    "gen_4c9ca12e3b9a79b98bfc0bdd72cc8ca06716736cc170276f4cfd182248f2c555",
+    "gen_3ca1e7fd492d2cb3be2e517c36e57e9a14a86a050e1cbb1e4e16da5d3a3493be",
+    "gen_f503046d6c8c1792acd597f50d6f0a02ad53bbd96b9b70909379d5553fb31a4d",
+    "gen_24fc31ee407ed11bd33f0a2e3ba396286185af35de5ab8e4a505ca91293c43de",
+    "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+    "gen_3def61868de3b6752b70b582fc54a8559b2baa66aab516e34aff6d78bdc69bed",
+    "gen_3b5bbf535fe095f613ef6a7504260b404aeefd7ba75f1bed6ab8939c215d71d7",
+    "gen_1a1f7f7be7985cf2670e10097041f6b7a523a25c08e73b054a4a1e62cf75e01f",
+    "gen_ec954ccfbf24c907d266b5b65bb9949ebbbe354663f73ea8211a27d669ebe4e5",
+    "gen_6b1b17b509b829a7d935436f392c03c723c1dea9c968fc1825505e7a3452556b",
+    "gen_06c02450fd86548555ccda2a288aeeee7da0001a373d358aca0744bacbf5e7ce",
+    "gen_9c906f4035304288ee509d600f53f4eb4b74204a7978093375467fda86839b2f",
+    "gen_89fd84bcb29bd9cfa0b2fc38a983582042830e1b1bb4fb103909b88eb2bacab4",
+    "gen_55766c024bcb9af5ffc0f617c75f2a74f3350db79bcf88099b8620fb010aa201",
+    "gen_7112fd0a2d228c7f4df999910162cc1f597036f4e2cf147e2504a936aec5c026",
+    "gen_23aa31dc2717e56baea85dffde9ae918ca707f9a4e0c08ae071ceec9f351e5d7",
+    "gen_6363b28bb5fb8432545ffe2bd491aeef2f0df85fb5ada7700d635e0b7ccc0939",
+    "gen_6ca943c49d2f48cb6ece0afe7a1412998bdaad2875cf55dcd91ceb798f09b81f",
+    "gen_23833101ad6c123cc761116b2e790112a20fdb72e71f76348a84c21103164b5c",
+    "gen_57ab06fbb78b3882e645227dc425c82b0508604aff48c452b7755f20b700b453",
+    "gen_4e7f17478d90965ad3d520c35c7cdec0a40e345de96d5540ebaadb6cc7ba4599",
+    "gen_a46f5720158119da493b0dcbea5b657678daf69fc6f8a01a5b071fd21007b60f",
+    "gen_97f3153ce0346865703b39ee33bb8c07de951f0f76897af8233c92ef7608ad2b",
+    "gen_3254a30bc5eaa1921283e4fac529c81352bdb5b3cb2226eb0551a693d8efe238",
+    "gen_76b98cd9cfc3b0d9a602a3803f6c5371e24c3fd859859c546a8ca8551b869412",
+    "gen_bbdcf935151b10369cd6bed18d7722a46aabab920d8f7174d273678611f86fa2",
+    "gen_64336067f24aa4193d2fa634e8edd9db2f895721206553b475d8b903b8f3d60c",
+    "gen_5d178c843171506dc0ec1bf83ac9c560eb28d4da4213a9cadb4481ec6d31d686",
+    "gen_1d7383b119c9b13f7bd9946b680882814682199706cda729132581f3bfffa9d2",
+    "gen_0d8d129defe1672206064c254e23cd11d9a7b3162729464442502b5378e363c3",
+    "gen_a72c3e0b92e32bc4d61b63b7e2d2a89dfbde729a58fed3ea83d04af6def282d1",
+    "gen_0d3e91b355c5162c62d1816b19d524f51115f5951c7cf15670cda58ddd2e6c50"
+  ],
+  "used_genome_ids": [
+    "gen_027d39c365505346b3bb049457ce0bbf5ea1b68003ca745749b53a7b249eb157",
+    "gen_029a747767e20a4c5ee6c6db7d5985f7a49a3ba1cca60138ee8f8808e0b4f44b",
+    "gen_06131ebc5cf2cd2bbd00776d2b1890959c17bd741f0a06fbdc2e3f491fff75e4",
+    "gen_06c02450fd86548555ccda2a288aeeee7da0001a373d358aca0744bacbf5e7ce",
+    "gen_0b03837a6c67f5826aeecf090eecae3ffbde4f1913857187845cc448ef979899",
+    "gen_0cb12f1b3bb924f8d4e970bea8e0facb19b4f02c0f137886690cbf438fd2d7d5",
+    "gen_0d3e91b355c5162c62d1816b19d524f51115f5951c7cf15670cda58ddd2e6c50",
+    "gen_0d8d129defe1672206064c254e23cd11d9a7b3162729464442502b5378e363c3",
+    "gen_0e2b9b7a38fb2437be01be18a7f83212d1d8a2efcde7bf6cd6a9aa556d5b1ca0",
+    "gen_0e9c20d7862aedaf471b66fff8f1eb3cc0083c8ba7e295f45d47430c34e9853d",
+    "gen_0eee79460e51aa6c3c8fef6e1a0aab7f71fd19c7e4e8829cd1c6f22f5df69611",
+    "gen_13cc32f77d2528c7747809dab943d2fb097c533bb613d8a001a415e84bf05d1a",
+    "gen_1490058f3032686694afb3be818b04e6b968ea65d5946184da009dc1fe2ba994",
+    "gen_14b7cc22ef2cf268ac0b0240fd2035a12a382813d4a7f98b28b66b0ca56c7d01",
+    "gen_18313309e8694c8a86bf95df81d20c5e9141932db7c28ca22ccabb8053ee699a",
+    "gen_1959c275d15afdd3e5652bbdedef7a22d232e322d08cd1b0a9832ce070c6689a",
+    "gen_19a404931b6ca576a1b71d71a6023d6b78fa78426ed0fdfab59a2d4c91d57061",
+    "gen_1a17fc151bc7faec53b5668165e72e3af1eca31ea84c75fcec46d3bc3c15ad0e",
+    "gen_1a1f7f7be7985cf2670e10097041f6b7a523a25c08e73b054a4a1e62cf75e01f",
+    "gen_1d7383b119c9b13f7bd9946b680882814682199706cda729132581f3bfffa9d2",
+    "gen_23833101ad6c123cc761116b2e790112a20fdb72e71f76348a84c21103164b5c",
+    "gen_23aa31dc2717e56baea85dffde9ae918ca707f9a4e0c08ae071ceec9f351e5d7",
+    "gen_24fc31ee407ed11bd33f0a2e3ba396286185af35de5ab8e4a505ca91293c43de",
+    "gen_251a7b7872e8d8c4f2a248cdedecd25ac278caa62b95611d1d50a3bcc2ce0526",
+    "gen_2599ee120f699a57e0d72b443a2d993f98232fa237cb8301ceda040dd5d94dd3",
+    "gen_2c07fe86679157fd87c8c9c287de223af254700eb93adf3998a20841317ab251",
+    "gen_2c714e25eda4a1064e98c409267950ead475dffeb520708fbc617fedd9558bf1",
+    "gen_3254a30bc5eaa1921283e4fac529c81352bdb5b3cb2226eb0551a693d8efe238",
+    "gen_3264a410f529b9c13a3af491a977c05468931cb284e22bfa7ca060efcea4565b",
+    "gen_32cc4f4198e8a9734f2c796eafec4b99fdc3d1dbcc7525741fb30c5a35428e44",
+    "gen_36150d7cf7f332e4a2f7ecbc85bae788a9a7c545600ce80a68f272afeb7556d7",
+    "gen_36770d942c17c3f78fbae26e8e69f341fa29345a2b3295195e2d4c7532690f71",
+    "gen_38c2d4637215103f873578f7af1e821c3b9f081fd3bc2b176f0b47aee3aef961",
+    "gen_3b5bbf535fe095f613ef6a7504260b404aeefd7ba75f1bed6ab8939c215d71d7",
+    "gen_3be61cd25d7a5c82017f120c2fb7000fd9047984a37b9cfb0a7b984797200638",
+    "gen_3ca1e7fd492d2cb3be2e517c36e57e9a14a86a050e1cbb1e4e16da5d3a3493be",
+    "gen_3def61868de3b6752b70b582fc54a8559b2baa66aab516e34aff6d78bdc69bed",
+    "gen_3f9e5e900ea0c4b74018f1fa3fa329b3eb539e6c0aaffac94f55b707f414c7a5",
+    "gen_40b904f194284a7cc13a4e26929a9d39dfccaa5c5b014eb1c98042ff00a1552d",
+    "gen_421e8053f10851cab044fea9d041003403061b6996fef407360708ccdc9d4ee6",
+    "gen_495552d00b8953d3a02af9594b5fa7ab8fb881180cb22780bc52be4b5d246349",
+    "gen_4c9ca12e3b9a79b98bfc0bdd72cc8ca06716736cc170276f4cfd182248f2c555",
+    "gen_4cbcdae0cec2f1af2724aab0a340b04951e3c9a96b77447f0f76cbd5307c356a",
+    "gen_4cf2e7a92216888770b0bc81cb031f2268d8d74e5bab855658cffbc041a6b5d4",
+    "gen_4da093d2aea8e1d8dd9aba55f56984cd57702e6ceb6cec5308c28d1631378e86",
+    "gen_4e7f17478d90965ad3d520c35c7cdec0a40e345de96d5540ebaadb6cc7ba4599",
+    "gen_4e89932f6a6589b1e4975f37ae4a0e6854de057a8f7b2c5207b3e9b50a2cef27",
+    "gen_501d52b04fe2ebc0a24dfc22f2941260108f3257cf8132af86598d5ea8fb4db2",
+    "gen_530ae083d009b105711286380c7f8154390a665bef98978ad59c4f0bc84100cc",
+    "gen_55766c024bcb9af5ffc0f617c75f2a74f3350db79bcf88099b8620fb010aa201",
+    "gen_57ab06fbb78b3882e645227dc425c82b0508604aff48c452b7755f20b700b453",
+    "gen_57adf0962caa3d7a4796f2559accf4675bb94ababe01f264866de75910d62fb5",
+    "gen_5884052a289bd619b2250cff801fd9dff135aa5f2e52f987ba54594f5aee7cef",
+    "gen_5d178c843171506dc0ec1bf83ac9c560eb28d4da4213a9cadb4481ec6d31d686",
+    "gen_5d831afd651a6010ceee27322a6440be6fd4e307cffe2f0d311450950d259d52",
+    "gen_609de8d41b62928fbabfadcec5ae6c7f5fd93dabb97ba02c24df2ad21cce696a",
+    "gen_62507c29873b86c2bc2a0cc517290b8a108cd3128663c00fed68b4fc36a72fc0",
+    "gen_6363b28bb5fb8432545ffe2bd491aeef2f0df85fb5ada7700d635e0b7ccc0939",
+    "gen_64336067f24aa4193d2fa634e8edd9db2f895721206553b475d8b903b8f3d60c",
+    "gen_65918b33bcdbef5701c739fb37dff096af3311a3b88d3d80205ac0d6fd3b3a85",
+    "gen_676dcfdfca9e0d20d859af6bdcdd1dcd857829d65b60da240484f30f7e0f3850",
+    "gen_67e1315173587ebf51131d26dca4c19265bd0e9e82b707ba0c0622c4a8f0063a",
+    "gen_6b1b17b509b829a7d935436f392c03c723c1dea9c968fc1825505e7a3452556b",
+    "gen_6ca943c49d2f48cb6ece0afe7a1412998bdaad2875cf55dcd91ceb798f09b81f",
+    "gen_7112fd0a2d228c7f4df999910162cc1f597036f4e2cf147e2504a936aec5c026",
+    "gen_75a2768c6d3f440d31044a1280d2587f201ecf34e3a06bf483e3f610979a97ee",
+    "gen_76b98cd9cfc3b0d9a602a3803f6c5371e24c3fd859859c546a8ca8551b869412",
+    "gen_79f2d65e1a2699d474889724a6c9f7e6a84a79cd0af5d6fe3243ac7306644bf6",
+    "gen_805205b4e33a1f7697edf4117660f031a8e663f7996dbd80ff8791f0c6d0283b",
+    "gen_85a75d74c4dafe739afc51edc4df933cb0a58f8c4598da56081984028abe3264",
+    "gen_85cfb55593858561d101914ded4af4280f912c14494be708af9194c7cbec2174",
+    "gen_86ad1f6e5f87ff8200c072b4d4b7c6cbc58344fa74e5058ed69260d147acd0c1",
+    "gen_89fd84bcb29bd9cfa0b2fc38a983582042830e1b1bb4fb103909b88eb2bacab4",
+    "gen_8a0ee0dd98ae29beb83a9e3edc4353d1b51b3c27ea0035f19d95e1368eec56b1",
+    "gen_8ae260ea877a2d80ffe9e92933736a81f993d5cfaa72c51164d3862fc64336fd",
+    "gen_8bd6646385065fa9870a001a578fbc81d6b10c4ca3705db9039c315ace2ef4fd",
+    "gen_8ff24031daf64a9167df836b0b2379dadb78862ed7e8d85cbc3dda7872da0309",
+    "gen_91d0368d38c067b59e35c633db2a58d98f354d5bb7c8084005ae2a69e3778226",
+    "gen_91e03009eae0caa80ad2ece9d989ffbab9b65dae5739d0e510516a271014b2b0",
+    "gen_92d9b1af1b696c3ba536d6669e9e938d64fe07d899352224d923de184e1e0e0c",
+    "gen_94ccbe37337ce4a36708664f0c6e97b9cca37da0b97f6d91ecc355391592c191",
+    "gen_95b8ad2e43f6709d2b5131dcc29751cfa3c6afe3904ada51ae8f2db0df58bc87",
+    "gen_969b9367acd3790fdcd1d68fb45afb7898b5eaf3af4b6dee98d8fce7dd00c082",
+    "gen_97f3153ce0346865703b39ee33bb8c07de951f0f76897af8233c92ef7608ad2b",
+    "gen_9c906f4035304288ee509d600f53f4eb4b74204a7978093375467fda86839b2f",
+    "gen_a2972502f5326456d0a7c09e778310ef46b8e8778a72e82f42ff17f681925f78",
+    "gen_a46f5720158119da493b0dcbea5b657678daf69fc6f8a01a5b071fd21007b60f",
+    "gen_a53b0bddf31cfef449ca768dca4fc1000832eab3c2dfc052c84f66217d0935db",
+    "gen_a72c3e0b92e32bc4d61b63b7e2d2a89dfbde729a58fed3ea83d04af6def282d1",
+    "gen_ac422af5cfba917f24090f963544572264fbcb8117d7bfe4ec72bdaced6aa6e1",
+    "gen_ad745757919331f4ddee55d88c85dd2d4b51966faef528bbb432d502501ad5c9",
+    "gen_add62c59e99cfc2d5a29d0b2c0c5c4763e5a0718f078e7f2a58ca08799ac1999",
+    "gen_b01cec180a7d9fdda0e8d9926861441ee4fbf055d3089cef4c7f6b8b976e8107",
+    "gen_b87a17004dafccdd9c8064d24365169b7d8b6642a2947d3e64cc9617a830c02f",
+    "gen_bbdcf935151b10369cd6bed18d7722a46aabab920d8f7174d273678611f86fa2",
+    "gen_bbf31f8ad1ff82381007af93070e313639f55a9e7ede4ad6443d7b3a90e24cbd",
+    "gen_c06fcc92a21cbbd2512b8034c745eb9881a0c42757fa556fc99b24249f592ba3",
+    "gen_c11c6bbe305b4205f140b90e2f340a82ede4ee565f17bb2ef501bc96acded0a6",
+    "gen_c215c581055e7506ef30d4491205def6c176cc74d219cd1d2285e2e36f40ca09",
+    "gen_c813c4b27eaabea5ba8ae152b93ce8e5ae98019bae2739cae93629d9a53e0aca",
+    "gen_c8f42d241711d248573088d7d66024267a70b42bdcc51f1a72be81de64a4e178",
+    "gen_ca903415cfd504c9bae93463a66eb2966f543181a7cb8e93f525944206d8a671",
+    "gen_caa16dd32ad60620b2179f216020fa2247a9e9824c97f39e42cd18d3816bb2c0",
+    "gen_d08d8fcef973e19035143830020055d3e843c8840b3fa20d3da128c1f988df59",
+    "gen_d112c19cf901819e11a8e8aaac4e49252cbc99d6b747cbee0697ed3b0080b3e8",
+    "gen_d3f1d43f327934ea9c2b597ccab162ca237bebd82089daef13992aa289c00fee",
+    "gen_d42cb3d662cd6c84d0b0d5313fb240f2ab1d6391250d8a55964fae88ae59df62",
+    "gen_d4ef8252ba96d6014f831c82874199f5a53bcaf16d33976395152fcf4d5e7d7c",
+    "gen_d58cd0517599a36ac02de058bcd531565fd2d5469c1c7097da55cd0e98e0087a",
+    "gen_d64e087f3aa20677ec719a9b62d7a25173bec2f355ab6342bca8fd44bf0ca388",
+    "gen_d774d9681e676fed8810ae7a4bde07a053cfe9ea04bd7fee8150e9977b8fd107",
+    "gen_d9aebe13ff78b32bfb01d06fa1230241a236f83e87904785559eda8670da0a98",
+    "gen_d9be974b05c3f2e0ac5839f228cde0dd82ac4fe1d3a41d2b8078f4242ecd1ecc",
+    "gen_d9e5ccb4b6aff3ed9cdc5101e6712d48893d0fc30de07435e2b9e0608f2b483f",
+    "gen_defa1da4e529b456a9638a15ff097048a85ef1278e08623bc3c981afda5c6bec",
+    "gen_e027d7e12d35b3bb42b097df22b14d942d8c1192b0f0f3e6be7502ad816e33f6",
+    "gen_e17951034fb62169fa712107e101014d5b0dc72886afc889d1a59ddfb954182d",
+    "gen_e182239d773a8b759873c34104079e9c82deb5cbcb2081b842297429de7abdfd",
+    "gen_e19c72c732fe5039d5cf1dd398d78bb39b54ed72c8b13742da7c851da19643ec",
+    "gen_e531156cacd13f7354e6951b388c5923f21f0c249e3147aed378f945337128cb",
+    "gen_e5fabda80800c0de97bc11deca913576fab60daf1123f8345ec665af255eebf1",
+    "gen_e73bbf5aff8c86818d7cd569327e9afd61f50d7a503eaa7bfcaf1e17dad27c2e",
+    "gen_e8b41ebadc75bbc8af5b445ee40f2b6c1fb7c215ec1a32f681b904ecd0f3985d",
+    "gen_ec954ccfbf24c907d266b5b65bb9949ebbbe354663f73ea8211a27d669ebe4e5",
+    "gen_edade7728e71a2ebbdf15b7d82a448c205bcab32c62febf47c87a2f496d8eb31",
+    "gen_ef8fb95ac759679631edb445fcbf953c313c97e2e65f6e53211cff88c35ad2f7",
+    "gen_ef9f5304f3cf430b06a4af7c1aba6b31e4f716c8b996cf92bcc467f926f7678a",
+    "gen_f503046d6c8c1792acd597f50d6f0a02ad53bbd96b9b70909379d5553fb31a4d",
+    "gen_f7dda3a5f40f0a6a52d3897e1eae17dd971f441c49317c7d7455522cc2722287",
+    "gen_fccbd019b3a65be85aa3dd2d690c9f75fe9fbe327e850a12a4dad1091a36c8fd"
+  ]
+}
