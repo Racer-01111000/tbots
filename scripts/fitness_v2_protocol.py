@@ -5,7 +5,11 @@ Implements the thirteen frozen conventions (§3 #0-#12) resolving the
 descriptors, DEVELOPMENT reference calibration, distance admission, and the
 Distributional/Sequence/Shock world generators. Execution needs no price
 generator here -- it matches its historical anchor exactly (warm-up
-amendment) and is distance-exempt (fitness_v2_admission.market_distance_passes).
+amendment) and is fully distance-exempt
+(fitness_v2_admission.market_distance_passes). Shock (2026-09-29 amendment)
+is exempt from that predicate's >=0.75 threshold only; it still requires a
+generated, structurally-validated descriptor. Distributional and Sequence
+remain fully subject to both validation and the threshold.
 
 Reuses, never duplicates: fitness_v2.py's contract algebra,
 fitness_v2_formula_definitions.py's trend/OC1/source-guard (already resolved,
@@ -23,6 +27,7 @@ from fitness_v2_formula_definitions import (
 )
 from fitness_v2_warmup import AMENDMENT_ID as WARMUP_AMENDMENT_ID
 from fitness_v2_admission import market_distance_passes
+from fitness_v2_shock_distance_amendment import AMENDMENT_ID as SHOCK_DISTANCE_AMENDMENT_ID
 
 EXECUTION_DIVERSITY_AMENDMENT_ID = (
     "fitness_v2_execution_diversity_amendment_"
@@ -715,20 +720,24 @@ def build_complete_protocol(
     boundary_proof: Mapping[str, Mapping[str, object]],
 ) -> dict:
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "authority": (
             "Rick: GO — Claude Code on NODE: TBOTS Fitness V2 pre-result "
             "protocol completion, 2026-09-26; GO ADDENDUM A — Unattended "
             "operation, 2026-09-26 (§2's blocking development-boundary "
             "correction and §3's positive post-2018/pre-2007-02-07 filter "
             "proof); and the post-freeze-audit Sequence warm-up settlement, "
-            "2026-09-26 (before any world generation)"
+            "2026-09-26 (before any world generation); and the Shock "
+            "market-distance amendment, 2026-09-29 (superseding, not "
+            "modifying, the prior frozen manifest -- see "
+            "FITNESS_V2_SHOCK_MARKET_DISTANCE_PROVENANCE_20260929.md)"
         ),
         "depends_on": {
             "parameter_freeze": PARAMETER_FREEZE_ID,
             "formula_definitions": DEFINITIONS_ID,
             "real_warmup_amendment": WARMUP_AMENDMENT_ID,
             "execution_diversity_amendment": EXECUTION_DIVERSITY_AMENDMENT_ID,
+            "shock_distance_amendment": SHOCK_DISTANCE_AMENDMENT_ID,
         },
         "development_boundary": {"start": DEVELOPMENT_START, "end": DEVELOPMENT_END},
         "development_boundary_rule": DEVELOPMENT_BOUNDARY_RULE,

@@ -691,7 +691,7 @@ class CompleteProtocolManifest(unittest.TestCase):
         self.assertEqual(
             set(content["depends_on"]),
             {"parameter_freeze", "formula_definitions", "real_warmup_amendment",
-             "execution_diversity_amendment"},
+             "execution_diversity_amendment", "shock_distance_amendment"},
         )
         self.assertEqual(len(content["component_names"]), 32)
 

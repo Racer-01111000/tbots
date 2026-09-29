@@ -1,0 +1,31 @@
+{
+  "content": {
+    "authority": "Rick",
+    "extends_warmup_amendment": "fitness_v2_real_warmup_amendment_3053c6c4fe0c708307ba9bf0e0084b3fbd967567aa9514da07f8756ce061dfec",
+    "no_retroactive_acceptance_of_prior_shock_attempts": true,
+    "no_threshold_tuning": true,
+    "rationale": {
+      "conclusion": "structural incompatibility between Shock's transformation (three authorized DEVELOPMENT donor-gap relocations from a real historical anchor) and a normalized-descriptor distance gate calibrated for fully synthetic worlds -- not a threshold that needed retuning",
+      "empirical_evidence": "533+ distinct Shock candidates drawn against the >=0.75 threshold, 0 admissions",
+      "identified_pre_result": true
+    },
+    "rule": {
+      "execution_unaffected": "Execution's pre-existing full exemption (no descriptor validation at all) is a separate, earlier rule and is unchanged by this amendment.",
+      "exempt_from": "market_distance_passes' >=0.75 normalized-descriptor distance threshold only",
+      "family": "shock",
+      "not_exempt": [
+        "distributional",
+        "sequence"
+      ],
+      "still_enforced_for_shock": [
+        "known-synthetic-family check",
+        "non-empty candidate/references requirement",
+        "per-vector length/type/finiteness structural validation",
+        "generator/base-path construction (fitness_v2_world_bank Shock builder, unchanged by this amendment)"
+      ]
+    },
+    "schema_version": 1,
+    "supersedes": null
+  },
+  "manifest_id": "fitness_v2_shock_distance_amendment_1c0ed706d18f92434955e9645b71c3d96e6d1a5cb843905827e7796a85093686"
+}

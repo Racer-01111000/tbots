@@ -45,7 +45,11 @@ MAX_WORLDS_PER_FAMILY = MAX_TOTAL_SYNTHETIC_WORLDS // len(SYNTHETIC_FAMILIES)
 COMPLETE_PROTOCOL_PATH = (
     Path(__file__).resolve().parents[1] / "evolution" / "protocol"
     / "fitness_v2_complete_protocol_"
-    "49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89.json"
+    # Superseded 2026-09-29 by the Shock market-distance amendment (adds
+    # depends_on.shock_distance_amendment; schema_version 3->4; every other
+    # field byte-identical -- see FITNESS_V2_SHOCK_MARKET_DISTANCE_PROVENANCE_
+    # 20260929.md). Prior manifest 49c71da1...60e89 preserved on disk, unread.
+    "a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea.json"
 )
 
 

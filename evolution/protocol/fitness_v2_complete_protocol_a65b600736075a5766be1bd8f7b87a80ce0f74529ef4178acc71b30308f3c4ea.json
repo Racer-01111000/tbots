@@ -1,0 +1,444 @@
+{
+  "content": {
+    "asset_universe": [
+      "DBC",
+      "EEM",
+      "EFA",
+      "GLD",
+      "IEF",
+      "SPY",
+      "TLT",
+      "VNQ"
+    ],
+    "authority": "Rick: GO \u2014 Claude Code on NODE: TBOTS Fitness V2 pre-result protocol completion, 2026-09-26; GO ADDENDUM A \u2014 Unattended operation, 2026-09-26 (\u00a72's blocking development-boundary correction and \u00a73's positive post-2018/pre-2007-02-07 filter proof); and the post-freeze-audit Sequence warm-up settlement, 2026-09-26 (before any world generation); and the Shock market-distance amendment, 2026-09-29 (superseding, not modifying, the prior frozen manifest -- see FITNESS_V2_SHOCK_MARKET_DISTANCE_PROVENANCE_20260929.md)",
+    "complete_protocol_ready": true,
+    "component_names": [
+      "autocorrelation_DBC",
+      "autocorrelation_EEM",
+      "autocorrelation_EFA",
+      "autocorrelation_GLD",
+      "autocorrelation_IEF",
+      "autocorrelation_SPY",
+      "autocorrelation_TLT",
+      "autocorrelation_VNQ",
+      "correlation",
+      "dispersion",
+      "drawdown_depth",
+      "drawdown_duration",
+      "gap_frequency",
+      "gap_magnitude",
+      "trend_DBC",
+      "trend_EEM",
+      "trend_EFA",
+      "trend_GLD",
+      "trend_IEF",
+      "trend_SPY",
+      "trend_TLT",
+      "trend_VNQ",
+      "turnover",
+      "volatility_DBC",
+      "volatility_EEM",
+      "volatility_EFA",
+      "volatility_GLD",
+      "volatility_IEF",
+      "volatility_SPY",
+      "volatility_TLT",
+      "volatility_VNQ",
+      "volatility_aggregate"
+    ],
+    "depends_on": {
+      "execution_diversity_amendment": "fitness_v2_execution_diversity_amendment_4ef367db44be987a59e41547b485decbfb8c7d9d0b75477490f9221a59b76fef",
+      "formula_definitions": "fitness_v2_formula_definitions_1a352cc511d2d0b4c408c1493bb1c88879b4f78e2b15955d9d4e4b47f158208b",
+      "parameter_freeze": "fitness_v2_parameter_freeze_47aba93e384f50836713b7c4e4723ddf858d6c8eda8da363c391d9bbb261cfac",
+      "real_warmup_amendment": "fitness_v2_real_warmup_amendment_3053c6c4fe0c708307ba9bf0e0084b3fbd967567aa9514da07f8756ce061dfec",
+      "shock_distance_amendment": "fitness_v2_shock_distance_amendment_1c0ed706d18f92434955e9645b71c3d96e6d1a5cb843905827e7796a85093686"
+    },
+    "development_boundary": {
+      "end": "2018-12-31",
+      "start": "2007-02-07"
+    },
+    "development_boundary_rule": "No row before the world's own first DEVELOPMENT session is read, for any purpose, ever, in calibration or descriptor computation. The Execution/Shock real-warm-up amendment governs WORLD CONSTRUCTION only, not calibration or descriptors -- it grants no exception here. The return series for asset i begins at the world's second session (first return's base = the world's own first-session close); an N-session world yields exactly N-1 returns. A 252-window means 252 consecutive RETURNS (253 consecutive prices), never 252 consecutive sessions -- an N-session world yields exactly N-1-252+1 = N-252 complete 252-return windows (H1: 1008 sessions -> 1007 returns -> 756 windows). Gaps need close[t-1], so the first gap is also at the world's second session. M63 turnover's first defined value is at the 64th session within a window; leader-change denominators count only consecutive pairs where both leaders are defined (\u00a73 #6).",
+    "gap_extrema": [
+      -0.12307697618791791,
+      0.1332944020849367
+    ],
+    "gap_threshold_tau": 0.017099908776601856,
+    "h_shapes": {
+      "anchor_rows": {
+        "H1": {
+          "DBC": {
+            "adjusted_close": 19.265056610107422,
+            "raw_close": 23.719999313354492,
+            "raw_high": 24.100000381469727,
+            "raw_low": 23.610000610351562,
+            "raw_open": 23.950000762939453
+          },
+          "EEM": {
+            "adjusted_close": 25.91799545288086,
+            "raw_close": 38.71666717529297,
+            "raw_high": 38.98666763305664,
+            "raw_low": 38.60333251953125,
+            "raw_open": 38.959999084472656
+          },
+          "EFA": {
+            "adjusted_close": 42.066192626953125,
+            "raw_close": 75.26000213623047,
+            "raw_high": 75.44999694824219,
+            "raw_low": 75.02999877929688,
+            "raw_open": 75.18000030517578
+          },
+          "GLD": {
+            "adjusted_close": 64.62999725341797,
+            "raw_close": 64.62999725341797,
+            "raw_high": 65.1500015258789,
+            "raw_low": 64.4800033569336,
+            "raw_open": 64.77999877929688
+          },
+          "IEF": {
+            "adjusted_close": 50.10575485229492,
+            "raw_close": 82.30999755859375,
+            "raw_high": 82.31999969482422,
+            "raw_low": 82.18000030517578,
+            "raw_open": 82.2300033569336
+          },
+          "SPY": {
+            "adjusted_close": 101.55508422851562,
+            "raw_close": 145.2100067138672,
+            "raw_high": 145.36000061035156,
+            "raw_low": 144.57000732421875,
+            "raw_open": 145.1199951171875
+          },
+          "TLT": {
+            "adjusted_close": 47.885074615478516,
+            "raw_close": 88.05999755859375,
+            "raw_high": 88.12000274658203,
+            "raw_low": 87.83999633789062,
+            "raw_open": 87.9000015258789
+          },
+          "VNQ": {
+            "adjusted_close": 38.812255859375,
+            "raw_close": 87.2699966430664,
+            "raw_high": 87.2699966430664,
+            "raw_low": 85.05000305175781,
+            "raw_open": 85.52999877929688
+          }
+        },
+        "H2": {
+          "DBC": {
+            "adjusted_close": 24.17106056213379,
+            "raw_close": 28.59000015258789,
+            "raw_high": 28.799999237060547,
+            "raw_low": 28.5,
+            "raw_open": 28.690000534057617
+          },
+          "EEM": {
+            "adjusted_close": 33.41185760498047,
+            "raw_close": 46.560001373291016,
+            "raw_high": 46.7599983215332,
+            "raw_low": 46.349998474121094,
+            "raw_open": 46.400001525878906
+          },
+          "EFA": {
+            "adjusted_close": 38.17818832397461,
+            "raw_close": 60.97999954223633,
+            "raw_high": 61.060001373291016,
+            "raw_low": 60.630001068115234,
+            "raw_open": 60.65999984741211
+          },
+          "GLD": {
+            "adjusted_close": 131.67999267578125,
+            "raw_close": 131.67999267578125,
+            "raw_high": 131.9499969482422,
+            "raw_low": 131.22999572753906,
+            "raw_open": 131.6699981689453
+          },
+          "IEF": {
+            "adjusted_close": 65.1807632446289,
+            "raw_close": 91.7699966430664,
+            "raw_high": 91.80000305175781,
+            "raw_low": 91.45999908447266,
+            "raw_open": 91.56999969482422
+          },
+          "SPY": {
+            "adjusted_close": 100.4229965209961,
+            "raw_close": 131.97000122070312,
+            "raw_high": 132.39999389648438,
+            "raw_low": 131.42999267578125,
+            "raw_open": 131.44000244140625
+          },
+          "TLT": {
+            "adjusted_close": 57.411136627197266,
+            "raw_close": 89.2699966430664,
+            "raw_high": 89.30000305175781,
+            "raw_low": 88.56999969482422,
+            "raw_open": 88.69999694824219
+          },
+          "VNQ": {
+            "adjusted_close": 31.320152282714844,
+            "raw_close": 57.61000061035156,
+            "raw_high": 57.70000076293945,
+            "raw_low": 57.02000045776367,
+            "raw_open": 57.130001068115234
+          }
+        },
+        "H3": {
+          "DBC": {
+            "adjusted_close": 15.386964797973633,
+            "raw_close": 18.200000762939453,
+            "raw_high": 18.299999237060547,
+            "raw_low": 18.09000015258789,
+            "raw_open": 18.139999389648438
+          },
+          "EEM": {
+            "adjusted_close": 30.969209671020508,
+            "raw_close": 39.7599983215332,
+            "raw_high": 39.88999938964844,
+            "raw_low": 39.68000030517578,
+            "raw_open": 39.689998626708984
+          },
+          "EFA": {
+            "adjusted_close": 44.25113296508789,
+            "raw_close": 62.20000076293945,
+            "raw_high": 62.380001068115234,
+            "raw_low": 61.9900016784668,
+            "raw_open": 61.9900016784668
+          },
+          "GLD": {
+            "adjusted_close": 119.16999816894531,
+            "raw_close": 119.16999816894531,
+            "raw_high": 119.4000015258789,
+            "raw_low": 118.7699966430664,
+            "raw_open": 118.83000183105469
+          },
+          "IEF": {
+            "adjusted_close": 83.16018676757812,
+            "raw_close": 107.80999755859375,
+            "raw_high": 108.20999908447266,
+            "raw_low": 107.80000305175781,
+            "raw_open": 108.19999694824219
+          },
+          "SPY": {
+            "adjusted_close": 169.02706909179688,
+            "raw_close": 204.6300048828125,
+            "raw_high": 205.63999938964844,
+            "raw_low": 204.13999938964844,
+            "raw_open": 204.77000427246094
+          },
+          "TLT": {
+            "adjusted_close": 94.96538543701172,
+            "raw_close": 130.75,
+            "raw_high": 131.97999572753906,
+            "raw_low": 130.75,
+            "raw_open": 131.97000122070312
+          },
+          "VNQ": {
+            "adjusted_close": 53.59860610961914,
+            "raw_close": 84.5999984741211,
+            "raw_high": 85.61000061035156,
+            "raw_low": 84.58000183105469,
+            "raw_open": 85.12000274658203
+          }
+        }
+      },
+      "dates": {
+        "H1": {
+          "end": "2011-02-04",
+          "n_sessions": 1008,
+          "start": "2007-02-07"
+        },
+        "H2": {
+          "end": "2015-02-06",
+          "n_sessions": 1007,
+          "start": "2011-02-07"
+        },
+        "H3": {
+          "end": "2018-12-31",
+          "n_sessions": 981,
+          "start": "2015-02-09"
+        }
+      },
+      "declared_starts": {
+        "H1": "2007-02-07",
+        "H2": "2011-02-07",
+        "H3": "2015-02-07"
+      },
+      "stream_counts": {
+        "H1": {
+          "first_date": "2007-02-07",
+          "last_date": "2011-02-04",
+          "raw_sessions": 1008,
+          "returns": 1007,
+          "windows_252": 756
+        },
+        "H2": {
+          "first_date": "2011-02-07",
+          "last_date": "2015-02-06",
+          "raw_sessions": 1007,
+          "returns": 1006,
+          "windows_252": 755
+        },
+        "H3": {
+          "first_date": "2015-02-09",
+          "last_date": "2018-12-31",
+          "raw_sessions": 981,
+          "returns": 980,
+          "windows_252": 729
+        }
+      }
+    },
+    "post_development_filter_proof": {
+      "DBC": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2006-02-06",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 5170
+      },
+      "EEM": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2003-04-14",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 5879
+      },
+      "EFA": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2001-08-27",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 6285
+      },
+      "GLD": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2004-11-18",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 5475
+      },
+      "IEF": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2002-07-30",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 6057
+      },
+      "SPY": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "1993-01-29",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 8450
+      },
+      "TLT": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2002-07-30",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 6057
+      },
+      "VNQ": {
+        "post_filter_max": "2018-12-31",
+        "post_filter_min": "2007-02-07",
+        "post_filter_row_count": 2996,
+        "raw_first": "2004-09-29",
+        "raw_last": "2026-08-25",
+        "raw_row_count": 5511
+      }
+    },
+    "reference_mad": {
+      "autocorrelation_DBC": 0.02477581667179103,
+      "autocorrelation_EEM": 0.051347357347442696,
+      "autocorrelation_EFA": 0.0624360119580709,
+      "autocorrelation_GLD": 0.03467941004504889,
+      "autocorrelation_IEF": 0.028361121529020587,
+      "autocorrelation_SPY": 0.04209543372807341,
+      "autocorrelation_TLT": 0.039107926680819964,
+      "autocorrelation_VNQ": 0.08716860596225268,
+      "correlation": 0.1040989093674837,
+      "dispersion": 0.001370667586279085,
+      "drawdown_depth": 0.019000549733405425,
+      "drawdown_duration": 0.126984126984127,
+      "gap_frequency": 0.024747474747474747,
+      "gap_magnitude": 0.000918126482372994,
+      "trend_DBC": 0.14407386378239329,
+      "trend_EEM": 0.07781835223884359,
+      "trend_EFA": 0.10820618323494002,
+      "trend_GLD": 0.08816124676870007,
+      "trend_IEF": 0.0842089926967946,
+      "trend_SPY": 0.06439517792174154,
+      "trend_TLT": 0.08457468287480174,
+      "trend_VNQ": 0.08941133040162669,
+      "turnover": 0.026455026455026454,
+      "volatility_DBC": 0.002807404168495924,
+      "volatility_EEM": 0.003621721860164564,
+      "volatility_EFA": 0.0037516569404752974,
+      "volatility_GLD": 0.002147436286798206,
+      "volatility_IEF": 0.000790919124370758,
+      "volatility_SPY": 0.0024281691698214824,
+      "volatility_TLT": 0.0013046969720737524,
+      "volatility_VNQ": 0.0029782256267619498,
+      "volatility_aggregate": 0.0018488226632948942
+    },
+    "reference_median": {
+      "autocorrelation_DBC": -0.01924427346256991,
+      "autocorrelation_EEM": -0.05828561753134398,
+      "autocorrelation_EFA": -0.07289500434404204,
+      "autocorrelation_GLD": -0.005154008494761442,
+      "autocorrelation_IEF": -0.04846312337401874,
+      "autocorrelation_SPY": -0.06141552437343943,
+      "autocorrelation_TLT": -0.03679581232121637,
+      "autocorrelation_VNQ": -0.001821093727403504,
+      "correlation": 0.17940040888087763,
+      "dispersion": 0.007092958384065708,
+      "drawdown_depth": 0.07114111107658194,
+      "drawdown_duration": 0.373015873015873,
+      "gap_frequency": 0.03434343434343434,
+      "gap_magnitude": 0.021529214935085472,
+      "trend_DBC": 0.6708566636905477,
+      "trend_EEM": 0.7218927841525109,
+      "trend_EFA": 0.7117017675555066,
+      "trend_GLD": 0.665213076807378,
+      "trend_IEF": 0.6424032668369788,
+      "trend_SPY": 0.7261601271547881,
+      "trend_TLT": 0.6448920434513743,
+      "trend_VNQ": 0.6510678063367807,
+      "turnover": 0.13227513227513227,
+      "volatility_DBC": 0.010985003150275209,
+      "volatility_EEM": 0.014079862106978577,
+      "volatility_EFA": 0.011675535727842851,
+      "volatility_GLD": 0.01094463769821051,
+      "volatility_IEF": 0.003831051316391455,
+      "volatility_SPY": 0.009285197513432462,
+      "volatility_TLT": 0.008369508953719849,
+      "volatility_VNQ": 0.01054208409724259,
+      "volatility_aggregate": 0.005795756815930686
+    },
+    "rules": {
+      "0_candidate_descriptor_horizon": "Component-wise median over every complete 252-return window (stride 1) of the world's own scored sessions; historical anchors and the DEVELOPMENT reference use the identical procedure over their own shape. See development_boundary_rule for the exact returns-vs-sessions boundary.",
+      "10_sequence_joins": "Intact 63-session segments, one scale constant per segment; the anchor stands in as segment 0 so every segment (including the first) is scaled to zero join gap; start index 0 eligible; overlap allowed. See sequence_warmup_rule for the anchor's warm-up-bar-0 accounting.",
+      "11_shock_transformation": "Exactly three donor-gap relocations from the DEVELOPMENT exceedance pool into three distinct eligible destinations; multiplies one asset's OHLC/adjusted/dividend from the destination through the end of the world; no same-asset donor/destination restriction.",
+      "12_zero_mad_reference_component": "Any of the 32 DEVELOPMENT reference components with MAD==0 aborts world-bank construction; no sentinel substitution.",
+      "1_sample_standard_deviation": "Sample stdev, n-1; reject below 2 observations.",
+      "2_returns": "Adjusted-close simple returns: adjusted[t]/adjusted[t-1]-1.",
+      "3_equal_weight_portfolio": "Daily-rebalanced equal-weight mean return across the eight assets; E0=1.0.",
+      "3b_cross_sectional_dispersion": "Per-session sample stdev across the eight assets; component = median over the window.",
+      "4_cross_asset_correlation": "63-session windows, median of the 28 off-diagonal Pearson correlations per window, nested median across windows; reject zero-variance asset.",
+      "5_drawdown_structure": "Depth/normalized-duration on the \u00a73 equity curve; peak includes E0; a run underwater at window end counts through the end.",
+      "6_turnover_opportunity": "M63 leader momentum, lexicographic tie-break; leader-change frequency over defined consecutive pairs.",
+      "7_return_autocorrelation": "Per-asset lag-1 Pearson; reject zero variance.",
+      "8_gap_descriptor": "Raw open/prior-close gap, corporate-action and invalid-price exclusion; tau = pooled eight-asset DEVELOPMENT 95th percentile of |gap| (linear interpolation, numpy default); reject zero exceedances.",
+      "9_distributional_reconstruction_level": "Generated warm-up bar 0 = real raw/adjusted close on the matching H-shape's first DEVELOPMENT trading session on or after its declared start; subsequent bars evolve by the sampled observation's own ratios."
+    },
+    "schema_version": 4,
+    "sequence_warmup_bars": 378,
+    "sequence_warmup_rule": "Rick, 2026-09-26 (settled inside the post-freeze audit window, before any world generation): the anchor row emitted by join_sequence_segments is warm-up bar 0 for Sequence exactly as rule #9 already makes it for Distributional. Anchor (bar 0) + 377 bars from the Sequence transformation stream = 378 warm-up bars (joined-sequence indices 0..377); the scored horizon begins at joined-sequence index 378. The warm-up/scored split is a pure index into the already-joined sequence -- segments (63 intact rows each, per \u00a710) are never split or realigned at this boundary; a single segment may straddle indices 377/378 and that is expected, not an error."
+  },
+  "manifest_id": "fitness_v2_complete_protocol_a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea"
+}

@@ -1,0 +1,35 @@
+{
+  "authority": "Rick, 2026-09-29",
+  "purpose": "Regenerate the complete-protocol manifest to depend on the new Shock market-distance amendment, without touching any other frozen dependency or calibration value.",
+  "old_manifest_id": "fitness_v2_complete_protocol_49c71da11d46f56838a560481350cb3436af3177bab6cb13254f9c84860c6e89",
+  "new_manifest_id": "fitness_v2_complete_protocol_a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea",
+  "shock_distance_amendment_id": "fitness_v2_shock_distance_amendment_1c0ed706d18f92434955e9645b71c3d96e6d1a5cb843905827e7796a85093686",
+  "kwargs_reconstruction_check": {
+    "method": "kwargs.json's values were extracted field-for-field from the OLD frozen manifest's content (gap_threshold_tau, gap_extrema, reference_median/mad, h_shapes.dates/anchor_rows/stream_counts, post_development_filter_proof), then passed into build_complete_protocol() using the code AS IT STOOD BEFORE this amendment's edits, and the result was asserted byte-equal to the old manifest's content before any source was changed.",
+    "result": "reconstruction matches old content exactly: True"
+  },
+  "post_edit_diff_old_content_vs_new_content": {
+    "changed_fields": ["authority", "depends_on", "schema_version"],
+    "schema_version": {"old": 3, "new": 4},
+    "depends_on_diff": "new adds exactly one key, shock_distance_amendment; all four pre-existing keys (parameter_freeze, formula_definitions, real_warmup_amendment, execution_diversity_amendment) are byte-identical to the old manifest",
+    "unchanged_fields": [
+      "development_boundary", "development_boundary_rule", "sequence_warmup_rule",
+      "sequence_warmup_bars", "h_shapes", "post_development_filter_proof",
+      "asset_universe", "component_names", "rules", "gap_threshold_tau",
+      "gap_extrema", "reference_median", "reference_mad", "complete_protocol_ready"
+    ]
+  },
+  "runtime_wiring_updated": [
+    "scripts/fitness_v2_world_bank.py: COMPLETE_PROTOCOL_PATH now points at the new manifest file; old file left on disk untouched",
+    "STATUS.json: protocol_manifest field updated to the new manifest id via worker_status.py's validated with_updates()/write_status() helpers (not hand-edited)"
+  ],
+  "tests": {
+    "test_fitness_v2_shock_distance_amendment.py": "6/6 passed",
+    "test_fitness_v2_shock_distance_manifest_supersession.py": "4/4 passed",
+    "test_fitness_v2_protocol.py": "79/79 passed (depends_on set assertion extended)",
+    "test_fitness_v2_world_bank.py": "17/17 passed (COMPLETE_PROTOCOL_PATH change)",
+    "test_fitness_v2_worker.py": "27/27 passed",
+    "full_suite": "run and passing at 694/694 only after the follow-up commit lands evolution/protocol/SUPERSEDED.json's registry entry for this supersession (test_protocol_supersession.py requires a real, already-existing commit SHA in superseded_at_commit, so it cannot be added to this same commit) -- see full_suite.log in this directory, captured at that final HEAD"
+  },
+  "no_world_genome_campaign_or_result_generated": true
+}
