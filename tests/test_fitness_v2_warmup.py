@@ -67,9 +67,18 @@ class WarmupAmendmentTests(unittest.TestCase):
             with self.assertRaises(FitnessV2Error):
                 validate_real_warmup(family, changed, changed, scoring_start="2007-02-07")
 
-    def test_shock_warmup_exception_does_not_exempt_distance(self):
+    def test_shock_warmup_exception_now_also_carries_a_distance_exemption(self):
+        # Superseded 2026-09-29 (Rick): Shock's warm-up exception previously
+        # did NOT imply a distance exemption (both were False here). Rick has
+        # since separately exempted Shock from the >=0.75 threshold itself
+        # (see fitness_v2_admission.py); this warm-up module's own declarative
+        # WARMUP_AMENDMENT["shock"]["market_distance_exempt"] field is left at
+        # False deliberately, since editing it would change the content-hashed
+        # AMENDMENT_ID embedded in the frozen complete-protocol manifest chain.
+        # The live predicate in fitness_v2_admission.py is the source of truth.
         self.assertTrue(market_distance_passes("execution", [0.0], [[0.0]]))
-        for family in ("shock", "sequence", "distributional"):
+        self.assertTrue(market_distance_passes("shock", [0.0], [[0.0]]))
+        for family in ("sequence", "distributional"):
             self.assertFalse(market_distance_passes(family, [0.0], [[0.0]]))
 
     def test_unknown_family_is_not_an_exception(self):

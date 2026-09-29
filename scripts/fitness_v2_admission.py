@@ -1,9 +1,16 @@
 """Pre-result market-distance gate; never a substitute for structural validation.
 
-Execution's exemption applies to this predicate alone. Callers must independently
-validate seeds, calendars, source isolation, and execution mechanics. Rick has
-resolved both Execution and Shock warm-up through historical-anchor exceptions.
-The coverage audit below remains historical evidence, not a readiness gate.
+Execution's exemption applies to this predicate alone and skips descriptor
+validation entirely (it never computes a synthetic descriptor). Shock's
+exemption (Rick, 2026-09-29) applies to the >=0.75 distance threshold only --
+Shock candidates still go through full descriptor structural validation.
+Distributional and Sequence remain fully subject to both validation and the
+threshold. Callers must independently validate seeds, calendars, source
+isolation, and execution mechanics. This amendment does not resolve the
+separate, still-open Shock warm-up bar conflict (see
+FITNESS_V2_SHOCK_WARMUP_CONFLICT_20260926.md); Rick has resolved Execution
+warm-up only, through a historical-anchor exception. The coverage audit below
+remains historical evidence, not a readiness gate.
 """
 from __future__ import annotations
 
@@ -24,6 +31,9 @@ def market_distance_passes(family: str, candidate: Sequence[float],
     Historical anchors cannot be admitted/replaced through this API. Inputs are
     already DEVELOPMENT-normalized descriptors; neither inputs nor anchors are
     modified here. Execution alone does not require market-distance admission.
+    Shock still requires valid descriptors but is exempt from the >=0.75
+    threshold itself (Rick, 2026-09-29); Distributional and Sequence are
+    unaffected and remain fully subject to both validation and the threshold.
     """
     if family not in SYNTHETIC_FAMILIES:
         raise FitnessV2Error("distance admission requires a known synthetic family")
@@ -37,6 +47,8 @@ def market_distance_passes(family: str, candidate: Sequence[float],
             or not math.isfinite(x) for x in vector
         ):
             raise FitnessV2Error("invalid normalized descriptor vector")
+    if family == "shock":
+        return True
     return all(
         math.sqrt(math.fsum((a - b) ** 2 for a, b in zip(candidate, reference))
                   / len(candidate)) >= 0.75

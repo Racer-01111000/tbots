@@ -14,15 +14,24 @@ class MarketDistanceAmendmentTests(unittest.TestCase):
     def test_execution_distance_only_exemption(self):
         self.assertTrue(market_distance_passes("execution", [0.0], [[0.0]]))
 
+    def test_shock_distance_threshold_exemption(self):
+        # Shock is exempt from the >=0.75 threshold only (Rick, 2026-09-29) --
+        # unlike Execution, it still requires valid descriptors (see
+        # test_invalid_descriptors_fail_closed_for_market_families).
+        self.assertTrue(market_distance_passes("shock", [0.0], [[0.0]]))
+        self.assertTrue(market_distance_passes("shock", [0.749999], [[0.0]]))
+        self.assertTrue(market_distance_passes("shock", [0.75], [[0.0]]))
+        self.assertTrue(market_distance_passes("shock", [1.0], [[0.0], [1.0]]))
+
     def test_other_families_keep_exact_threshold(self):
-        for family in ("distributional", "sequence", "shock"):
+        for family in ("distributional", "sequence"):
             with self.subTest(family=family):
                 self.assertFalse(market_distance_passes(family, [0.0], [[0.0]]))
                 self.assertFalse(market_distance_passes(family, [0.749999], [[0.0]]))
                 self.assertTrue(market_distance_passes(family, [0.75], [[0.0]]))
 
     def test_all_references_remain_binding(self):
-        for family in ("distributional", "sequence", "shock"):
+        for family in ("distributional", "sequence"):
             self.assertFalse(market_distance_passes(family, [1.0], [[0.0], [1.0]]))
 
     def test_exemption_does_not_accept_unknown_family_or_historical_replacement(self):
