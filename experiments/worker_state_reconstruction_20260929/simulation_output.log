@@ -1,0 +1,62 @@
+=== before: real STATUS.json ===
+{
+  "world_bank_id": "world_bank_v1",
+  "synthetic_world_count": 16,
+  "campaign_seed": 2066557696,
+  "generation": 2,
+  "campaigns_complete": 0
+}
+
+=== simulating instance loss: renaming STATUS.json aside ===
+STATUS.json exists now: False
+
+=== calling reconcile_status() directly (NOT run_one_step/main -- no campaign work triggered) ===
+{
+  "world_bank_id": "world_bank_v1",
+  "synthetic_world_count": 16,
+  "campaign_seed": 2066557696,
+  "generation": 2,
+  "campaigns_complete": 0,
+  "protocol_manifest": "fitness_v2_complete_protocol_a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea",
+  "recoveries": 1
+}
+
+=== proving resume point (calling _resume_campaign_state directly -- pure, no computation/checkpointing) ===
+resume_from: 3
+resume population matches gen2's next_population: True
+resume used_genome_ids matches gen2's exactly: True
+
+=== proving no world-bank rebuild occurred ===
+mtime unchanged: True
+bytes unchanged: True
+
+=== reconciled STATUS.json now on disk (from the reconstruction's own write_status) ===
+{
+  "schema": "tbots-status-v1",
+  "updated_utc": "2026-09-29T08:26:37Z",
+  "head_commit_parent": "bb7cbf9e1e8969426a6f78bdc1022ada4eabea12",
+  "state": "running",
+  "phase": "campaign",
+  "protocol_manifest": "fitness_v2_complete_protocol_a65b600736075a5766be1bd8f7b87a80ce0f74529ef4178acc71b30308f3c4ea",
+  "freeze_commit": "1c3b6b013c4a47dbaf74a8a9ef5cda09f43afcd2",
+  "audit_window_ends_utc": "2026-09-26T12:29:05Z",
+  "world_bank_id": "world_bank_v1",
+  "synthetic_world_count": 16,
+  "campaign": 1,
+  "campaign_seed": 2066557696,
+  "generation": 2,
+  "campaigns_complete": 0,
+  "rank1_qualifiers": 0,
+  "research_champion": null,
+  "negative_result": false,
+  "last_progress_utc": "2026-09-29T08:26:37Z",
+  "stop_code": null,
+  "stop_reason": null,
+  "recoveries": 1,
+  "last_generation_seconds": null,
+  "disk_used_bytes": 16559017984,
+  "disk_free_bytes": 212637298688
+}
+
+=== restoring the original real STATUS.json exactly (undoing the simulated loss) ===
+restored matches original byte-for-byte: True

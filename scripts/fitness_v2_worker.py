@@ -38,7 +38,7 @@ from fitness_v2_campaign import (
 from fitness_v2_evolution_protocol import FINAL_GENERATION
 from fitness_v2_protocol import development_reference_calibration, world_descriptor_vector
 from fitness_v2_world_bank import (
-    SYNTHETIC_FAMILIES, ExpansionHeld, build_synthetic_family,
+    COMPLETE_PROTOCOL_PATH, SYNTHETIC_FAMILIES, ExpansionHeld, build_synthetic_family,
     distributional_world, execution_world, expand_family, historical_world,
     load_complete_protocol, load_real_development_pool, scored_only,
     sequence_world, shock_world,
@@ -48,6 +48,7 @@ from worker_disk import disk_gate
 from worker_gate import check_audit_gate
 from worker_git import commit_and_push
 from worker_lock import LockHeldElsewhere, worker_lock
+from worker_state_reconstruction import StateReconstructionError, reconcile_status
 from worker_status import read_status, with_updates, write_status
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -122,6 +123,21 @@ def _load_world_bank(world_bank_id: str) -> dict:
     return json.loads(_world_bank_path(world_bank_id).read_text())
 
 
+def _active_protocol_manifest_id() -> str:
+    # COMPLETE_PROTOCOL_PATH's own filename (sans .json) IS the manifest_id
+    # string (see fitness_v2_protocol.complete_protocol_manifest) -- reading
+    # it back out this way, rather than parsing the file's own "manifest_id"
+    # field, additionally proves the filename and its content still agree.
+    envelope = json.loads(COMPLETE_PROTOCOL_PATH.read_text())
+    if envelope.get("manifest_id") != COMPLETE_PROTOCOL_PATH.stem:
+        raise StateReconstructionError(
+            f"active protocol manifest file {COMPLETE_PROTOCOL_PATH.name} does not "
+            f"self-identify as {COMPLETE_PROTOCOL_PATH.stem!r} (found "
+            f"{envelope.get('manifest_id')!r}) -- refusing to trust it"
+        )
+    return COMPLETE_PROTOCOL_PATH.stem
+
+
 def run_one_step() -> dict:
     """Acquires no lock itself -- the caller (the systemd-invoked entry
     point, see fitness_v2_worker_main) is responsible for worker_lock, so a
@@ -134,7 +150,25 @@ def run_one_step() -> dict:
     if disk["outcome"] == "stopped":
         raise WorkerStop(disk["stop_code"], disk["detail"])
 
-    status = read_status(STATUS_PATH) if STATUS_PATH.exists() else None
+    # STATUS.json is a reconstructable runtime projection, never the sole
+    # keeper of evolutionary progress (Rick, 2026-09-29: "TBOTS CLOUD V1
+    # STATE SURVIVABILITY FIX") -- reconcile_status rebuilds it from durable
+    # evolution/state/*.json + the active protocol manifest whenever it is
+    # missing, stale, or inconsistent, and fails closed (raising here, caught
+    # below as a WorkerStop) rather than ever guessing. See
+    # worker_state_reconstruction.py for the full precedence contract.
+    try:
+        status = reconcile_status(
+            repo_root=REPO_ROOT, status_path=STATUS_PATH, checkpoint_dir=CHECKPOINT_DIR,
+            campaign_seeds=CAMPAIGN_SEEDS, final_generation=FINAL_GENERATION,
+            expansion_batch_id=_expansion_batch_id,
+            generation_checkpoint_path=_generation_checkpoint_path,
+            nominee_checkpoint_path=_nominee_checkpoint_path,
+            active_protocol_manifest_id=_active_protocol_manifest_id,
+            now_utc=_now_utc(),
+        )
+    except StateReconstructionError as exc:
+        raise WorkerStop("S", str(exc))
     audit_window_ends_utc = status["audit_window_ends_utc"] if status else None
     gate = check_audit_gate(REPO_ROOT, BRANCH, audit_window_ends_utc)
     if gate["outcome"] == "idle":

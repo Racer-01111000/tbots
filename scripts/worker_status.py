@@ -19,7 +19,10 @@ VALID_PHASES = {
     "protocol_freeze", "freeze_audit_window", "world_bank", "baseline",
     "campaign", "admission", "champion_decision", "expansion", "terminal_hold",
 }
-VALID_STOP_CODES = {None, "A", "B", "C", "D", "E", "F", "G", "H", "R"}
+# "S" (2026-09-29): durable evolution/state/ evidence and STATUS.json (or
+# the active protocol manifest) contradict each other in a way
+# worker_state_reconstruction.py cannot safely resolve -- see that module.
+VALID_STOP_CODES = {None, "A", "B", "C", "D", "E", "F", "G", "H", "R", "S"}
 
 FIELDS = (
     "schema", "updated_utc", "head_commit_parent", "state", "phase",

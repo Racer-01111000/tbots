@@ -92,7 +92,10 @@ class WorkerHarness(unittest.TestCase):
         self.origin, self.work = _init_repo_pair(self.tmp)
         self._originals = {
             name: getattr(worker, name)
-            for name in ("REPO_ROOT", "STATUS_PATH", "CHECKPOINT_DIR", "LOCK_PATH", "BRANCH", "disk_gate")
+            for name in (
+                "REPO_ROOT", "STATUS_PATH", "CHECKPOINT_DIR", "LOCK_PATH", "BRANCH",
+                "disk_gate", "_active_protocol_manifest_id",
+            )
         }
         worker.REPO_ROOT = self.work
         worker.STATUS_PATH = self.work / "STATUS.json"
@@ -108,6 +111,13 @@ class WorkerHarness(unittest.TestCase):
             "outcome": "ok", "stop_code": None, "detail": None,
             "disk_used_bytes": 0, "disk_free_bytes": 999_999_999_999,
         }
+        # Real _active_protocol_manifest_id() reads the real, committed
+        # evolution/protocol/fitness_v2_complete_protocol_*.json, which does
+        # not exist in this test's scratch repo -- stub it to match
+        # _base_status()'s own "x" placeholder, exactly like disk_gate above.
+        # StaleReconstructionTests below overrides this per-test to exercise
+        # a genuine mismatch.
+        worker._active_protocol_manifest_id = lambda: "x"
 
     def tearDown(self):
         for name, value in self._originals.items():
@@ -119,6 +129,33 @@ class WorkerHarness(unittest.TestCase):
         _git(self.work, "add", "STATUS.json")
         _git(self.work, "commit", "-m", "status")
         _git(self.work, "push", "origin", BRANCH)
+
+    def _write_world_bank(self, world_bank_id: str, synthetic_counts: dict | None = None) -> None:
+        """A minimal-but-durably-valid world-bank checkpoint file, written
+        directly to CHECKPOINT_DIR (no git commit needed -- reconcile_status
+        only reads the local filesystem, matching production: a worker
+        never needs its OWN just-committed checkpoint to still be reachable
+        over git to resume from it locally). Defaults to 4/family = 16, the
+        real initial-batch count, so _expansion_batch_id succeeds."""
+        counts = synthetic_counts or {f: 4 for f in ("distributional", "execution", "sequence", "shock")}
+        bank = {
+            "historical": [{}, {}, {}],
+            "synthetic": {family: [{}] * n for family, n in counts.items()},
+            "synthetic_state": {
+                family: {"consumed_indices": [], "used_seeds": [], "attempts": []}
+                for family in counts
+            },
+        }
+        worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+        (worker.CHECKPOINT_DIR / f"{world_bank_id}.json").write_text(json.dumps(bank))
+
+    def _write_nominee(self, batch_id: int, seed: int, *, clears_all_gates: bool = True) -> None:
+        worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+        path = worker.CHECKPOINT_DIR / f"batch{batch_id}_campaign_{seed}_nominee.json"
+        path.write_text(json.dumps({
+            "genome_id": f"gen_{seed}", "evolution_seed": seed,
+            "clears_all_gates": clears_all_gates, "cross_family_fitness": 0.0,
+        }))
 
 
 class DiskGateTakesPrecedence(WorkerHarness):
@@ -170,8 +207,10 @@ class AuditGateDispatch(WorkerHarness):
             worker._generate_world_bank = original
 
     def test_ready_gate_dispatches_to_next_campaign_when_world_bank_exists(self):
+        self._write_world_bank("world_bank_v1")
         self._write_status(_base_status(
             audit_window_ends_utc="2020-01-01T00:00:00Z", world_bank_id="world_bank_v1",
+            synthetic_world_count=16,
         ))
         calls = []
         original = worker._run_next_campaign
@@ -183,9 +222,12 @@ class AuditGateDispatch(WorkerHarness):
             worker._run_next_campaign = original
 
     def test_ready_gate_dispatches_to_finalize_when_all_campaigns_complete(self):
+        self._write_world_bank("world_bank_v1")
+        for seed in worker.CAMPAIGN_SEEDS:
+            self._write_nominee(0, seed)
         self._write_status(_base_status(
             audit_window_ends_utc="2020-01-01T00:00:00Z", world_bank_id="world_bank_v1",
-            campaigns_complete=5,
+            synthetic_world_count=16, campaigns_complete=5, rank1_qualifiers=5,
         ))
         calls = []
         original = worker._finalize_or_expand

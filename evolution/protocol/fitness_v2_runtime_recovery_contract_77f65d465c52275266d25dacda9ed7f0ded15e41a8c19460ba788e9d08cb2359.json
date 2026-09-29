@@ -1,0 +1,11 @@
+{
+  "content": {
+    "audit_window_ends_utc": "2026-09-26T12:29:05Z",
+    "authority": "Rick",
+    "freeze_commit": "1c3b6b013c4a47dbaf74a8a9ef5cda09f43afcd2",
+    "head_commit_parent": "bb7cbf9e1e8969426a6f78bdc1022ada4eabea12",
+    "purpose": "Durable home for the STATUS.json fields that have no other durable record, so worker_state_reconstruction.py can rebuild STATUS.json from evolution/state/*.json alone when the file is missing, stale, or inconsistent -- including on a fresh clone with no prior STATUS.json history at all.",
+    "schema_version": 1
+  },
+  "manifest_id": "fitness_v2_runtime_recovery_contract_77f65d465c52275266d25dacda9ed7f0ded15e41a8c19460ba788e9d08cb2359"
+}
