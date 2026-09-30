@@ -63,8 +63,9 @@ class BuildStatus(unittest.TestCase):
 
     def test_accepts_every_documented_stop_code(self):
         # "S" added 2026-09-29 for worker_state_reconstruction.py's
-        # fail-closed contradiction stop.
-        for code in ("A", "B", "C", "D", "E", "F", "G", "H", "R", "S"):
+        # fail-closed contradiction stop. "O" added 2026-09-30 for
+        # checkpoint_durability.py's orphan-checkpoint fail-closed stop.
+        for code in ("A", "B", "C", "D", "E", "F", "G", "H", "O", "R", "S"):
             build_status(**_base(state="stopped", stop_code=code))
 
     def test_accepts_every_documented_state(self):

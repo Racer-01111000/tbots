@@ -43,6 +43,7 @@ from fitness_v2_world_bank import (
     load_complete_protocol, load_real_development_pool, scored_only,
     sequence_world, shock_world,
 )
+from checkpoint_durability import UnresolvedCheckpointDurability, check_startup_durability
 from worker_checkpoint import commit_checkpoint, recover_pending_transaction
 from worker_disk import disk_gate
 from worker_gate import check_audit_gate
@@ -149,6 +150,32 @@ def run_one_step() -> dict:
     disk = disk_gate(REPO_ROOT)
     if disk["outcome"] == "stopped":
         raise WorkerStop(disk["stop_code"], disk["detail"])
+
+    # Rick, 2026-09-30 ("GO -- TBOTS CHECKPOINT DURABILITY REPAIR AND
+    # REVALIDATION"): a checkpoint can be durably written to disk and then
+    # the process can crash before the matching git commit ever runs --
+    # proven during Cloud V1 acceptance testing to leave that file
+    # permanently untracked and unpushed while resume silently advances
+    # past it (no gate previously inspected the working tree). This check
+    # must run before reconcile_status, so STATUS.json can never advance to
+    # describe a checkpoint that is not yet durable in git. On success it
+    # either finds nothing (the common case) or fully commits+pushes+
+    # remote-verifies an orphan and returns immediately -- it never falls
+    # through to reconcile_status/_advance in the same invocation.
+    try:
+        durability = check_startup_durability(
+            repo_root=REPO_ROOT, checkpoint_dir=CHECKPOINT_DIR, branch=BRANCH,
+            campaign_seeds=CAMPAIGN_SEEDS, final_generation=FINAL_GENERATION,
+            expansion_batch_id=_expansion_batch_id,
+            generation_checkpoint_path=_generation_checkpoint_path,
+            nominee_checkpoint_path=_nominee_checkpoint_path,
+            active_protocol_manifest_id=_active_protocol_manifest_id,
+            status_path=STATUS_PATH,
+        )
+    except UnresolvedCheckpointDurability as exc:
+        raise WorkerStop("O", str(exc))
+    if durability["outcome"] == "repaired":
+        return {"action": "recovered_orphan_checkpoint", **durability}
 
     # STATUS.json is a reconstructable runtime projection, never the sole
     # keeper of evolutionary progress (Rick, 2026-09-29: "TBOTS CLOUD V1

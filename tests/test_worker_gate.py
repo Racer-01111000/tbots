@@ -132,6 +132,34 @@ class WindowElapsedNonFastForward(unittest.TestCase):
             self.assertEqual(result["stop_code"], "C")
 
 
+class WindowElapsedLocalAheadUnpushed(unittest.TestCase):
+    def test_stops_with_code_c_but_a_distinct_unpushed_commit_message(self):
+        """Remote has not moved at all -- local is simply ahead with a
+        commit that never reached origin (e.g. a crash between git commit
+        and git push). This must NOT be reported as a rewritten/diverged
+        branch: the message is the whole point of this test, not just the
+        stop_code (which is intentionally unchanged -- see worker_gate.py's
+        own comment)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            _origin, work = _init_repo_pair(tmp)
+
+            (work / "unpushed.txt").write_text("local, never pushed\n")
+            _git(work, "add", "unpushed.txt")
+            _git(work, "commit", "-m", "committed locally, crashed before push")
+
+            result = check_audit_gate(
+                work, BRANCH, "2026-09-26T12:29:05Z",
+                now_utc=datetime(2026, 9, 26, 13, 0, 0, tzinfo=timezone.utc),
+            )
+            self.assertEqual(result["outcome"], "stopped")
+            self.assertEqual(result["stop_code"], "C")
+            self.assertIn("unpushed commit", result["detail"])
+            self.assertIn("remote has not diverged", result["detail"])
+            self.assertIn("Not a rewritten branch", result["detail"])
+            self.assertNotIn("non-fast-forward / rewritten branch", result["detail"])
+
+
 class WindowElapsedHoldFile(unittest.TestCase):
     def test_stops_with_code_h_when_hold_file_present_on_remote(self):
         with tempfile.TemporaryDirectory() as tmp:

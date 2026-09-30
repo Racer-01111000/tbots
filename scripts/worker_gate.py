@@ -56,6 +56,27 @@ def check_audit_gate(repo_root, branch: str, audit_window_ends_utc: str, *, now_
 
     if local_head != remote_head:
         merge_base = _run_git(repo_root, "merge-base", "HEAD", remote_ref)
+        if merge_base == remote_head:
+            # remote_head is an ancestor of local HEAD: local is strictly
+            # ahead with a commit that never reached origin -- e.g. a crash
+            # between git commit and git push (proven 2026-09-30 during the
+            # "TBOTS CLOUD V1 DETERMINISTIC PARITY AND RECOVERY ACCEPTANCE"
+            # GO's interruption-window testing). The remote has not moved
+            # at all, so this is NOT a rewritten/diverged branch -- it gets
+            # its own message. Still fails closed with the same stop_code
+            # ("C"): this only clarifies what the message claims, it does
+            # not change what triggers a stop or add any automatic retry.
+            return {
+                "outcome": "stopped", "stop_code": "C",
+                "detail": (
+                    f"local HEAD {local_head} has an unpushed commit ahead of "
+                    f"{remote_ref} {remote_head} -- the remote has not diverged, this "
+                    "is a local commit that never reached origin (e.g. a crash between "
+                    "commit and push). Not a rewritten branch. No automatic retry: "
+                    f"resolve by hand, typically `git push origin HEAD:{branch}` once "
+                    "confirmed safe."
+                ),
+            }
         if merge_base != local_head:
             return {
                 "outcome": "stopped", "stop_code": "C",

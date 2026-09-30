@@ -22,7 +22,13 @@ VALID_PHASES = {
 # "S" (2026-09-29): durable evolution/state/ evidence and STATUS.json (or
 # the active protocol manifest) contradict each other in a way
 # worker_state_reconstruction.py cannot safely resolve -- see that module.
-VALID_STOP_CODES = {None, "A", "B", "C", "D", "E", "F", "G", "H", "R", "S"}
+# "O" (2026-09-30): a checkpoint durably written to disk but orphaned from
+# git history (untracked/modified, or leftover transaction debris) fails
+# validation or cannot be safely committed+pushed -- see
+# checkpoint_durability.py. Distinct from "C" (worker_gate.py), which
+# covers a checkpoint that IS committed locally but not yet pushed; "O" is
+# strictly earlier than that, before any git operation ran at all.
+VALID_STOP_CODES = {None, "A", "B", "C", "D", "E", "F", "G", "H", "O", "R", "S"}
 
 FIELDS = (
     "schema", "updated_utc", "head_commit_parent", "state", "phase",

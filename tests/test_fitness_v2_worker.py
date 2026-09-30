@@ -131,12 +131,14 @@ class WorkerHarness(unittest.TestCase):
         _git(self.work, "push", "origin", BRANCH)
 
     def _write_world_bank(self, world_bank_id: str, synthetic_counts: dict | None = None) -> None:
-        """A minimal-but-durably-valid world-bank checkpoint file, written
-        directly to CHECKPOINT_DIR (no git commit needed -- reconcile_status
-        only reads the local filesystem, matching production: a worker
-        never needs its OWN just-committed checkpoint to still be reachable
-        over git to resume from it locally). Defaults to 4/family = 16, the
-        real initial-batch count, so _expansion_batch_id succeeds."""
+        """A minimal-but-durably-valid world-bank checkpoint file,
+        committed+pushed to the scratch repo -- representing an already-
+        established prior state, exactly as production always has it (a
+        checkpoint reachable locally but never committed only exists
+        during the specific crash window checkpoint_durability.py now
+        closes; see its own module docstring and CHANGES.md 2026-09-30).
+        Defaults to 4/family = 16, the real initial-batch count, so
+        _expansion_batch_id succeeds."""
         counts = synthetic_counts or {f: 4 for f in ("distributional", "execution", "sequence", "shock")}
         bank = {
             "historical": [{}, {}, {}],
@@ -147,15 +149,22 @@ class WorkerHarness(unittest.TestCase):
             },
         }
         worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-        (worker.CHECKPOINT_DIR / f"{world_bank_id}.json").write_text(json.dumps(bank))
+        rel = f"evolution/state/{world_bank_id}.json"
+        (worker.REPO_ROOT / rel).write_text(json.dumps(bank))
+        _git(self.work, "add", rel)
+        _git(self.work, "commit", "-m", f"world bank {world_bank_id}")
+        _git(self.work, "push", "origin", BRANCH)
 
     def _write_nominee(self, batch_id: int, seed: int, *, clears_all_gates: bool = True) -> None:
         worker.CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-        path = worker.CHECKPOINT_DIR / f"batch{batch_id}_campaign_{seed}_nominee.json"
-        path.write_text(json.dumps({
+        rel = f"evolution/state/batch{batch_id}_campaign_{seed}_nominee.json"
+        (worker.REPO_ROOT / rel).write_text(json.dumps({
             "genome_id": f"gen_{seed}", "evolution_seed": seed,
             "clears_all_gates": clears_all_gates, "cross_family_fitness": 0.0,
         }))
+        _git(self.work, "add", rel)
+        _git(self.work, "commit", "-m", f"nominee batch{batch_id} seed{seed}")
+        _git(self.work, "push", "origin", BRANCH)
 
 
 class DiskGateTakesPrecedence(WorkerHarness):
@@ -283,20 +292,42 @@ class CrashRecovery(WorkerHarness):
         # intent) but the process died before recover_pending_transaction's
         # hardlink-commit step ran -- exactly worker_checkpoint's own crash
         # window. The NEXT invocation's run_one_step() must resolve this
-        # before doing anything else.
-        artifacts = {"evolution/state/world_bank.json": {"historical": ["H1", "H2", "H3"]}}
+        # before doing anything else -- and, since 2026-09-30's checkpoint-
+        # durability repair, "resolve" now means finalize the hardlink AND
+        # commit+push it, not just the hardlink (a finalized-but-uncommitted
+        # file is exactly the DIFFERENT, later crash window that repair
+        # closes -- see checkpoint_durability.py). Realistic world-bank
+        # content is required here (a "synthetic" key with real counts) so
+        # it actually passes that check, not the old placeholder shape that
+        # only needed to satisfy the hardlink mechanics.
+        counts = {f: 4 for f in ("distributional", "execution", "sequence", "shock")}
+        bank = {
+            "historical": [{}, {}, {}],
+            "synthetic": {family: [{}] * n for family, n in counts.items()},
+            "synthetic_state": {
+                family: {"consumed_indices": [], "used_seeds": [], "attempts": []}
+                for family in counts
+            },
+        }
+        artifacts = {"evolution/state/world_bank_v1.json": bank}
         prepare_transaction(worker.REPO_ROOT, "crash_test", artifacts, allowed_prefixes={"evolution"})
-        final_path = worker.REPO_ROOT / "evolution" / "state" / "world_bank.json"
+        final_path = worker.REPO_ROOT / "evolution" / "state" / "world_bank_v1.json"
         self.assertFalse(final_path.exists())  # not yet committed -- this IS the crash window
 
-        self._write_status(_base_status())  # idle window: run_one_step does no new work either way
+        self._write_status(_base_status())  # idle window: irrelevant, durability check runs first
         result = worker.run_one_step()
 
-        self.assertEqual(result["action"], "waiting_on_audit_window")
+        self.assertEqual(result["action"], "recovered_orphan_checkpoint")
         self.assertTrue(final_path.exists())
-        self.assertEqual(json.loads(final_path.read_text()), artifacts["evolution/state/world_bank.json"])
+        self.assertEqual(json.loads(final_path.read_text()), bank)
         # The pending-transaction bookkeeping itself is gone -- recovered, not left dangling.
         self.assertFalse((worker.REPO_ROOT / ".worker_checkpoint_transaction.json").exists())
+        # AND now also committed+pushed -- the actual point of the repair.
+        self.assertEqual(_git(self.work, "status", "--porcelain", "--", "evolution/"), "")
+        self.assertEqual(
+            _git(self.work, "rev-parse", "HEAD"),
+            _git(self.work, "rev-parse", f"origin/{BRANCH}"),
+        )
 
     def test_deterministic_redo_of_an_already_committed_generation_is_a_safe_no_op(self):
         # Models the current worker's mid-campaign crash fallback: if the
