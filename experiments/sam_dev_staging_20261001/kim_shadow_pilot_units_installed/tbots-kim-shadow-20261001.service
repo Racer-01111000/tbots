@@ -1,0 +1,19 @@
+[Unit]
+Description=Kim bounded read-only shadow capture tick (2026-10-01 only)
+
+[Service]
+Type=oneshot
+User=ec2-user
+ExecStart=/home/ec2-user/validation/venv313/bin/python3.13 /home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots/experiments/sam_dev_staging_20261001/kim_shadow_tick.py
+Restart=no
+TimeoutStartSec=45s
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+CPUQuota=25%
+MemoryMax=256M
+TasksMax=32
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots/experiments/sam_dev_staging_20261001/kim_shadow_pilot
+

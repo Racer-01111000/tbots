@@ -1,0 +1,12 @@
+[Unit]
+Description=Kim shadow pilot cleanup trigger (one-time, 2026-10-01 16:17 America/New_York)
+
+[Timer]
+OnCalendar=2026-10-01 16:17:00 America/New_York
+AccuracySec=1s
+Persistent=true
+Unit=tbots-kim-cleanup-20261001.service
+
+[Install]
+WantedBy=timers.target
+

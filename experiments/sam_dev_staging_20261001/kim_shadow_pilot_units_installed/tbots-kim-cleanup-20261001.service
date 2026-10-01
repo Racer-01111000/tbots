@@ -1,0 +1,9 @@
+[Unit]
+Description=Kim shadow pilot finite cleanup (disables capture timer/service after expiry)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl disable --now tbots-kim-shadow-20261001.timer
+ExecStartPost=/usr/bin/systemctl stop tbots-kim-shadow-20261001.service
+RemainAfterExit=no
+

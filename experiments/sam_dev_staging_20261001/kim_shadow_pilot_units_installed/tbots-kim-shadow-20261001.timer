@@ -1,0 +1,14 @@
+[Unit]
+Description=Kim bounded read-only shadow capture timer (2026-10-01 only)
+
+[Timer]
+OnCalendar=2026-10-01 04..15:*:00 America/New_York
+OnCalendar=2026-10-01 16:00..15:00 America/New_York
+AccuracySec=1s
+RandomizedDelaySec=0
+Persistent=false
+Unit=tbots-kim-shadow-20261001.service
+
+[Install]
+WantedBy=timers.target
+

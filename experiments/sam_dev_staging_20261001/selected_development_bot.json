@@ -63,5 +63,6 @@
   "selection_history": "REPLACED Sam (gen_8e7a622b...) with the frozen champion under GO TBOTS_DATA_REPAIR_BEST_BOT_AND_PAPER_KEYS_20261001, per Rick's direct explicit authorization of conditional replacement.",
   "source_file": "/home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots/evolution/protocol/frozen_champion_s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672.json",
   "source_file_sha256": "82a0e1b1ad860d5fbfc75740cd6d84e4b56188e952e17a30f6c8d330ccdaad21",
-  "status": "DEVELOPMENT_CANDIDATE"
+  "status": "DEVELOPMENT_CANDIDATE",
+  "display_alias": "Kim"
 }
