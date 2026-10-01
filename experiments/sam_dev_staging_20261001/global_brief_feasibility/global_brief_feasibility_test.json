@@ -1,0 +1,180 @@
+{
+  "delayed_sip_completed_session": {
+    "status": 200,
+    "bars_returned": 5,
+    "sample": {
+      "c": 762.63,
+      "h": 769.41,
+      "l": 762.18,
+      "n": 1254881,
+      "o": 766.45,
+      "t": "2026-09-30T04:00:00Z",
+      "v": 62848369,
+      "vw": 765.688349
+    }
+  },
+  "global_instruments": {
+    "Nikkei 225": {
+      "symbol": "^N225",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 68956.72,
+        "previousClose": 66364.2,
+        "exchangeTimezoneName": "Asia/Tokyo",
+        "regularMarketTime": 1790837103,
+        "instrumentType": "INDEX",
+        "currency": "JPY"
+      }
+    },
+    "Hang Seng": {
+      "symbol": "^HSI",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 24613.27,
+        "previousClose": 24834.12,
+        "exchangeTimezoneName": "Asia/Hong_Kong",
+        "regularMarketTime": 1790755730,
+        "instrumentType": "INDEX",
+        "currency": "HKD"
+      }
+    },
+    "CSI 300": {
+      "symbol": "000300.SS",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 4357.616,
+        "previousClose": 4345.209,
+        "exchangeTimezoneName": "Asia/Shanghai",
+        "regularMarketTime": 1790751634,
+        "instrumentType": "INDEX",
+        "currency": "CNY"
+      }
+    },
+    "KOSPI": {
+      "symbol": "^KS11",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 6971.35,
+        "previousClose": 7017.91,
+        "exchangeTimezoneName": "Asia/Seoul",
+        "regularMarketTime": 1790836370,
+        "instrumentType": "INDEX",
+        "currency": "KRW"
+      }
+    },
+    "ASX 200": {
+      "symbol": "^AXJO",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 8614.4,
+        "previousClose": 8702.0,
+        "exchangeTimezoneName": "Australia/Sydney",
+        "regularMarketTime": 1790837745,
+        "instrumentType": "INDEX",
+        "currency": "AUD"
+      }
+    },
+    "FTSE 100": {
+      "symbol": "^FTSE",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 10444.03,
+        "previousClose": 10680.0,
+        "exchangeTimezoneName": "Europe/London",
+        "regularMarketTime": 1790846684,
+        "instrumentType": "INDEX",
+        "currency": "GBP"
+      }
+    },
+    "DAX": {
+      "symbol": "^GDAXI",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 25017.71,
+        "previousClose": 25266.53,
+        "exchangeTimezoneName": "Europe/Berlin",
+        "regularMarketTime": 1790846686,
+        "instrumentType": "INDEX",
+        "currency": "EUR"
+      }
+    },
+    "Euro Stoxx 50": {
+      "symbol": "^STOXX50E",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 6212.48,
+        "previousClose": 6302.82,
+        "exchangeTimezoneName": "Europe/Zurich",
+        "regularMarketTime": 1790846685,
+        "instrumentType": "INDEX",
+        "currency": "EUR"
+      }
+    },
+    "SP500 futures": {
+      "symbol": "ES=F",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 7732.75,
+        "previousClose": 7746.75,
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketTime": 1790846984,
+        "instrumentType": "FUTURE",
+        "currency": "USD"
+      }
+    },
+    "Nasdaq futures": {
+      "symbol": "NQ=F",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 30895.75,
+        "previousClose": 30566.25,
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketTime": 1790846985,
+        "instrumentType": "FUTURE",
+        "currency": "USD"
+      }
+    },
+    "WTI": {
+      "symbol": "CL=F",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 92.21,
+        "previousClose": 92.6,
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketTime": 1790846985,
+        "instrumentType": "FUTURE",
+        "currency": "USD"
+      }
+    },
+    "Brent": {
+      "symbol": "BZ=F",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 100.28,
+        "previousClose": 105.28,
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketTime": 1790846963,
+        "instrumentType": "FUTURE",
+        "currency": "USD"
+      }
+    },
+    "Gold": {
+      "symbol": "GC=F",
+      "label": "OK",
+      "sample": {
+        "regularMarketPrice": 4189.0,
+        "previousClose": 4168.4,
+        "exchangeTimezoneName": "America/New_York",
+        "regularMarketTime": 1790846985,
+        "instrumentType": "FUTURE",
+        "currency": "USD"
+      }
+    },
+    "USD Index": {
+      "symbol": "DX=F",
+      "label": "UNAVAILABLE (status=404)",
+      "sample": null
+    }
+  },
+  "news_items_count_before_test": 338
+}

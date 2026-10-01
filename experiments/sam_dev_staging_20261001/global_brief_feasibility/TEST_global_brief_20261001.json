@@ -1,0 +1,274 @@
+{
+  "label": "TEST -- global pre-open brief feasibility, not a production edition",
+  "generated_at_utc": "2026-10-01T09:41:26.293828+00:00",
+  "pilot_id": "KIM_BOUNDED_SHADOW_20261001",
+  "tick_progression_check": {
+    "ticks_in_last_10min": 34,
+    "verdict": "PASS"
+  },
+  "delayed_sip_completed_session_check": {
+    "status": 200,
+    "bars_returned": 5,
+    "sample_bar": {
+      "c": 762.63,
+      "h": 769.41,
+      "l": 762.18,
+      "n": 1254881,
+      "o": 766.45,
+      "t": "2026-09-30T04:00:00Z",
+      "v": 62848369,
+      "vw": 765.688349
+    },
+    "verdict": "PASS"
+  },
+  "global_instruments": {
+    "asia": [
+      {
+        "name": "Nikkei 225",
+        "symbol": "^N225",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Asia/Tokyo",
+        "currency": "JPY",
+        "price": 68956.72,
+        "reference_prior_close": 66364.2,
+        "event_time_utc": "2026-10-01T06:45:03+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": 3.907,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "Hang Seng",
+        "symbol": "^HSI",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Asia/Hong_Kong",
+        "currency": "HKD",
+        "price": 24613.27,
+        "reference_prior_close": 24834.12,
+        "event_time_utc": "2026-09-30T08:08:50+00:00",
+        "event_local_date": "2026-09-30",
+        "session_label": "stale_prior_session_holiday_or_closed",
+        "pct_change_vs_reference": -0.889,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "CSI 300 (mainland, Shanghai)",
+        "symbol": "000300.SS",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Asia/Shanghai",
+        "currency": "CNY",
+        "price": 4357.616,
+        "reference_prior_close": 4345.209,
+        "event_time_utc": "2026-09-30T07:00:34+00:00",
+        "event_local_date": "2026-09-30",
+        "session_label": "stale_prior_session_holiday_or_closed",
+        "pct_change_vs_reference": 0.286,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "KOSPI",
+        "symbol": "^KS11",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Asia/Seoul",
+        "currency": "KRW",
+        "price": 6971.35,
+        "reference_prior_close": 7017.91,
+        "event_time_utc": "2026-10-01T06:32:50+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -0.663,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "S&P/ASX 200",
+        "symbol": "^AXJO",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Australia/Sydney",
+        "currency": "AUD",
+        "price": 8614.4,
+        "reference_prior_close": 8702.0,
+        "event_time_utc": "2026-10-01T06:55:45+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -1.007,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      }
+    ],
+    "europe": [
+      {
+        "name": "FTSE 100",
+        "symbol": "^FTSE",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Europe/London",
+        "currency": "GBP",
+        "price": 10445.18,
+        "reference_prior_close": 10680.0,
+        "event_time_utc": "2026-10-01T09:26:26+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -2.199,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "DAX Performance Index",
+        "symbol": "^GDAXI",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Europe/Berlin",
+        "currency": "EUR",
+        "price": 25015.43,
+        "reference_prior_close": 25266.53,
+        "event_time_utc": "2026-10-01T09:26:26+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -0.994,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "Euro Stoxx 50",
+        "symbol": "^STOXX50E",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "Europe/Zurich",
+        "currency": "EUR",
+        "price": 6211.35,
+        "reference_prior_close": 6302.82,
+        "event_time_utc": "2026-10-01T09:26:15+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -1.451,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      }
+    ],
+    "us_futures": [
+      {
+        "name": "S&P 500 futures (ES)",
+        "symbol": "ES=F",
+        "kind": "future",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 7733.75,
+        "reference_prior_close": 7746.75,
+        "event_time_utc": "2026-10-01T09:31:26+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -0.168,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "Nasdaq futures (NQ)",
+        "symbol": "NQ=F",
+        "kind": "future",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 30893.0,
+        "reference_prior_close": 30566.25,
+        "event_time_utc": "2026-10-01T09:31:23+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": 1.069,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      }
+    ],
+    "commodities_fx": [
+      {
+        "name": "WTI Crude (CL)",
+        "symbol": "CL=F",
+        "kind": "future",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 92.18,
+        "reference_prior_close": 92.6,
+        "event_time_utc": "2026-10-01T09:31:23+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -0.454,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "Brent Crude (BZ)",
+        "symbol": "BZ=F",
+        "kind": "future",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 100.32,
+        "reference_prior_close": 105.28,
+        "event_time_utc": "2026-10-01T09:31:08+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": -4.711,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "Gold (GC)",
+        "symbol": "GC=F",
+        "kind": "future",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 4189.0,
+        "reference_prior_close": 4168.4,
+        "event_time_utc": "2026-10-01T09:31:23+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": 0.494,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      },
+      {
+        "name": "ICE US Dollar Index, spot/cash (DXY)",
+        "symbol": "DX-Y.NYB",
+        "kind": "index",
+        "available": true,
+        "venue_timezone": "America/New_York",
+        "currency": "USD",
+        "price": 101.798,
+        "reference_prior_close": 101.2,
+        "event_time_utc": "2026-10-01T09:31:25+00:00",
+        "event_local_date": "2026-10-01",
+        "session_label": "fresh_close_or_live",
+        "pct_change_vs_reference": 0.591,
+        "source": "Yahoo Finance chart API (free, public, unauthenticated)"
+      }
+    ]
+  },
+  "instrument_coverage": {
+    "total_tested": 14,
+    "available": 14,
+    "verdict": "PASS"
+  },
+  "news_check": {
+    "total_items": 338,
+    "most_recent_3": [
+      {
+        "title": "U.S. electricity use for electric vehicles increasing at a slower pace in 2026",
+        "source": "https://www.eia.gov/rss/todayinenergy.xml",
+        "pub_ts": "Wed, 30 Sep 2026  09:00:00 EST",
+        "first_seen": "2026-10-01T09:06:51.673912+00:00"
+      },
+      {
+        "title": "Henry Hub natural gas prices this summer were 6% lower than last summer",
+        "source": "https://www.eia.gov/rss/todayinenergy.xml",
+        "pub_ts": "Fri, 25 Sep 2026  09:00:00 EST",
+        "first_seen": "2026-10-01T09:06:51.673912+00:00"
+      },
+      {
+        "title": "Public companies produce most U.S. crude oil and natural gas",
+        "source": "https://www.eia.gov/rss/todayinenergy.xml",
+        "pub_ts": "Tue, 22 Sep 2026  09:00:00 EST",
+        "first_seen": "2026-10-01T09:06:51.673912+00:00"
+      }
+    ],
+    "verdict": "PASS"
+  },
+  "overall_verdict": "PASS"
+}
