@@ -1,0 +1,2102 @@
+{
+  "go": "TBOTS_SAM_15_MONTH_REPLAY_AND_LIVE_SHADOW_20261001 -- finish outstanding items",
+  "ceiling18_5bps_sensitivity_full_matrix": [
+    {
+      "genome_id": "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank1",
+        "B_reproduction_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.02020069000000002,
+          "excess_vs_passive18": -0.014324459999999872,
+          "max_drawdown": -0.0085069646849949,
+          "sharpe": 1.273231809917619,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.012548110000000001,
+          "excess_vs_passive18": -0.039315659999999975,
+          "max_drawdown": -0.015809259808323928,
+          "sharpe": 0.4791653332976047,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank2",
+        "B_reproduction_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.01356124999999997,
+          "excess_vs_passive18": -0.020963899999999924,
+          "max_drawdown": -0.014542503813129048,
+          "sharpe": 0.8998121500033371,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.01442123999999989,
+          "excess_vs_passive18": -0.037442530000000085,
+          "max_drawdown": -0.01455452671797608,
+          "sharpe": 0.5391429402013125,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank3",
+        "B_reproduction_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.012416729999999987,
+          "excess_vs_passive18": -0.022108419999999906,
+          "max_drawdown": -0.008124550134894104,
+          "sharpe": 0.8987127554481322,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.012039939999999971,
+          "excess_vs_passive18": -0.039823830000000005,
+          "max_drawdown": -0.012250132276853898,
+          "sharpe": 0.4932645863069469,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank4",
+        "B_reproduction_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.022726479999999993,
+          "excess_vs_passive18": -0.0117986699999999,
+          "max_drawdown": -0.008499492343238324,
+          "sharpe": 1.397650323995428,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.016166970000000003,
+          "excess_vs_passive18": -0.03569679999999997,
+          "max_drawdown": -0.014715564124736402,
+          "sharpe": 0.6025337342490757,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank5",
+        "B_reproduction_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.022726479999999993,
+          "excess_vs_passive18": -0.0117986699999999,
+          "max_drawdown": -0.008499492343238324,
+          "sharpe": 1.397650323995428,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.016166970000000003,
+          "excess_vs_passive18": -0.03569679999999997,
+          "max_drawdown": -0.014715564124736402,
+          "sharpe": 0.6025337342490757,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank6",
+        "B_reproduction_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.024858650000000093,
+          "excess_vs_passive18": -0.0096664999999998,
+          "max_drawdown": -0.011050659430887233,
+          "sharpe": 1.2580557807937214,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.016311500000000034,
+          "excess_vs_passive18": -0.03555226999999994,
+          "max_drawdown": -0.01913628646360299,
+          "sharpe": 0.48608791433673026,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank7",
+        "B_reproduction_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.009660009999999941,
+          "excess_vs_passive18": -0.024865139999999952,
+          "max_drawdown": -0.014547248967616055,
+          "sharpe": 0.6647887095810685,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.010534419999999933,
+          "excess_vs_passive18": -0.04132935000000004,
+          "max_drawdown": -0.014551081514702857,
+          "sharpe": 0.40200967828641965,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank8",
+        "B_reproduction_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.009660009999999941,
+          "excess_vs_passive18": -0.024865139999999952,
+          "max_drawdown": -0.014547248967616055,
+          "sharpe": 0.6647887095810685,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.010534419999999933,
+          "excess_vs_passive18": -0.04132935000000004,
+          "max_drawdown": -0.014551081514702857,
+          "sharpe": 0.40200967828641965,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_85a860e23b2a5c4da442298daacdbcbf9b766b78db328ea2deb77e374722ce16",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.017012000000000027,
+          "excess_vs_passive18": -0.017513149999999866,
+          "max_drawdown": -0.01345305344003167,
+          "sharpe": 0.7160848170486419,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.02211906000000008,
+          "excess_vs_passive18": -0.029744709999999897,
+          "max_drawdown": -0.013456754238562185,
+          "sharpe": 0.6644338984520446,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_1106d6122fc36a75bcf915ad1e4577a7082da320caf7c3de9933d81ac5dcb7f8",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.018757410000000085,
+          "excess_vs_passive18": -0.015767739999999808,
+          "max_drawdown": -0.012239602630909396,
+          "sharpe": 0.7894204774413345,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.026247740000000075,
+          "excess_vs_passive18": -0.0256160299999999,
+          "max_drawdown": -0.012213923012296846,
+          "sharpe": 0.796222622413717,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_bd7cff5c7b4e0a582ff98bc3cc045329db8dacf31dcef4781229963c26209a05",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.018158459999999987,
+          "excess_vs_passive18": -0.016366689999999906,
+          "max_drawdown": -0.010834411337851346,
+          "sharpe": 0.7626753049691275,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.02295029999999998,
+          "excess_vs_passive18": -0.028913469999999997,
+          "max_drawdown": -0.010816183250539235,
+          "sharpe": 0.6880518983815298,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_6ef496e6e7ede503e4eef6934badf0dda529ef472c9e237d1d2068b003b03265",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.017261619999999978,
+          "excess_vs_passive18": -0.017263529999999916,
+          "max_drawdown": -0.012410002260631159,
+          "sharpe": 0.7303146373012271,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.022838010000000075,
+          "excess_vs_passive18": -0.0290257599999999,
+          "max_drawdown": -0.012390698154583712,
+          "sharpe": 0.6890470221909178,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_096e9c7e17650771f3d8a16e0069398d9f1ad5caed2ab626c88f82319f1b904a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.01693380000000011,
+          "excess_vs_passive18": -0.017591349999999784,
+          "max_drawdown": -0.01346774399654671,
+          "sharpe": 0.7124896206362074,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.022717050000000016,
+          "excess_vs_passive18": -0.02914671999999996,
+          "max_drawdown": -0.013480007484660383,
+          "sharpe": 0.6822492168596688,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_c801163c69d2f71d22913697b6a8270ba5aef2010c9204f0efdfe510458f3e8a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.019204999999999917,
+          "excess_vs_passive18": -0.015320149999999977,
+          "max_drawdown": -0.011353166443728746,
+          "sharpe": 0.8038721134004758,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.027162260000000105,
+          "excess_vs_passive18": -0.02470150999999987,
+          "max_drawdown": -0.011364205058221333,
+          "sharpe": 0.8200370760890056,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_c486673917deddbe1412530ddc57987800020ac5789a1c887f383acf4c945c4f",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.017012000000000027,
+          "excess_vs_passive18": -0.017513149999999866,
+          "max_drawdown": -0.01345305344003167,
+          "sharpe": 0.7160848170486419,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.02221618999999997,
+          "excess_vs_passive18": -0.029647580000000007,
+          "max_drawdown": -0.013457009294326139,
+          "sharpe": 0.6675299352432963,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_5f33b6376ef3d402a6143c6f99d1b7635699e648fa4735cc97b8de18f3e5cd83",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.01957081000000005,
+          "excess_vs_passive18": -0.014954339999999844,
+          "max_drawdown": -0.012190062153522807,
+          "sharpe": 0.8186317813255919,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.02699732999999993,
+          "excess_vs_passive18": -0.024866440000000045,
+          "max_drawdown": -0.012201097822145734,
+          "sharpe": 0.8126262927418758,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank1",
+        "D_reproduction_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.037080290000000016,
+          "excess_vs_passive18": 0.0025551400000001223,
+          "max_drawdown": -0.019419620227356993,
+          "sharpe": 1.1707755341043373,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.06752157000000003,
+          "excess_vs_passive18": 0.015657800000000055,
+          "max_drawdown": -0.0268100064241783,
+          "sharpe": 1.5503244201606647,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank2",
+        "D_reproduction_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.011030029999999913,
+          "excess_vs_passive18": -0.02349511999999998,
+          "max_drawdown": -0.03551001908408358,
+          "sharpe": 0.30885304530714247,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.03760542,
+          "excess_vs_passive18": -0.014258349999999975,
+          "max_drawdown": -0.02605268539420391,
+          "sharpe": 0.7564690872493525,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank3",
+        "D_reproduction_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.037778099999999926,
+          "excess_vs_passive18": 0.003252950000000032,
+          "max_drawdown": -0.019410158977918535,
+          "sharpe": 1.192612833937972,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.07323819000000009,
+          "excess_vs_passive18": 0.021374420000000116,
+          "max_drawdown": -0.0268100064241783,
+          "sharpe": 1.6746522299840698,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank4",
+        "D_reproduction_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.03541254999999999,
+          "excess_vs_passive18": 0.0008874000000000937,
+          "max_drawdown": -0.01641800887201994,
+          "sharpe": 1.2364670759619372,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.06683737999999995,
+          "excess_vs_passive18": 0.01497360999999997,
+          "max_drawdown": -0.0268100064241783,
+          "sharpe": 1.5302017831325612,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank5",
+        "D_reproduction_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.03541254999999999,
+          "excess_vs_passive18": 0.0008874000000000937,
+          "max_drawdown": -0.01641800887201994,
+          "sharpe": 1.2364670759619372,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.06683737999999995,
+          "excess_vs_passive18": 0.01497360999999997,
+          "max_drawdown": -0.0268100064241783,
+          "sharpe": 1.5302017831325612,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank6",
+        "D_reproduction_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.008090139999999968,
+          "excess_vs_passive18": -0.026435009999999926,
+          "max_drawdown": -0.03551708460145708,
+          "sharpe": 0.23693260728272694,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.04551872999999995,
+          "excess_vs_passive18": -0.006345040000000024,
+          "max_drawdown": -0.028156166718397824,
+          "sharpe": 0.9278719430571458,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank7",
+        "D_reproduction_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.008090139999999968,
+          "excess_vs_passive18": -0.026435009999999926,
+          "max_drawdown": -0.03551708460145708,
+          "sharpe": 0.23693260728272694,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.04551872999999995,
+          "excess_vs_passive18": -0.006345040000000024,
+          "max_drawdown": -0.028156166718397824,
+          "sharpe": 0.9278719430571458,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank8",
+        "D_reproduction_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.031102060000000042,
+          "excess_vs_passive18": -0.003423089999999851,
+          "max_drawdown": -0.01831126015565121,
+          "sharpe": 1.0102836646322753,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.017197490000000037,
+          "excess_vs_passive18": -0.03466627999999994,
+          "max_drawdown": -0.024433233788533237,
+          "sharpe": 0.4177141844762703,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "lineage": "champion",
+      "aliases": [
+        "S5D_CHAMPION"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.038110110000000086,
+          "excess_vs_passive18": 0.0035849600000001924,
+          "max_drawdown": -0.06705746898918097,
+          "sharpe": 0.6150932622617906,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.07822752999999993,
+          "excess_vs_passive18": 0.02636375999999996,
+          "max_drawdown": -0.05263054194024552,
+          "sharpe": 0.9021810822911859,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    }
+  ],
+  "ceiling18_5bps_sensitivity_ranking": [
+    {
+      "rank": 1,
+      "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "lineage": "champion",
+      "aliases": [
+        "S5D_CHAMPION"
+      ],
+      "score": 0.0035849600000001924,
+      "primary_excess": 0.0035849600000001924,
+      "supp_excess": 0.02636375999999996
+    },
+    {
+      "rank": 2,
+      "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank3",
+        "D_reproduction_rank3"
+      ],
+      "score": 0.003252950000000032,
+      "primary_excess": 0.003252950000000032,
+      "supp_excess": 0.021374420000000116
+    },
+    {
+      "rank": 3,
+      "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank1",
+        "D_reproduction_rank1"
+      ],
+      "score": 0.0025551400000001223,
+      "primary_excess": 0.0025551400000001223,
+      "supp_excess": 0.015657800000000055
+    },
+    {
+      "rank": 4,
+      "genome_id": "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank4",
+        "D_reproduction_rank4"
+      ],
+      "score": 0.0008874000000000937,
+      "primary_excess": 0.0008874000000000937,
+      "supp_excess": 0.01497360999999997
+    },
+    {
+      "rank": 5,
+      "genome_id": "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank5",
+        "D_reproduction_rank5"
+      ],
+      "score": 0.0008874000000000937,
+      "primary_excess": 0.0008874000000000937,
+      "supp_excess": 0.01497360999999997
+    },
+    {
+      "rank": 6,
+      "genome_id": "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank2",
+        "D_reproduction_rank2"
+      ],
+      "score": -0.02349511999999998,
+      "primary_excess": -0.02349511999999998,
+      "supp_excess": -0.014258349999999975
+    },
+    {
+      "rank": 7,
+      "genome_id": "gen_c801163c69d2f71d22913697b6a8270ba5aef2010c9204f0efdfe510458f3e8a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank6"
+      ],
+      "score": -0.02470150999999987,
+      "primary_excess": -0.015320149999999977,
+      "supp_excess": -0.02470150999999987
+    },
+    {
+      "rank": 8,
+      "genome_id": "gen_5f33b6376ef3d402a6143c6f99d1b7635699e648fa4735cc97b8de18f3e5cd83",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank8"
+      ],
+      "score": -0.024866440000000045,
+      "primary_excess": -0.014954339999999844,
+      "supp_excess": -0.024866440000000045
+    },
+    {
+      "rank": 9,
+      "genome_id": "gen_1106d6122fc36a75bcf915ad1e4577a7082da320caf7c3de9933d81ac5dcb7f8",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank2"
+      ],
+      "score": -0.0256160299999999,
+      "primary_excess": -0.015767739999999808,
+      "supp_excess": -0.0256160299999999
+    },
+    {
+      "rank": 10,
+      "genome_id": "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank6",
+        "D_reproduction_rank6"
+      ],
+      "score": -0.026435009999999926,
+      "primary_excess": -0.026435009999999926,
+      "supp_excess": -0.006345040000000024
+    },
+    {
+      "rank": 11,
+      "genome_id": "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank7",
+        "D_reproduction_rank7"
+      ],
+      "score": -0.026435009999999926,
+      "primary_excess": -0.026435009999999926,
+      "supp_excess": -0.006345040000000024
+    },
+    {
+      "rank": 12,
+      "genome_id": "gen_bd7cff5c7b4e0a582ff98bc3cc045329db8dacf31dcef4781229963c26209a05",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank3"
+      ],
+      "score": -0.028913469999999997,
+      "primary_excess": -0.016366689999999906,
+      "supp_excess": -0.028913469999999997
+    },
+    {
+      "rank": 13,
+      "genome_id": "gen_6ef496e6e7ede503e4eef6934badf0dda529ef472c9e237d1d2068b003b03265",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank4"
+      ],
+      "score": -0.0290257599999999,
+      "primary_excess": -0.017263529999999916,
+      "supp_excess": -0.0290257599999999
+    },
+    {
+      "rank": 14,
+      "genome_id": "gen_096e9c7e17650771f3d8a16e0069398d9f1ad5caed2ab626c88f82319f1b904a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank5"
+      ],
+      "score": -0.02914671999999996,
+      "primary_excess": -0.017591349999999784,
+      "supp_excess": -0.02914671999999996
+    },
+    {
+      "rank": 15,
+      "genome_id": "gen_c486673917deddbe1412530ddc57987800020ac5789a1c887f383acf4c945c4f",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank7"
+      ],
+      "score": -0.029647580000000007,
+      "primary_excess": -0.017513149999999866,
+      "supp_excess": -0.029647580000000007
+    },
+    {
+      "rank": 16,
+      "genome_id": "gen_85a860e23b2a5c4da442298daacdbcbf9b766b78db328ea2deb77e374722ce16",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank1"
+      ],
+      "score": -0.029744709999999897,
+      "primary_excess": -0.017513149999999866,
+      "supp_excess": -0.029744709999999897
+    },
+    {
+      "rank": 17,
+      "genome_id": "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank8",
+        "D_reproduction_rank8"
+      ],
+      "score": -0.03466627999999994,
+      "primary_excess": -0.003423089999999851,
+      "supp_excess": -0.03466627999999994
+    },
+    {
+      "rank": 18,
+      "genome_id": "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank6",
+        "B_reproduction_rank6"
+      ],
+      "score": -0.03555226999999994,
+      "primary_excess": -0.0096664999999998,
+      "supp_excess": -0.03555226999999994
+    },
+    {
+      "rank": 19,
+      "genome_id": "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank5",
+        "B_reproduction_rank5"
+      ],
+      "score": -0.03569679999999997,
+      "primary_excess": -0.0117986699999999,
+      "supp_excess": -0.03569679999999997
+    },
+    {
+      "rank": 20,
+      "genome_id": "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank4",
+        "B_reproduction_rank4"
+      ],
+      "score": -0.03569679999999997,
+      "primary_excess": -0.0117986699999999,
+      "supp_excess": -0.03569679999999997
+    },
+    {
+      "rank": 21,
+      "genome_id": "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank2",
+        "B_reproduction_rank2"
+      ],
+      "score": -0.037442530000000085,
+      "primary_excess": -0.020963899999999924,
+      "supp_excess": -0.037442530000000085
+    },
+    {
+      "rank": 22,
+      "genome_id": "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank1",
+        "B_reproduction_rank1"
+      ],
+      "score": -0.039315659999999975,
+      "primary_excess": -0.014324459999999872,
+      "supp_excess": -0.039315659999999975
+    },
+    {
+      "rank": 23,
+      "genome_id": "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank3",
+        "B_reproduction_rank3"
+      ],
+      "score": -0.039823830000000005,
+      "primary_excess": -0.022108419999999906,
+      "supp_excess": -0.039823830000000005
+    },
+    {
+      "rank": 24,
+      "genome_id": "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank7",
+        "B_reproduction_rank7"
+      ],
+      "score": -0.04132935000000004,
+      "primary_excess": -0.024865139999999952,
+      "supp_excess": -0.04132935000000004
+    },
+    {
+      "rank": 25,
+      "genome_id": "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank8",
+        "B_reproduction_rank8"
+      ],
+      "score": -0.04132935000000004,
+      "primary_excess": -0.024865139999999952,
+      "supp_excess": -0.04132935000000004
+    }
+  ],
+  "ceiling18_5bps_winner_is_champion": true,
+  "ordering_changes_at_5bps_same_18pct_ceiling": false,
+  "native_sizing_caveat": "The native_5bps_full_matrix/native_5bps_ranking fields above compare each candidate against a passive benchmark matched to its own NOMINAL exposure cap. This is unfair to any max_positions-constrained candidate -- the champion's nominal native cap is 89pct but max_positions=1 means it never realizes more than one position's weight in practice, so the 89pct-exposure passive it is compared against is not the benchmark it actually competes against day to day. This is the same nominal-vs-effective sizing mismatch this GO already caught once (the original Sam-beats-champion framing bug). The ceiling18_5bps_sensitivity fields are the properly apples-to-apples test: identical 18pct-ceiling-matched-passive methodology as the accepted ranking_final.json, slippage alone dropped from 10bps to 5bps.",
+  "generated_at_utc": "2026-10-01T08:18:17Z",
+  "data_layer_reproduction_check": {
+    "method": "row_count_and_date_coverage_vs_manifest",
+    "limitation": "data_v2's original per-symbol normalized rows were never persisted to disk (only MANIFEST.json's counts/hashes and the derived ranking/rerun outputs survive) -- a byte-exact diff of price/volume content against the original fetch is not possible this gate. This check instead confirms row counts and date coverage match exactly, which rules out any new/missing trading day or truncated fetch.",
+    "symbols_checked": 8,
+    "mismatches": {},
+    "reproduced": true
+  },
+  "determinism_check": {
+    "mismatches": [],
+    "deterministic": true,
+    "candidates_checked": 25
+  },
+  "native_5bps_full_matrix": [
+    {
+      "genome_id": "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank1",
+        "B_reproduction_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.021944570000000052,
+          "annualized": 0.01755565600000004,
+          "excess_vs_native_passive": -0.05182091999999994,
+          "native_passive_exposure": 0.38,
+          "max_drawdown": -0.008512110318479649,
+          "sharpe": 1.3308506189318035,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.014260130000000037,
+          "annualized": 0.008223232860411921,
+          "excess_vs_native_passive": -0.09788751000000007,
+          "native_passive_exposure": 0.38,
+          "max_drawdown": -0.015809259808323928,
+          "sharpe": 0.5330783705748474,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank2",
+        "B_reproduction_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.01356124999999997,
+          "annualized": 0.010848999999999977,
+          "excess_vs_native_passive": -0.15945973000000002,
+          "native_passive_exposure": 0.87,
+          "max_drawdown": -0.014542503813129048,
+          "sharpe": 0.8998121500033371,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.01442123999999989,
+          "annualized": 0.008316138398169274,
+          "excess_vs_native_passive": -0.2570233700000002,
+          "native_passive_exposure": 0.87,
+          "max_drawdown": -0.01455452671797608,
+          "sharpe": 0.5391429402013125,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank3",
+        "B_reproduction_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.012416729999999987,
+          "annualized": 0.00993338399999999,
+          "excess_vs_native_passive": -0.06922933999999992,
+          "native_passive_exposure": 0.42000000000000004,
+          "max_drawdown": -0.008124550134894104,
+          "sharpe": 0.8987127554481322,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.012039939999999971,
+          "annualized": 0.006942940228832936,
+          "excess_vs_native_passive": -0.1124289300000001,
+          "native_passive_exposure": 0.42000000000000004,
+          "max_drawdown": -0.012250132276853898,
+          "sharpe": 0.4932645863069469,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank4",
+        "B_reproduction_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.02448026999999997,
+          "annualized": 0.019584215999999977,
+          "excess_vs_native_passive": -0.051202250000000005,
+          "native_passive_exposure": 0.39,
+          "max_drawdown": -0.008503897820651973,
+          "sharpe": 1.4525903451766622,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.01791018000000011,
+          "annualized": 0.010328067185354754,
+          "excess_vs_native_passive": -0.09734007,
+          "native_passive_exposure": 0.39,
+          "max_drawdown": -0.014715564124736402,
+          "sharpe": 0.6545386938565813,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank5",
+        "B_reproduction_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.02448026999999997,
+          "annualized": 0.019584215999999977,
+          "excess_vs_native_passive": -0.04323007000000012,
+          "native_passive_exposure": 0.35,
+          "max_drawdown": -0.008503897820651973,
+          "sharpe": 1.4525903451766622,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.01791018000000011,
+          "annualized": 0.010328067185354754,
+          "excess_vs_native_passive": -0.08501709999999996,
+          "native_passive_exposure": 0.35,
+          "max_drawdown": -0.014715564124736402,
+          "sharpe": 0.6545386938565813,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank6",
+        "B_reproduction_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.03194029000000009,
+          "annualized": 0.025552232000000077,
+          "excess_vs_native_passive": -0.04374222999999988,
+          "native_passive_exposure": 0.39,
+          "max_drawdown": -0.011063018959140525,
+          "sharpe": 1.4546858380591587,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.02331094999999994,
+          "annualized": 0.013442470022883263,
+          "excess_vs_native_passive": -0.09193930000000017,
+          "native_passive_exposure": 0.39,
+          "max_drawdown": -0.01913628646360299,
+          "sharpe": 0.6555337720244455,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank7",
+        "B_reproduction_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.009660009999999941,
+          "annualized": 0.007728007999999953,
+          "excess_vs_native_passive": -0.16543919000000007,
+          "native_passive_exposure": 0.88,
+          "max_drawdown": -0.014547248967616055,
+          "sharpe": 0.6647887095810685,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.010534419999999933,
+          "annualized": 0.0060747685125857745,
+          "excess_vs_native_passive": -0.26436382,
+          "native_passive_exposure": 0.88,
+          "max_drawdown": -0.014551081514702857,
+          "sharpe": 0.40200967828641965,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank8",
+        "B_reproduction_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.009660009999999941,
+          "annualized": 0.007728007999999953,
+          "excess_vs_native_passive": -0.16336097000000005,
+          "native_passive_exposure": 0.87,
+          "max_drawdown": -0.014547248967616055,
+          "sharpe": 0.6647887095810685,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.010534419999999933,
+          "annualized": 0.0060747685125857745,
+          "excess_vs_native_passive": -0.26091019000000015,
+          "native_passive_exposure": 0.87,
+          "max_drawdown": -0.014551081514702857,
+          "sharpe": 0.40200967828641965,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_85a860e23b2a5c4da442298daacdbcbf9b766b78db328ea2deb77e374722ce16",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.031127820000000028,
+          "annualized": 0.024902256000000025,
+          "excess_vs_native_passive": -0.02678361000000007,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.020383610021774135,
+          "sharpe": 0.8775417267631929,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.03872462999999993,
+          "annualized": 0.022330907917620095,
+          "excess_vs_native_passive": -0.048886430000000036,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.02038625875304756,
+          "sharpe": 0.8108977350078544,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_1106d6122fc36a75bcf915ad1e4577a7082da320caf7c3de9933d81ac5dcb7f8",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.03297298999999998,
+          "annualized": 0.026378391999999987,
+          "excess_vs_native_passive": -0.026852960000000037,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.021057380901103873,
+          "sharpe": 0.9025741755075505,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.04451077000000003,
+          "annualized": 0.025667537848970273,
+          "excess_vs_native_passive": -0.04626406999999988,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.02108451954530266,
+          "sharpe": 0.9155843971395958,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_bd7cff5c7b4e0a582ff98bc3cc045329db8dacf31dcef4781229963c26209a05",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.029838129999999907,
+          "annualized": 0.023870503999999928,
+          "excess_vs_native_passive": -0.02807330000000019,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.01724071679011585,
+          "sharpe": 0.8629513127785942,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.036767409999999945,
+          "annualized": 0.021202259313501115,
+          "excess_vs_native_passive": -0.05084365000000002,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.017236208812057452,
+          "sharpe": 0.7852258194717938,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_6ef496e6e7ede503e4eef6934badf0dda529ef472c9e237d1d2068b003b03265",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.030750379999999966,
+          "annualized": 0.024600303999999976,
+          "excess_vs_native_passive": -0.02907557000000005,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.021358269518415574,
+          "sharpe": 0.8449549342466008,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.039080819999999905,
+          "annualized": 0.022536308100686447,
+          "excess_vs_native_passive": -0.05169402000000001,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.021355446481121865,
+          "sharpe": 0.8001511926017947,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_096e9c7e17650771f3d8a16e0069398d9f1ad5caed2ab626c88f82319f1b904a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.030596080000000025,
+          "annualized": 0.024476864000000022,
+          "excess_vs_native_passive": -0.02731535000000007,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.02047460031102777,
+          "sharpe": 0.8628209259490004,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.039141759999999914,
+          "annualized": 0.022571449702517114,
+          "excess_vs_native_passive": -0.04846930000000005,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.020504787996159513,
+          "sharpe": 0.8199864300538177,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_c801163c69d2f71d22913697b6a8270ba5aef2010c9204f0efdfe510458f3e8a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.03229827000000007,
+          "annualized": 0.02583861600000006,
+          "excess_vs_native_passive": -0.027527679999999943,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.019019127286493354,
+          "sharpe": 0.877353976985622,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.0444509500000001,
+          "annualized": 0.025633042105263217,
+          "excess_vs_native_passive": -0.04632388999999981,
+          "native_passive_exposure": 0.31,
+          "max_drawdown": -0.01904472111237343,
+          "sharpe": 0.9088015409144306,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_c486673917deddbe1412530ddc57987800020ac5789a1c887f383acf4c945c4f",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.031127820000000028,
+          "annualized": 0.024902256000000025,
+          "excess_vs_native_passive": -0.02678361000000007,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.020383610021774135,
+          "sharpe": 0.8775417267631929,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.03888785000000006,
+          "annualized": 0.02242503020594969,
+          "excess_vs_native_passive": -0.048723209999999906,
+          "native_passive_exposure": 0.3,
+          "max_drawdown": -0.020386586908861304,
+          "sharpe": 0.8146242154857031,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_5f33b6376ef3d402a6143c6f99d1b7635699e648fa4735cc97b8de18f3e5cd83",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.036313169999999895,
+          "annualized": 0.02905053599999992,
+          "excess_vs_native_passive": -0.029487930000000162,
+          "native_passive_exposure": 0.33999999999999997,
+          "max_drawdown": -0.021934878136073976,
+          "sharpe": 0.9361236578084098,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.047879479999999974,
+          "annualized": 0.027610134919908453,
+          "excess_vs_native_passive": -0.05196343999999997,
+          "native_passive_exposure": 0.33999999999999997,
+          "max_drawdown": -0.021922459567459307,
+          "sharpe": 0.9308797466871137,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank1",
+        "D_reproduction_rank1"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.047566489999999906,
+          "annualized": 0.03805319199999993,
+          "excess_vs_native_passive": 0.0033794999999998687,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.024757909980886228,
+          "sharpe": 1.1719998815100403,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.0868313300000001,
+          "annualized": 0.05007207130434788,
+          "excess_vs_native_passive": 0.020082540000000204,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.034257417889937636,
+          "sharpe": 1.5486274944046183,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank2",
+        "D_reproduction_rank2"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.012206579999999967,
+          "annualized": 0.009765263999999975,
+          "excess_vs_native_passive": -0.026145010000000024,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.03941549167477554,
+          "sharpe": 0.30899433886628197,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.04179872000000007,
+          "annualized": 0.024103609702517202,
+          "excess_vs_native_passive": -0.015898100000000026,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.028882072771348133,
+          "sharpe": 0.757026130673906,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank3",
+        "D_reproduction_rank3"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.04422034000000008,
+          "annualized": 0.03537627200000006,
+          "excess_vs_native_passive": 0.003944029999999987,
+          "native_passive_exposure": 0.21000000000000002,
+          "max_drawdown": -0.022613901707601358,
+          "sharpe": 1.1942806566521749,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.08584627999999994,
+          "annualized": 0.049504033318077775,
+          "excess_vs_native_passive": 0.025156149999999933,
+          "native_passive_exposure": 0.21000000000000002,
+          "max_drawdown": -0.031300592495135504,
+          "sharpe": 1.6739557660201434,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank4",
+        "D_reproduction_rank4"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.045407470000000005,
+          "annualized": 0.036325976,
+          "excess_vs_native_passive": 0.0012204799999999683,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.020938185714578395,
+          "sharpe": 1.2375365201643695,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.0859564100000001,
+          "annualized": 0.04956754077803209,
+          "excess_vs_native_passive": 0.019207620000000203,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.034257417889937636,
+          "sharpe": 1.5286889386015214,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank5",
+        "D_reproduction_rank5"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.045407470000000005,
+          "annualized": 0.036325976,
+          "excess_vs_native_passive": 0.0012204799999999683,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.020938185714578395,
+          "sharpe": 1.2375365201643695,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.0859564100000001,
+          "annualized": 0.04956754077803209,
+          "excess_vs_native_passive": 0.019207620000000203,
+          "native_passive_exposure": 0.23,
+          "max_drawdown": -0.034257417889937636,
+          "sharpe": 1.5286889386015214,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank6",
+        "D_reproduction_rank6"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.008931859999999903,
+          "annualized": 0.007145487999999922,
+          "excess_vs_native_passive": -0.02941973000000009,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.03940639703925253,
+          "sharpe": 0.23699872813331896,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.050705730000000004,
+          "annualized": 0.029239917528604123,
+          "excess_vs_native_passive": -0.006991090000000089,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.031216605012758802,
+          "sharpe": 0.9295482269266994,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank7",
+        "D_reproduction_rank7"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.008931859999999903,
+          "annualized": 0.007145487999999922,
+          "excess_vs_native_passive": -0.02941973000000009,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.03940639703925253,
+          "sharpe": 0.23699872813331896,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.050705730000000004,
+          "annualized": 0.029239917528604123,
+          "excess_vs_native_passive": -0.006991090000000089,
+          "native_passive_exposure": 0.2,
+          "max_drawdown": -0.031216605012758802,
+          "sharpe": 0.9295482269266994,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank8",
+        "D_reproduction_rank8"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.036348959999999986,
+          "annualized": 0.02907916799999999,
+          "excess_vs_native_passive": -0.003927350000000107,
+          "native_passive_exposure": 0.21000000000000002,
+          "max_drawdown": -0.021327269897373435,
+          "sharpe": 1.011185504925516,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.019942040000000105,
+          "annualized": 0.011499757620137361,
+          "excess_vs_native_passive": -0.040748089999999904,
+          "native_passive_exposure": 0.21000000000000002,
+          "max_drawdown": -0.028530150786941655,
+          "sharpe": 0.4165600193445146,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    },
+    {
+      "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "lineage": "champion",
+      "aliases": [
+        "S5D_CHAMPION"
+      ],
+      "windows": {
+        "primary_15mo": {
+          "total_return": 0.038110110000000086,
+          "annualized": 0.03048808800000007,
+          "excess_vs_native_passive": -0.13900592,
+          "native_passive_exposure": 0.89,
+          "max_drawdown": -0.06705746898918097,
+          "sharpe": 0.6150932622617906,
+          "halted": false,
+          "step_count": 315
+        },
+        "supplementary_21mo": {
+          "total_return": 0.07822752999999993,
+          "annualized": 0.04511061226544619,
+          "excess_vs_native_passive": -0.20023597000000004,
+          "native_passive_exposure": 0.89,
+          "max_drawdown": -0.05263054194024552,
+          "sharpe": 0.9021810822911859,
+          "halted": false,
+          "step_count": 437
+        }
+      },
+      "eligible": true,
+      "ineligible_reason": null
+    }
+  ],
+  "native_5bps_ranking": [
+    {
+      "rank": 1,
+      "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank3",
+        "D_reproduction_rank3"
+      ],
+      "score": 0.003944029999999987,
+      "primary_excess": 0.003944029999999987,
+      "supp_excess": 0.025156149999999933
+    },
+    {
+      "rank": 2,
+      "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank1",
+        "D_reproduction_rank1"
+      ],
+      "score": 0.0033794999999998687,
+      "primary_excess": 0.0033794999999998687,
+      "supp_excess": 0.020082540000000204
+    },
+    {
+      "rank": 3,
+      "genome_id": "gen_2d9d0e59e3031587a6170a087fa814b99dce6c030153da1d90364749d984a198",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank4",
+        "D_reproduction_rank4"
+      ],
+      "score": 0.0012204799999999683,
+      "primary_excess": 0.0012204799999999683,
+      "supp_excess": 0.019207620000000203
+    },
+    {
+      "rank": 4,
+      "genome_id": "gen_93e402fc7ee7fc97a9a9904ef40928104cc35a8705d141e8517bc9b4f890c7ee",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank5",
+        "D_reproduction_rank5"
+      ],
+      "score": 0.0012204799999999683,
+      "primary_excess": 0.0012204799999999683,
+      "supp_excess": 0.019207620000000203
+    },
+    {
+      "rank": 5,
+      "genome_id": "gen_e9fb7fe3d72065a1b7c1cec27e0b0ada328dd5b75c12ad3ca0ba13ccac6455aa",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank2",
+        "D_reproduction_rank2"
+      ],
+      "score": -0.026145010000000024,
+      "primary_excess": -0.026145010000000024,
+      "supp_excess": -0.015898100000000026
+    },
+    {
+      "rank": 6,
+      "genome_id": "gen_6ce59904c4747b291b20a4bcaf0fc2f8a710e3c3af1948f5cc5fbf9ecf8f7f93",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank6",
+        "D_reproduction_rank6"
+      ],
+      "score": -0.02941973000000009,
+      "primary_excess": -0.02941973000000009,
+      "supp_excess": -0.006991090000000089
+    },
+    {
+      "rank": 7,
+      "genome_id": "gen_983d0ceecfce6a1af1f559aee0b81af32a048839a62305e86d408c6120d41333",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank7",
+        "D_reproduction_rank7"
+      ],
+      "score": -0.02941973000000009,
+      "primary_excess": -0.02941973000000009,
+      "supp_excess": -0.006991090000000089
+    },
+    {
+      "rank": 8,
+      "genome_id": "gen_ea57943b61e80358287cc16c1109d6b8940c38ed260c2fe3d8acec444b6b79eb",
+      "lineage": "D",
+      "aliases": [
+        "D_primary_rank8",
+        "D_reproduction_rank8"
+      ],
+      "score": -0.040748089999999904,
+      "primary_excess": -0.003927350000000107,
+      "supp_excess": -0.040748089999999904
+    },
+    {
+      "rank": 9,
+      "genome_id": "gen_1106d6122fc36a75bcf915ad1e4577a7082da320caf7c3de9933d81ac5dcb7f8",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank2"
+      ],
+      "score": -0.04626406999999988,
+      "primary_excess": -0.026852960000000037,
+      "supp_excess": -0.04626406999999988
+    },
+    {
+      "rank": 10,
+      "genome_id": "gen_c801163c69d2f71d22913697b6a8270ba5aef2010c9204f0efdfe510458f3e8a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank6"
+      ],
+      "score": -0.04632388999999981,
+      "primary_excess": -0.027527679999999943,
+      "supp_excess": -0.04632388999999981
+    },
+    {
+      "rank": 11,
+      "genome_id": "gen_096e9c7e17650771f3d8a16e0069398d9f1ad5caed2ab626c88f82319f1b904a",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank5"
+      ],
+      "score": -0.04846930000000005,
+      "primary_excess": -0.02731535000000007,
+      "supp_excess": -0.04846930000000005
+    },
+    {
+      "rank": 12,
+      "genome_id": "gen_c486673917deddbe1412530ddc57987800020ac5789a1c887f383acf4c945c4f",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank7"
+      ],
+      "score": -0.048723209999999906,
+      "primary_excess": -0.02678361000000007,
+      "supp_excess": -0.048723209999999906
+    },
+    {
+      "rank": 13,
+      "genome_id": "gen_85a860e23b2a5c4da442298daacdbcbf9b766b78db328ea2deb77e374722ce16",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank1"
+      ],
+      "score": -0.048886430000000036,
+      "primary_excess": -0.02678361000000007,
+      "supp_excess": -0.048886430000000036
+    },
+    {
+      "rank": 14,
+      "genome_id": "gen_bd7cff5c7b4e0a582ff98bc3cc045329db8dacf31dcef4781229963c26209a05",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank3"
+      ],
+      "score": -0.05084365000000002,
+      "primary_excess": -0.02807330000000019,
+      "supp_excess": -0.05084365000000002
+    },
+    {
+      "rank": 15,
+      "genome_id": "gen_6ef496e6e7ede503e4eef6934badf0dda529ef472c9e237d1d2068b003b03265",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank4"
+      ],
+      "score": -0.05169402000000001,
+      "primary_excess": -0.02907557000000005,
+      "supp_excess": -0.05169402000000001
+    },
+    {
+      "rank": 16,
+      "genome_id": "gen_5f33b6376ef3d402a6143c6f99d1b7635699e648fa4735cc97b8de18f3e5cd83",
+      "lineage": "C",
+      "aliases": [
+        "C_primary_rank8"
+      ],
+      "score": -0.05196343999999997,
+      "primary_excess": -0.029487930000000162,
+      "supp_excess": -0.05196343999999997
+    },
+    {
+      "rank": 17,
+      "genome_id": "gen_903b0ebdb7c6d6309dafba6971efed04bfa46e15df4369382719fb11f0f4a6b5",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank5",
+        "B_reproduction_rank5"
+      ],
+      "score": -0.08501709999999996,
+      "primary_excess": -0.04323007000000012,
+      "supp_excess": -0.08501709999999996
+    },
+    {
+      "rank": 18,
+      "genome_id": "gen_e05fa5c871f0aa65017ab06a625aa7e348afc6dc9084f89dc7773cba60e03a4f",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank6",
+        "B_reproduction_rank6"
+      ],
+      "score": -0.09193930000000017,
+      "primary_excess": -0.04374222999999988,
+      "supp_excess": -0.09193930000000017
+    },
+    {
+      "rank": 19,
+      "genome_id": "gen_d237943367da61d097547c6030e0ff7c0ec3f6119b3159de414830a591eb588e",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank4",
+        "B_reproduction_rank4"
+      ],
+      "score": -0.09734007,
+      "primary_excess": -0.051202250000000005,
+      "supp_excess": -0.09734007
+    },
+    {
+      "rank": 20,
+      "genome_id": "gen_aa66ea53013a7de61bcbf66053beea2ae3ebc18e81283c03c2474ece58958712",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank1",
+        "B_reproduction_rank1"
+      ],
+      "score": -0.09788751000000007,
+      "primary_excess": -0.05182091999999994,
+      "supp_excess": -0.09788751000000007
+    },
+    {
+      "rank": 21,
+      "genome_id": "gen_01258c541e8b6faf0b770bac0390a2d2b2a726a8085fee46410d1a3a99e6ac57",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank3",
+        "B_reproduction_rank3"
+      ],
+      "score": -0.1124289300000001,
+      "primary_excess": -0.06922933999999992,
+      "supp_excess": -0.1124289300000001
+    },
+    {
+      "rank": 22,
+      "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+      "lineage": "champion",
+      "aliases": [
+        "S5D_CHAMPION"
+      ],
+      "score": -0.20023597000000004,
+      "primary_excess": -0.13900592,
+      "supp_excess": -0.20023597000000004
+    },
+    {
+      "rank": 23,
+      "genome_id": "gen_e60408c15665c8e65235b8bbadcc87aefdf43fef0d9fc96087afacb1df93e028",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank2",
+        "B_reproduction_rank2"
+      ],
+      "score": -0.2570233700000002,
+      "primary_excess": -0.15945973000000002,
+      "supp_excess": -0.2570233700000002
+    },
+    {
+      "rank": 24,
+      "genome_id": "gen_fa0338ffe46c588664a654b48565cc4a28377f1a00872114778375885c74164b",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank8",
+        "B_reproduction_rank8"
+      ],
+      "score": -0.26091019000000015,
+      "primary_excess": -0.16336097000000005,
+      "supp_excess": -0.26091019000000015
+    },
+    {
+      "rank": 25,
+      "genome_id": "gen_8080e4c7d32b75a63981b91f7d6ad8e819ccbaef3931a9920d52dbd4a64d9b8d",
+      "lineage": "B",
+      "aliases": [
+        "B_primary_rank7",
+        "B_reproduction_rank7"
+      ],
+      "score": -0.26436382,
+      "primary_excess": -0.16543919000000007,
+      "supp_excess": -0.26436382
+    }
+  ],
+  "native_5bps_winner_is_champion": false,
+  "ordering_changes_at_5bps_native_vs_10bps_18pct": true,
+  "selected_runner_check": {
+    "staged_genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "matches_champion_id": true,
+    "executed_via": "control_agent.decide through champion_decide_fn_factory (same pathway named in selected_development_bot.json)",
+    "fresh_data_total_return_18pct_10bps_primary": 0.03759460999999997,
+    "original_ranking_primary_excess_for_reference": 0.0025521218462074557,
+    "ran_without_exception": true,
+    "order_submission_attempted": false
+  }
+}
