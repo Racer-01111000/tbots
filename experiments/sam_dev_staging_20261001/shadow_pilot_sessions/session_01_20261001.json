@@ -1,0 +1,136 @@
+{
+  "go": "TBOTS_SAM_15_MONTH_REPLAY_AND_LIVE_SHADOW_20261001 -- five-session read-only shadow pilot",
+  "session_index": 1,
+  "session_timestamp_utc": "2026-10-01T08:24:01.789011+00:00",
+  "orders_disabled_confirmed": true,
+  "order_submission_attempted": false,
+  "host_used": "https://paper-api.alpaca.markets",
+  "account_http_status": 200,
+  "account_status_field": "ACTIVE",
+  "account_trading_blocked": false,
+  "market_clock_is_open": false,
+  "market_clock_timestamp": "2026-10-01T04:23:52.494555-04:00",
+  "market_clock_next_open": "2026-10-01T09:30:00-04:00",
+  "market_clock_next_close": "2026-10-01T16:00:00-04:00",
+  "feed_used": "iex",
+  "universe": [
+    "SPY",
+    "EFA",
+    "EEM",
+    "IEF",
+    "TLT",
+    "GLD",
+    "DBC",
+    "VNQ"
+  ],
+  "bars_per_symbol": {
+    "SPY": 412,
+    "EFA": 412,
+    "EEM": 412,
+    "IEF": 412,
+    "TLT": 412,
+    "GLD": 412,
+    "DBC": 412,
+    "VNQ": 412
+  },
+  "selected_genome_id_check": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+  "decision": {
+    "selected": [
+      "DBC"
+    ],
+    "weights": {
+      "DBC": 0.18
+    },
+    "evaluations": {
+      "SPY": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": -0.01075743223077219,
+        "m126": 0.08157879802508372,
+        "m252": 0.2164158861355332,
+        "ma200": 726.5586928104575,
+        "trend_pass": true,
+        "ensemble_momentum": 0.09574575064328157,
+        "volatility": 0.007039148446550395
+      },
+      "EFA": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": -0.042440440532694246,
+        "m126": 0.042440052172168174,
+        "m252": 0.20603598374927445,
+        "ma200": 102.63160130718954,
+        "trend_pass": true,
+        "ensemble_momentum": 0.06867853179624946,
+        "volatility": 0.00815362410650184
+      },
+      "EEM": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": 0.004815650865312104,
+        "m126": 0.07641463807834903,
+        "m252": 0.3841210613598671,
+        "ma200": 64.28467320261439,
+        "trend_pass": true,
+        "ensemble_momentum": 0.15511711676784276,
+        "volatility": 0.01537402161470587
+      },
+      "IEF": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.035525321239607055,
+        "m126": -0.04735494880546087,
+        "m252": -0.017597888253409688,
+        "ma200": 93.0095751633987,
+        "trend_pass": false,
+        "ensemble_momentum": -0.03349271943282587,
+        "volatility": 0.0031531687460015813
+      },
+      "TLT": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.04829441251986799,
+        "m126": -0.08337258596325947,
+        "m252": -0.060810810810810745,
+        "ma200": 83.77245098039215,
+        "trend_pass": false,
+        "ensemble_momentum": -0.06415926976464607,
+        "volatility": 0.006138100640483285
+      },
+      "GLD": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.059053853754940766,
+        "m126": -0.11643740286251125,
+        "m252": 0.24394186806009133,
+        "ma200": 411.2082026143791,
+        "trend_pass": false,
+        "ensemble_momentum": 0.02281687048087977,
+        "volatility": 0.015292402454399502
+      },
+      "DBC": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": 0.07407407407407418,
+        "m126": 0.08143812709030107,
+        "m252": 0.473792160437557,
+        "ma200": 29.486764705882354,
+        "trend_pass": true,
+        "ensemble_momentum": 0.20976812053397742,
+        "volatility": 0.013386915547924077
+      },
+      "VNQ": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.07111018969627858,
+        "m126": -0.04517847629195515,
+        "m252": 0.023412517131110144,
+        "ma200": 94.14366013071896,
+        "trend_pass": false,
+        "ensemble_momentum": -0.03095871628570786,
+        "volatility": 0.008233741074737603
+      }
+    }
+  },
+  "wall_time_s": 10.58
+}
