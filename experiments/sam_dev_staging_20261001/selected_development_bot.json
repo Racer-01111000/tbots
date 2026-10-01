@@ -1,0 +1,67 @@
+{
+  "admission_status": "NOT_ADMITTED",
+  "broker_status": "NO_BROKER",
+  "data_used": {
+    "dataset": "data_v2 (coherent single-vintage fetch, supersedes data_v1's vintage-spliced dataset)",
+    "dataset_revision": "b09141e348ab9caf0158b66cd95940bff9bbae2318000ba0ead9d7bf7e23fed0"
+  },
+  "native_sizing_constraint": {
+    "max_asset_weight": 0.18,
+    "max_total_exposure": 0.89
+  },
+  "never_changes_accepted_champion_identity": true,
+  "never_changes_formal_admission": true,
+  "no_evolution_no_generation10_no_orders": true,
+  "pilot_sizing_overlay": {
+    "common_ceiling_gross_exposure": 0.18,
+    "note": "ceiling never increases exposure above native; native already effectively <=18% given max_positions=1"
+  },
+  "ranking_inventory_hash": null,
+  "ranking_result_summary": {
+    "full_ranking_file": "/home/ec2-user/sam_15_month_replay_20261001/data_v2/ranking_final.json",
+    "sam_rank_in_25": 3,
+    "winner_genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "winner_is_champion": true
+  },
+  "ranking_rule": "score = min(annualized_excess_vs_18pct_passive_primary, annualized_excess_vs_18pct_passive_supplementary), both at common 18pct ceiling, 10bps slippage; ties by smaller |worst_drawdown|, then higher min Sharpe, then lexicographic genome_id",
+  "rollback_reference": {
+    "how_to_rollback": "point the runtime loader back at SAM_MANIFEST_20261001.json; no file is deleted, this is a pointer change only",
+    "previous_selected_genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+    "previous_selection_manifest": "/home/ec2-user/sam_dev_staging_20261001/SAM_MANIFEST_20261001.json (UNCHANGED, preserved as-is)"
+  },
+  "selected_decision_implementation": "control_agent.decide(view, genome) with champion_decide_fn_factory's rebalance-cadence gate (genome['rebalance_every_n_sessions']) -- the accepted, unmodified implementation",
+  "selected_genome_definition": {
+    "direction": "long_only",
+    "drawdown_halt_pct": 0.12,
+    "leverage": "none",
+    "max_asset_weight": 0.18,
+    "max_positions": 1,
+    "momentum_lookbacks": [
+      34,
+      110,
+      295
+    ],
+    "rebalance_every_n_sessions": 50,
+    "shorting": "none",
+    "strategy_family": "trend",
+    "target_max_exposure": 0.89,
+    "trend_filter_window": 153,
+    "universe": [
+      "SPY",
+      "EFA",
+      "EEM",
+      "IEF",
+      "TLT",
+      "GLD",
+      "DBC",
+      "VNQ"
+    ],
+    "volatility_window": 68
+  },
+  "selected_genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+  "selected_genome_label": "S5D_CHAMPION (same raw genome as the formally accepted champion -- selection as DEVELOPMENT shadow runner, NOT a change to ACCEPTED_CHAMPION_ID or formal admission)",
+  "selection_history": "REPLACED Sam (gen_8e7a622b...) with the frozen champion under GO TBOTS_DATA_REPAIR_BEST_BOT_AND_PAPER_KEYS_20261001, per Rick's direct explicit authorization of conditional replacement.",
+  "source_file": "/home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots/evolution/protocol/frozen_champion_s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672.json",
+  "source_file_sha256": "82a0e1b1ad860d5fbfc75740cd6d84e4b56188e952e17a30f6c8d330ccdaad21",
+  "status": "DEVELOPMENT_CANDIDATE"
+}

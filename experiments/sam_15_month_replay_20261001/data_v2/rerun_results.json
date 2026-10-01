@@ -1,0 +1,34 @@
+{
+  "primary_15mo": {
+    "slip5": {
+      "sam_native": 0.047566489999999906,
+      "passive23": 0.04418699000000004,
+      "champion_native": 0.038110110000000086,
+      "sam_ceiling18": 0.037080290000000016,
+      "champion_ceiling18": 0.038110110000000086
+    },
+    "slip10": {
+      "sam_native": 0.04649327000000003,
+      "passive23": 0.04400830999999994,
+      "champion_native": 0.03759460999999997,
+      "sam_ceiling18": 0.03625068999999992,
+      "champion_ceiling18": 0.03759460999999997
+    }
+  },
+  "supplementary_21mo": {
+    "slip5": {
+      "sam_native": 0.0868313300000001,
+      "passive23": 0.06674878999999989,
+      "champion_native": 0.07822752999999993,
+      "sam_ceiling18": 0.06752157000000003,
+      "champion_ceiling18": 0.07822752999999993
+    },
+    "slip10": {
+      "sam_native": 0.08591243000000004,
+      "passive23": 0.06655367000000001,
+      "champion_native": 0.07747441999999993,
+      "sam_ceiling18": 0.06680712,
+      "champion_ceiling18": 0.07747441999999993
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "normalization_version": "v1",
+  "ingested_at": "2026-10-01T06:58:51.419609+00:00",
+  "fetch_start": "1990-01-01",
+  "fetch_end": "2026-09-30",
+  "note": "single coherent vintage, no splice",
+  "symbols": {
+    "SPY": {
+      "raw_row_count": 8475,
+      "output_row_count": 8475,
+      "start": "1993-01-29",
+      "end": "2026-09-30",
+      "normalized_sha256": "040f10c24b3bece2bf8995201cbc1b8e811c11e9da062414286da666f19d2b07",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "EFA": {
+      "raw_row_count": 6310,
+      "output_row_count": 6310,
+      "start": "2001-08-27",
+      "end": "2026-09-30",
+      "normalized_sha256": "1c62d2c24e43ca9fa6f6343be232931b24815108c0858d1cc3442ddd679ae114",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/EFA?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "EEM": {
+      "raw_row_count": 5904,
+      "output_row_count": 5904,
+      "start": "2003-04-14",
+      "end": "2026-09-30",
+      "normalized_sha256": "1d1af826ecb53db34812b67b47c8d120ebfd8b1d6f30489d10f280080078d012",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/EEM?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "IEF": {
+      "raw_row_count": 6082,
+      "output_row_count": 6082,
+      "start": "2002-07-30",
+      "end": "2026-09-30",
+      "normalized_sha256": "d802e3dc4d2dbf89f5b825cd87c5f5d3f59873e29d9dd99c21848beff8ddde3d",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "TLT": {
+      "raw_row_count": 6082,
+      "output_row_count": 6082,
+      "start": "2002-07-30",
+      "end": "2026-09-30",
+      "normalized_sha256": "f7619dbb08e7c4584b1095255aa698384937003cfa5aa2cf8829184691a0dc69",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "GLD": {
+      "raw_row_count": 5500,
+      "output_row_count": 5500,
+      "start": "2004-11-18",
+      "end": "2026-09-30",
+      "normalized_sha256": "bc6aaa0387b8305abec5f4a02bdc5c0a2eeefa539d58d88a2b926272799f2c30",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "DBC": {
+      "raw_row_count": 5195,
+      "output_row_count": 5195,
+      "start": "2006-02-06",
+      "end": "2026-09-30",
+      "normalized_sha256": "ec25fd952a782f2f81d70ad1c622dc45d2aa9fa62cfcf536cae1da28cc265e57",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/DBC?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    },
+    "VNQ": {
+      "raw_row_count": 5536,
+      "output_row_count": 5536,
+      "start": "2004-09-29",
+      "end": "2026-09-30",
+      "normalized_sha256": "9786cbd752ec3e74c43cce34da075120ef218950a76f90ad00acc6d255d8bd43",
+      "fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?period1=631152000&period2=1790812800&interval=1d&events=div,splits"
+    }
+  },
+  "dataset_revision": "b09141e348ab9caf0158b66cd95940bff9bbae2318000ba0ead9d7bf7e23fed0"
+}
