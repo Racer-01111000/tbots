@@ -1,0 +1,299 @@
+{
+  "normalization_version": "v1",
+  "ingested_at": "2026-10-01T06:23:12.771618+00:00",
+  "symbols": {
+    "SPY": {
+      "existing_rows": 8450,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [
+        {
+          "date": "2026-08-25",
+          "field": "adjusted_close",
+          "existing": "765.9099731445312",
+          "gapfill": "764.0127563476562"
+        }
+      ],
+      "combined_rows": 8475,
+      "combined_start": "1993-01-29",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "f81cfb4da9f9d72cb8c970868875908796297065b96f130a7592eb8fde4f2bee",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "SPY",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 8450,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 8450,
+        "start": "1993-01-29",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "SPY",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "EFA": {
+      "existing_rows": 6285,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [],
+      "combined_rows": 6310,
+      "combined_start": "2001-08-27",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "7337c74d33b70725084654ea4515edcdd2c5fef0113c881a177c08f0796d7107",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/EFA?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "EFA",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 6285,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 6285,
+        "start": "2001-08-27",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "EFA",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "EEM": {
+      "existing_rows": 5879,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [],
+      "combined_rows": 5904,
+      "combined_start": "2003-04-14",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "c210eab11c7288aa2ea1cd5a3d3b03175588524819a926b45284da1642b96700",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/EEM?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "EEM",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 5879,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 5879,
+        "start": "2003-04-14",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "EEM",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "IEF": {
+      "existing_rows": 6057,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [
+        {
+          "date": "2026-08-25",
+          "field": "adjusted_close",
+          "existing": "93.51000213623047",
+          "gapfill": "93.17524719238281"
+        }
+      ],
+      "combined_rows": 6082,
+      "combined_start": "2002-07-30",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "ea493fdbac87a9630b44ffbff6419ef58491aeb0cc933379ddba4360a984b719",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/IEF?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "IEF",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 6057,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 6057,
+        "start": "2002-07-30",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "IEF",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "TLT": {
+      "existing_rows": 6057,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [
+        {
+          "date": "2026-08-25",
+          "field": "adjusted_close",
+          "existing": "83.47000122070312",
+          "gapfill": "83.15137481689453"
+        }
+      ],
+      "combined_rows": 6082,
+      "combined_start": "2002-07-30",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "b1b48e6130c066dc6d80ea38a59471b21dd4e3c60de9f53686fe7e5e2eaec792",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/TLT?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "TLT",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 6057,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 6057,
+        "start": "2002-07-30",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "TLT",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "GLD": {
+      "existing_rows": 5475,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [],
+      "combined_rows": 5500,
+      "combined_start": "2004-11-18",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "03a852bf69468d21e4e3b2dbc4ae4c61610d7fbe5a20ba6450f89ca22c56bade",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/GLD?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "GLD",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 5475,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 5475,
+        "start": "2004-11-18",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "GLD",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "DBC": {
+      "existing_rows": 5170,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [],
+      "combined_rows": 5195,
+      "combined_start": "2006-02-06",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "238180d1c5bacafddf21aab13aa7374c16750219fb35e179e6620410830dbce3",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/DBC?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "DBC",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 5170,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 5170,
+        "start": "2006-02-06",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "DBC",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    },
+    "VNQ": {
+      "existing_rows": 5511,
+      "gap_rows_fetched": 26,
+      "new_rows_appended": 25,
+      "overlap_mismatches": [
+        {
+          "date": "2026-08-25",
+          "field": "adjusted_close",
+          "existing": "99.25",
+          "gapfill": "98.39659118652344"
+        }
+      ],
+      "combined_rows": 5536,
+      "combined_start": "2004-09-29",
+      "combined_end": "2026-09-30",
+      "normalized_sha256": "ad461ee0fd21c3fa60f1518bc57d392d50a4019b4ee38d3bc0311a4ef7935381",
+      "gap_fetch_url": "https://query1.finance.yahoo.com/v8/finance/chart/VNQ?period1=1787616000&period2=1790812800&interval=1d&events=div,splits",
+      "existing_normalize_report": {
+        "ticker": "VNQ",
+        "source": "yahoo_chart_v8_accepted",
+        "raw_row_count": 5511,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 5511,
+        "start": "2004-09-29",
+        "end": "2026-08-25"
+      },
+      "gap_normalize_report": {
+        "ticker": "VNQ",
+        "source": "yahoo_chart_v8_gapfill_20261001",
+        "raw_row_count": 26,
+        "duplicate_timestamps": [],
+        "rejected_missing_field": [],
+        "rejected_invalid_numeric": [],
+        "output_row_count": 26,
+        "start": "2026-08-25",
+        "end": "2026-09-30"
+      }
+    }
+  },
+  "dataset_revision": "6b8a62573453bc7218b43a5fba31cc1c7db6ee52479bc81a8f3436b9a9334319"
+}
