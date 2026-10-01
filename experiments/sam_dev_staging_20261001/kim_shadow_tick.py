@@ -272,6 +272,206 @@ def do_news_poll(conn, now):
     record_tick(conn, "NEWS_POLL_OK", f"{total_new} new items across {len(NEWS_FEEDS)} feeds")
 
 
+
+
+# ---------------------------------------------------------------------
+# Global pre-open brief -- cached across ticks, two idempotent editions
+# per day (09:15 and 09:29 America/New_York), built from already-free/
+# already-entitled sources only. Added per Rick's direct authorization
+# 2026-10-01. Never touches order submission.
+# ---------------------------------------------------------------------
+GLOBAL_INSTRUMENTS = {
+    "asia": [
+        ("Nikkei 225", "^N225", "index"), ("Hang Seng", "^HSI", "index"),
+        ("CSI 300 (mainland, Shanghai)", "000300.SS", "index"),
+        ("KOSPI", "^KS11", "index"), ("S&P/ASX 200", "^AXJO", "index"),
+    ],
+    "europe": [
+        ("FTSE 100", "^FTSE", "index"), ("DAX Performance Index", "^GDAXI", "index"),
+        ("Euro Stoxx 50", "^STOXX50E", "index"),
+    ],
+    "us_futures": [
+        ("S&P 500 futures (ES)", "ES=F", "future"), ("Nasdaq futures (NQ)", "NQ=F", "future"),
+    ],
+    "commodities_fx": [
+        ("WTI Crude (CL)", "CL=F", "future"), ("Brent Crude (BZ)", "BZ=F", "future"),
+        ("Gold (GC)", "GC=F", "future"),
+        ("ICE US Dollar Index, spot/cash (DXY)", "DX-Y.NYB", "index"),
+    ],
+}
+ALL_SYMBOLS = [(name, sym, kind, sec) for sec, items in GLOBAL_INSTRUMENTS.items() for name, sym, kind in items]
+EDITION_LOCAL_TIMES = [(9, 15, "0915"), (9, 29, "0929")]  # America/New_York, hour, minute
+REFRESH_LEAD_MINUTES = 25
+YAHOO_HOST = "https://query1.finance.yahoo.com"
+
+
+def init_global_brief_tables(conn):
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS global_obs_cache (
+            symbol TEXT PRIMARY KEY, name TEXT, kind TEXT, section TEXT,
+            fetched_at TEXT, http_status INTEGER, payload_json TEXT
+        );
+        CREATE TABLE IF NOT EXISTS brief_editions (
+            edition_key TEXT PRIMARY KEY, generated_at TEXT NOT NULL, payload_json TEXT NOT NULL
+        );
+        """
+    )
+    conn.commit()
+
+
+def yahoo_meta_bounded(symbol):
+    url = f"{YAHOO_HOST}/v8/finance/chart/{symbol}?range=5d&interval=1d"
+    status, body, err = bounded_get(url, {"User-Agent": "Mozilla/5.0"}, (YAHOO_HOST,))
+    if err or status != 200 or not body:
+        return status, None, err
+    try:
+        meta = json.loads(body)["chart"]["result"][0]["meta"]
+        return status, meta, None
+    except Exception as e:
+        return status, None, f"parse_error: {e}"
+
+
+def label_session(meta, now):
+    tzname = meta.get("exchangeTimezoneName")
+    rt = meta.get("regularMarketTime")
+    if not tzname or not rt:
+        return "unavailable", None, None
+    event_dt_utc = datetime.fromtimestamp(rt, tz=timezone.utc)
+    local_dt = event_dt_utc.astimezone(ZoneInfo(tzname))
+    today_local = now.astimezone(ZoneInfo(tzname)).date()
+    age_days = (today_local - local_dt.date()).days
+    if age_days == 0:
+        return "fresh_close_or_live", event_dt_utc.isoformat(), local_dt.date().isoformat()
+    # Softened per correction: do not assert "holiday" without an independently
+    # verified exchange calendar -- this session has no verified calendar
+    # source wired up. Report the fact (stale, N days old) without inventing a cause.
+    return f"stale_{age_days}d_unverified_cause", event_dt_utc.isoformat(), local_dt.date().isoformat()
+
+
+def refresh_one_stale_instrument(conn, now):
+    """Round-robin: refresh whichever symbol has the oldest (or no) cache entry.
+    At most one fetch per tick -- this is how the 45s budget stays safe even
+    though there are 14 instruments to cover before each edition deadline."""
+    existing = dict(conn.execute("SELECT symbol, fetched_at FROM global_obs_cache").fetchall())
+    candidates = sorted(ALL_SYMBOLS, key=lambda t: existing.get(t[1], ""))
+    name, sym, kind, section = candidates[0]
+    status, meta, err = yahoo_meta_bounded(sym)
+    if err or meta is None:
+        payload = {"available": False, "error": err, "http_status": status}
+    else:
+        label, event_ts, event_local_date = label_session(meta, now)
+        payload = {
+            "available": True, "name": name, "symbol": sym, "kind": kind,
+            "venue_timezone": meta.get("exchangeTimezoneName"), "currency": meta.get("currency"),
+            "price": meta.get("regularMarketPrice"),
+            "reference_prior_close": meta.get("previousClose") or meta.get("chartPreviousClose"),
+            "event_time_utc": event_ts, "event_local_date": event_local_date,
+            "session_label": label,
+            "known_delay": "Yahoo public chart API -- delay/real-time status not disclosed by the source; treat as indicative, not entitled real-time",
+        }
+    conn.execute(
+        "INSERT INTO global_obs_cache (symbol, name, kind, section, fetched_at, http_status, payload_json) "
+        "VALUES (?,?,?,?,?,?,?) ON CONFLICT(symbol) DO UPDATE SET "
+        "fetched_at=excluded.fetched_at, http_status=excluded.http_status, payload_json=excluded.payload_json",
+        (sym, name, kind, section, now.isoformat(), status, json.dumps(payload)),
+    )
+    conn.commit()
+    record_tick(conn, "GLOBAL_OBS_REFRESH", f"{sym} ({name})")
+
+
+def next_edition_targets(now):
+    ny_now = now.astimezone(ZoneInfo("America/New_York"))
+    out = []
+    for h, m, key in EDITION_LOCAL_TIMES:
+        target_ny = ny_now.replace(hour=h, minute=m, second=0, microsecond=0)
+        target_utc = target_ny.astimezone(timezone.utc)
+        edition_key = f"{SESSION_DATE}_{key}"
+        out.append((edition_key, target_utc))
+    return out
+
+
+def assemble_and_write_edition(conn, edition_key, now, headers):
+    rows = conn.execute("SELECT symbol, payload_json FROM global_obs_cache").fetchall()
+    by_symbol = {sym: json.loads(pj) for sym, pj in rows}
+    sections = {}
+    for sec, items in GLOBAL_INSTRUMENTS.items():
+        sections[sec] = [by_symbol.get(sym, {"available": False, "name": name, "symbol": sym,
+                                              "error": "not_yet_cached_this_edition"})
+                          for name, sym, kind in items]
+
+    end = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    sip_status, sip_body, sip_err = bounded_get(
+        f"https://data.alpaca.markets/v2/stocks/SPY/bars?timeframe=1Day&feed=sip&start=2026-09-24&end={end.strftime('%Y-%m-%dT%H:%M:%SZ')}&limit=10",
+        headers, ALPACA_HOSTS,
+    )
+    sip_bars = []
+    if sip_status == 200 and sip_body:
+        try:
+            sip_bars = json.loads(sip_body).get("bars", [])
+        except Exception:
+            pass
+
+    news_rows = conn.execute(
+        "SELECT title, source_url, item_url, pub_ts, first_seen_ts FROM news_items ORDER BY first_seen_ts DESC LIMIT 10"
+    ).fetchall()
+    news = [{"title": r[0], "source": r[1], "url": r[2], "pub_ts": r[3], "first_seen": r[4]} for r in news_rows]
+
+    payload = {
+        "edition_key": edition_key,
+        "generated_at_utc": now.isoformat(),
+        "sections": sections,
+        "delayed_sip_completed_session": {
+            "status": sip_status, "bars_returned": len(sip_bars),
+            "sample": sip_bars[-1] if sip_bars else None,
+        },
+        "recent_news": news,
+        "note": "Collection-time snapshot. Cache entries may be up to ~{} minutes old at edition time; each row carries its own event_time_utc/fetched_at for honest staleness.".format(REFRESH_LEAD_MINUTES),
+    }
+
+    if edition_key.endswith("_0929"):
+        prev_key = edition_key.replace("_0929", "_0915")
+        prev = conn.execute("SELECT payload_json FROM brief_editions WHERE edition_key=?", (prev_key,)).fetchone()
+        if prev:
+            prev_payload = json.loads(prev[0])
+            prev_news_ids = {(n["title"], n["source"]) for n in prev_payload.get("recent_news", [])}
+            payload["new_since_0915"] = [n for n in news if (n["title"], n["source"]) not in prev_news_ids]
+            payload["note"] += " new_since_0915 lists headlines first seen after the 09:15 edition only."
+        else:
+            payload["new_since_0915"] = None
+            payload["note"] += " 09:15 edition not found -- cannot diff."
+
+    cur = conn.execute(
+        "INSERT OR IGNORE INTO brief_editions (edition_key, generated_at, payload_json) VALUES (?,?,?)",
+        (edition_key, now.isoformat(), json.dumps(payload, default=str)),
+    )
+    conn.commit()
+    if cur.rowcount == 0:
+        record_tick(conn, "EDITION_ALREADY_EXISTS", edition_key)
+        return False
+
+    out_json = PILOT_DIR / f"global_brief_{edition_key}.json"
+    out_json.write_text(json.dumps(payload, indent=2, default=str))
+    record_tick(conn, "EDITION_WRITTEN", f"{edition_key} -> {out_json.name}")
+    return True
+
+
+def do_global_brief_step(conn, headers, now):
+    init_global_brief_tables(conn)
+    targets = next_edition_targets(now)
+    for edition_key, target_utc in targets:
+        already = conn.execute("SELECT 1 FROM brief_editions WHERE edition_key=?", (edition_key,)).fetchone()
+        if already:
+            continue
+        lead_start = target_utc - timedelta(minutes=REFRESH_LEAD_MINUTES)
+        if lead_start <= now < target_utc:
+            refresh_one_stale_instrument(conn, now)
+            return  # one refresh per tick, budget-safe
+        if now >= target_utc:
+            assemble_and_write_edition(conn, edition_key, now, headers)
+            return
+
+
 def main():
     ensure_pilot_dir()
     lock_fd = open(LOCK_PATH, "w")
@@ -339,6 +539,7 @@ def main():
     do_iex_snapshot(conn, headers, now)
     do_sip_checks_once(conn, headers, now)
     do_news_poll(conn, now)
+    do_global_brief_step(conn, headers, now)
 
     conn.close()
     fcntl.flock(lock_fd, fcntl.LOCK_UN)
