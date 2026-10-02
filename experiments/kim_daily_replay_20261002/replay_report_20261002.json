@@ -1,0 +1,135 @@
+{
+  "purpose": "Blind daily-bar replay of Kim (champion genome) ending 2026-10-01, fresh Alpaca data, no-lookahead audited.",
+  "data_source": "https://data.alpaca.markets/v2/stocks/{symbol}/bars, feed=iex, adjustment=raw and adjustment=all, 1Day",
+  "fetch_window": {
+    "start": "2025-02-08",
+    "end": "2026-10-01"
+  },
+  "fetch_log": {
+    "SPY": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "EFA": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "EEM": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "IEF": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "TLT": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "GLD": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "DBC": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    },
+    "VNQ": {
+      "raw_bars": 413,
+      "adj_bars": 413
+    }
+  },
+  "common_dates_count": 413,
+  "warmup_bars_used": 296,
+  "walk_window": {
+    "start": "2026-04-16",
+    "end": "2026-10-01"
+  },
+  "step_count_expected": 117,
+  "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+  "no_lookahead_violations": [],
+  "fills": [
+    {
+      "symbol": "DBC",
+      "side": "buy",
+      "shares": 618,
+      "fill_price_cents": 2810,
+      "commission_cents": 868,
+      "slippage_cents": 618,
+      "notional_cents": 1736580,
+      "fill_date": "2026-04-17"
+    },
+    {
+      "symbol": "DBC",
+      "side": "sell",
+      "shares": 618,
+      "fill_price_cents": 2671,
+      "commission_cents": 825,
+      "slippage_cents": 618,
+      "notional_cents": 1650678,
+      "fill_date": "2026-06-30"
+    },
+    {
+      "symbol": "EEM",
+      "side": "buy",
+      "shares": 264,
+      "fill_price_cents": 6763,
+      "commission_cents": 893,
+      "slippage_cents": 792,
+      "notional_cents": 1785432,
+      "fill_date": "2026-06-30"
+    },
+    {
+      "symbol": "DBC",
+      "side": "buy",
+      "shares": 544,
+      "fill_price_cents": 3318,
+      "commission_cents": 902,
+      "slippage_cents": 1088,
+      "notional_cents": 1804992,
+      "fill_date": "2026-09-10"
+    },
+    {
+      "symbol": "EEM",
+      "side": "sell",
+      "shares": 264,
+      "fill_price_cents": 6736,
+      "commission_cents": 889,
+      "slippage_cents": 792,
+      "notional_cents": 1778304,
+      "fill_date": "2026-09-10"
+    }
+  ],
+  "errors": [],
+  "simulate_result": {
+    "start_date": "2026-04-16",
+    "end_date": "2026-10-01",
+    "starting_cash_cents": 10000000,
+    "final_equity_cents": 9879201,
+    "total_return": -0.012079900000000032,
+    "sharpe": -0.6396000692925157,
+    "sortino": -0.8750061932423155,
+    "max_drawdown": -0.04719717084267927,
+    "halted": false,
+    "turnover": 0.8755986,
+    "commission_cents": 4377,
+    "slippage_cents": 3908,
+    "transaction_cost_cents": 8285,
+    "transaction_cost_rate": 0.0008285,
+    "dividend_cents": 0,
+    "order_count": 5,
+    "fill_count": 5,
+    "step_count": 117,
+    "ever_held_position": true,
+    "monthly_returns": {
+      "2026-04": 0.018453199999999947,
+      "2026-05": -0.009830201328838717,
+      "2026-06": -0.01505134258642249,
+      "2026-07": -0.011455573910319039,
+      "2026-08": 0.007716587526357399,
+      "2026-09": -0.0038120731517018447,
+      "2026-10": 0.002262781076032283
+    },
+    "slippage_bps_used": 5
+  }
+}
