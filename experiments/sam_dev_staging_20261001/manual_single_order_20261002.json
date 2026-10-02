@@ -1,0 +1,17 @@
+{
+  "purpose": "Rick-approved, step-by-step, exactly-one-order test of the real Alpaca paper order-submission path (27dd1d6), with manual approval at each step and submission_enabled() flipped only for the duration of this one call.",
+  "order_id": "1987acf9-a8f1-48e1-85fa-1f91a7299691",
+  "client_order_id": "kim-manual-test-20261002T025247Z",
+  "symbol": "DBC",
+  "side": "buy",
+  "qty": "1",
+  "order_type": "market",
+  "time_in_force": "day",
+  "submitted_at": "2026-10-02T02:52:47.902402668Z",
+  "status_at_submission": "accepted",
+  "filled_qty_at_submission": "0",
+  "filled_avg_price_at_submission": null,
+  "expires_at": "2026-10-02T20:00:00Z",
+  "market_was_open": false,
+  "note": "Not Kim's real sizing decision (DBC@18%) -- a minimal 1-share test order by explicit choice, to observe the real API without committing to full sizing. submission_enabled() reverted to False immediately after this single call; shadow timers confirmed disabled throughout. Fill status requires a separate follow-up read-only check after 2026-10-02 09:30 ET."
+}
