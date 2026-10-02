@@ -1,20 +1,14 @@
-"""Isolated Alpaca paper/data adapter -- order submission gated by two
-independent switches, both defaulting closed, neither reachable from
-strategy/genome configuration.
+"""Isolated Alpaca paper/data adapter scaffold -- preparation only.
 
-No credentials are read or held by this module. The one HTTP call this
-module can make (a POST to {host}/v2/orders) only happens inside
-route_order(), only when submission_enabled() is True, only to an
-allowlisted host, and only with an explicitly passed `headers` dict --
-callers may inject a fake `http_post` so every code path remains
-testable with fixtures without touching the network.
+No credentials, no network calls, no brokerage activity. This module
+makes no HTTP requests of its own; callers inject an HTTP client (real
+or fake) so every code path here is testable with fixtures. Order
+submission is disabled by two independent switches, both defaulting
+closed, and neither is reachable from strategy/genome configuration.
 """
 from __future__ import annotations
 
-import json
 import os
-import urllib.error
-import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -174,32 +168,7 @@ class PaperOrderLedger:
 # allowlisted AND submission_enabled() is true. A strategy/genome cannot
 # reach either check -- it only ever calls route_order(...).
 # ---------------------------------------------------------------------------
-def _default_http_post(host: str, order: IntendedOrder, headers: dict) -> dict:
-    """PROPOSED, NOT DEPLOYED. The only place in this module that would
-    make a real HTTP request. POST only, to {host}/v2/orders only -- host
-    was already allowlisted by the caller (route_order) before this is
-    ever reached."""
-    body = json.dumps({
-        "symbol": order.symbol,
-        "qty": str(order.qty),
-        "side": order.side,
-        "type": order.order_type,
-        "time_in_force": order.time_in_force,
-        "client_order_id": order.client_order_id,
-    }).encode()
-    req = urllib.request.Request(
-        f"{host}/v2/orders", data=body, method="POST",
-        headers={**headers, "Content-Type": "application/json"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        raise RuntimeError(f"order POST rejected: HTTP {e.code}: {e.read().decode(errors='replace')[:500]}")
-
-
-def route_order(order: IntendedOrder, *, host: str, ledger: PaperOrderLedger,
-                 headers: dict | None = None, http_post=None) -> dict | None:
+def route_order(order: IntendedOrder, *, host: str, ledger: PaperOrderLedger) -> None:
     assert_trading_host_allowed(host)
     ledger.record_intent(order)  # duplicate check happens before the enable check
     if not submission_enabled():
@@ -207,12 +176,6 @@ def route_order(order: IntendedOrder, *, host: str, ledger: PaperOrderLedger,
             "order recorded in ledger as intent only -- submission is disabled by default "
             "and this gate does not authorize brokerage calls"
         )
-    poster = http_post or _default_http_post
-    response = poster(host, order, headers or {})
-    ledger.reconcile(ReconciledOrder(
-        client_order_id=order.client_order_id,
-        broker_order_id=response.get("id"),
-        status=OrderStatus(response.get("status", "new")),
-        filled_qty=float(response.get("filled_qty") or 0),
-    ))
-    return response
+    raise NotImplementedError(
+        "actual HTTP submission is intentionally unimplemented in this preparation gate"
+    )
