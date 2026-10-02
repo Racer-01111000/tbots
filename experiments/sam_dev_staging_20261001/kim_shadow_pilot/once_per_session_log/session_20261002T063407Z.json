@@ -1,0 +1,120 @@
+{
+  "run_timestamp_utc": "2026-10-02T06:34:07.694348+00:00",
+  "mode": "SHADOW_ONLY -- decide, log, reconcile; no submission",
+  "validate_only": true,
+  "submission_enabled_confirmed_false": true,
+  "cadence_step_used": 0,
+  "rebalance_due": true,
+  "unavailable_symbols": [],
+  "equity_used_for_sizing": 100000.0,
+  "buying_power_ignored": 399967.21,
+  "decision": {
+    "selected": [
+      "DBC"
+    ],
+    "weights": {
+      "DBC": 0.18
+    },
+    "evaluations": {
+      "SPY": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": -0.015220837468262971,
+        "m126": 0.0756366400608135,
+        "m252": 0.22056803297019267,
+        "ma200": 727.1275163398692,
+        "trend_pass": true,
+        "ensemble_momentum": 0.0936612785209144,
+        "volatility": 0.00704164188022282
+      },
+      "EFA": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": -0.053735737946264295,
+        "m126": 0.026654687032045432,
+        "m252": 0.20210403272939814,
+        "ma200": 102.63160130718954,
+        "trend_pass": true,
+        "ensemble_momentum": 0.05834099393839309,
+        "volatility": 0.008182392642765095
+      },
+      "EEM": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": 0.00179964007198552,
+        "m126": 0.054126558308347894,
+        "m252": 0.3942809434356085,
+        "ma200": 64.32035947712419,
+        "trend_pass": true,
+        "ensemble_momentum": 0.15006904727198064,
+        "volatility": 0.015322346704822519
+      },
+      "IEF": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.035945595854922296,
+        "m126": -0.04613905799423257,
+        "m252": -0.011182462356067235,
+        "ma200": 92.65326797385622,
+        "trend_pass": false,
+        "ensemble_momentum": -0.031089038735074032,
+        "volatility": 0.003190983189602938
+      },
+      "TLT": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.05144007810593121,
+        "m126": -0.08256610009442877,
+        "m252": -0.05305799220272911,
+        "ma200": 83.37591503267973,
+        "trend_pass": false,
+        "ensemble_momentum": -0.06235472346769636,
+        "volatility": 0.006166685197161884
+      },
+      "GLD": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.040507344462826556,
+        "m126": -0.11592027161235197,
+        "m252": 0.2715253786872174,
+        "ma200": 410.5642156862745,
+        "trend_pass": false,
+        "ensemble_momentum": 0.038365920870679616,
+        "volatility": 0.015261988773449257
+      },
+      "DBC": {
+        "eligible": true,
+        "reason": "eligible",
+        "m63": 0.1001007725898555,
+        "m126": 0.09678499665103812,
+        "m252": 0.49543378995433796,
+        "ma200": 29.53911764705882,
+        "trend_pass": true,
+        "ensemble_momentum": 0.23077318639841052,
+        "volatility": 0.013309484326002853
+      },
+      "VNQ": {
+        "eligible": false,
+        "reason": "filtered_by_momentum_or_trend",
+        "m63": -0.08769954973393357,
+        "m126": -0.048152893444373124,
+        "m252": 0.03290464604333221,
+        "ma200": 94.12346405228757,
+        "trend_pass": false,
+        "ensemble_momentum": -0.03431593237832483,
+        "volatility": 0.008240476656417741
+      }
+    }
+  },
+  "intended_orders_not_submitted": [
+    {
+      "symbol": "DBC",
+      "side": "buy",
+      "shares": 549
+    }
+  ],
+  "broker_account_status": "ACTIVE",
+  "broker_trading_blocked": false,
+  "broker_open_order_count": 1,
+  "broker_position_count": 0
+}

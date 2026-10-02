@@ -1,0 +1,8 @@
+{
+  "session_zero_date": "2026-10-02",
+  "sessions_elapsed": 0,
+  "last_run_date": null,
+  "rebalance_every_n_sessions": 50,
+  "cadence_source": "champion_decide_fn_factory semantics (step % N == 0), reused unmodified",
+  "note": "sessions_elapsed increments once per ACTUAL once-per-session run; a missed/skipped day does not advance it on its own."
+}
