@@ -155,3 +155,23 @@ def test_end_to_end_standing_dbc_order_yields_548_not_549():
     assert len(dbc) == 1
     expected_target = math.floor(0.1830 * 6_000_000_00 / 2000)
     assert dbc[0]["shares"] == expected_target - 1
+
+
+
+def test_broker_open_order_count_excludes_terminal_statuses():
+    # Regression for the 2026-10-03 overnight finding: broker_open_order_count
+    # was literally len(orders) from a status=all query, i.e. a total-order
+    # count mislabeled as "open." It must only count live (non-terminal)
+    # statuses, matching the same LIVE_ORDER_STATUSES set shares_including_pending
+    # already uses correctly.
+    orders = [
+        {"status": "filled"},
+        {"status": "canceled"},
+        {"status": "new"},
+        {"status": "partially_filled"},
+        {"status": "expired"},
+    ]
+    assert k.count_live_orders(orders) == 2
+    assert k.count_live_orders([]) == 0
+    assert k.count_live_orders(None) == 0
+

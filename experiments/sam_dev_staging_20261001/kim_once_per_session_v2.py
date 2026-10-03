@@ -220,6 +220,13 @@ def shares_including_pending(positions, orders) -> dict:
     return current
 
 
+def count_live_orders(orders) -> int:
+    """Count of orders still in a live (non-terminal) status -- NOT len(orders),
+    which counts every order returned by the status=all query (filled,
+    canceled, expired, etc. included)."""
+    return sum(1 for o in (orders or []) if o.get("status") in LIVE_ORDER_STATUSES)
+
+
 def compute_target_orders(decision_weights: dict, equity_cents: int, mark_prices_cents: dict,
                            current_shares: dict, unavailable_symbols: list, genome: dict,
                            current_drawdown: float = 0.0) -> list:
@@ -352,7 +359,7 @@ def main():
         "intended_orders_not_submitted": intended_orders,
         "broker_account_status": acct.get("status") if acct else None,
         "broker_trading_blocked": acct.get("trading_blocked") if acct else None,
-        "broker_open_order_count": len(orders) if orders else 0,
+        "broker_open_order_count": count_live_orders(orders),
         "broker_position_count": len(positions) if positions else 0,
     }
 
