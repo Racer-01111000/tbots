@@ -24,6 +24,13 @@ class DuplicateSubmissionError(RuntimeError):
     pass
 
 
+# Every terminal status Alpaca can report for an order. Reconciliation
+# treats anything outside this set (including the ledger's own
+# "intent_recorded" and the live "accepted"/"new"/"partially_filled"/etc.)
+# as still needing attention.
+TERMINAL_ORDER_STATUSES = {"filled", "rejected", "canceled", "expired"}
+
+
 @dataclass
 class IntendedOrderSpec:
     client_order_id: str
@@ -32,6 +39,15 @@ class IntendedOrderSpec:
     side: str
     order_type: str = "market"
     time_in_force: str = "opg"
+
+
+def build_client_order_id(session_date: str, symbol: str) -> str:
+    """Deterministic key: one order per (session_date, symbol). A retry
+    after a crash reuses this same id instead of minting a fresh one --
+    that's what lets both the local ledger and the broker's own
+    duplicate-client-order-id rejection recognize a resubmission as the
+    same intent rather than a new one."""
+    return f"kim-{session_date}-{symbol}"
 
 
 def validate_inputs_fresh(last_price_ts: datetime | None, now: datetime, max_age_seconds: float = 300.0) -> None:
@@ -69,6 +85,7 @@ class PersistentIntentLedger:
 
     def __init__(self, db_path: str):
         self.conn = sqlite3.connect(db_path)
+        self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute(
             """CREATE TABLE IF NOT EXISTS order_intents (
                 client_order_id TEXT PRIMARY KEY, symbol TEXT, qty INTEGER, side TEXT,
@@ -115,6 +132,27 @@ class PersistentIntentLedger:
         keys = ["client_order_id", "symbol", "qty", "side", "status", "broker_order_id", "filled_qty"]
         return dict(zip(keys, row))
 
+    def get_by_client_order_id(self, client_order_id: str) -> dict | None:
+        """Alias for get() -- named to match the broker-side lookup it
+        mirrors, used by the reconciliation/seeding callers."""
+        return self.get(client_order_id)
+
+    def get_unresolved(self) -> list[dict]:
+        """Every row not yet in a terminal broker status -- includes rows
+        still at 'intent_recorded' (never got a confirmed response) as
+        well as live statuses like 'accepted'/'partially_filled'."""
+        placeholders = ",".join("?" for _ in TERMINAL_ORDER_STATUSES)
+        rows = self.conn.execute(
+            f"SELECT client_order_id, symbol, qty, side, status, broker_order_id, filled_qty "
+            f"FROM order_intents WHERE status IS NULL OR status NOT IN ({placeholders})",
+            tuple(TERMINAL_ORDER_STATUSES),
+        ).fetchall()
+        keys = ["client_order_id", "symbol", "qty", "side", "status", "broker_order_id", "filled_qty"]
+        return [dict(zip(keys, row)) for row in rows]
+
+    def count_all(self) -> int:
+        return self.conn.execute("SELECT COUNT(*) FROM order_intents").fetchone()[0]
+
     def has_any_intent_today(self, symbol: str, date_prefix: str) -> bool:
         row = self.conn.execute(
             "SELECT 1 FROM order_intents WHERE symbol=? AND client_order_id LIKE ?",
@@ -136,6 +174,16 @@ def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: Int
 
     if existing is None:
         ledger.record_intent(spec)  # intent persisted BEFORE the broker call
+    elif existing["status"] == "intent_recorded":
+        # A prior run recorded intent but crashed before ever getting a
+        # confirmed response -- it may have died before OR after the
+        # broker actually received the request. Never guess: ask the
+        # broker directly first. If the broker already knows this
+        # client_order_id, adopt its answer instead of submitting again.
+        found = broker.find_by_client_order_id(spec.client_order_id)
+        if found is not None:
+            ledger.update_status(spec.client_order_id, found["id"], found["status"], found.get("filled_qty", 0))
+            return {"outcome": "reconciled_from_prior_crash", "record": ledger.get(spec.client_order_id)}
 
     try:
         response = broker.submit(spec)
@@ -197,3 +245,18 @@ class MockBroker:
     def find_by_client_order_id(self, client_order_id: str) -> dict | None:
         return self._orders.get(client_order_id)
 
+    def set_order_status(self, client_order_id: str, status: str, filled_qty: float = 0,
+                          symbol: str = "TEST", qty: int = 0) -> None:
+        """Test helper: simulate the broker's own state changing over time
+        (e.g. accepted -> filled, or accepted -> expired) between an
+        original submission and a later reconciliation poll. Also usable
+        to seed a broker-side order that was never placed through
+        broker.submit() at all (an externally-placed/pre-existing order)."""
+        existing = self._orders.get(client_order_id, {})
+        self._orders[client_order_id] = {
+            "id": existing.get("id", f"broker-{client_order_id}"),
+            "status": status,
+            "symbol": existing.get("symbol", symbol),
+            "qty": existing.get("qty", qty),
+            "filled_qty": filled_qty,
+        }

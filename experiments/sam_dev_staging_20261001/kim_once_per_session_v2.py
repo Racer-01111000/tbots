@@ -33,6 +33,26 @@ v2 (2026-10-02 GO) hardening over the 2026-10-02 06:34 validate-only version:
      GET /v2/calendar), the job abstains with that reason rather than
      treating it as a data failure.
 
+2026-10-03 restart-safe execution hardening (GO step 3):
+  6. current_drawdown is no longer hardcoded 0.0: a persisted peak-equity
+     series (peak_equity.py) gives a real figure, so risk.validate()'s
+     drawdown halt is actually enforced now, not just logged as inert.
+  7. A persistent, crash-safe order-intent ledger (kim_order_logic.py's
+     PersistentIntentLedger) is reconciled against the broker every
+     session -- read-only GETs, covering every status Alpaca can report
+     (accepted/filled/partially_filled/canceled/rejected/expired), so the
+     ledger never silently diverges from broker truth. This stays a no-op
+     today because nothing ever writes to the ledger while submission is
+     disabled.
+  8. The first submission-enabled session seeds the ledger from the
+     broker's actual standing positions/orders before computing any order,
+     so a pre-existing position (e.g. an earlier manually-placed order)
+     becomes the baseline and the computed order is sized as a delta, not
+     as if starting from zero. submission_enabled() stays hardcoded False
+     below (untouched) -- this path is real and wired, but unreachable in
+     production today, and is proven only via kim_order_simulation_tests'
+     MockBroker-based tests.
+
 Set KIM_SESSION_VALIDATE_ONLY=1 to run the full pipeline (fetch, decide,
 reconcile, log) WITHOUT advancing or writing the persisted cadence state.
 """
@@ -49,15 +69,19 @@ from pathlib import Path
 REPO = Path("/home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots")
 DEV_STAGING = REPO / "experiments/sam_dev_staging_20261001"
 sys.path.insert(0, str(DEV_STAGING / "alpaca_adapter"))
+sys.path.insert(0, str(DEV_STAGING / "kim_order_simulation_tests"))
 sys.path.insert(0, str(REPO / "scripts"))
 
 from runtime_credential_loader import load_credential_headers, get_json  # noqa: E402
 from alpaca_adapter import (  # noqa: E402
     assert_trading_host_allowed, submission_enabled, PAPER_TRADING_HOST,
 )
+from kim_order_logic import PersistentIntentLedger  # noqa: E402
 import control_agent  # noqa: E402
 import execution  # noqa: E402
 import risk  # noqa: E402
+import peak_equity  # noqa: E402
+import broker_reconciliation  # noqa: E402
 
 UNIVERSE = ["SPY", "EFA", "EEM", "IEF", "TLT", "GLD", "DBC", "VNQ"]
 WARMUP_BARS = 296  # longest momentum lookback (295) + 1
@@ -71,6 +95,8 @@ LIVE_ORDER_STATUSES = {"new", "accepted", "partially_filled", "held", "pending_n
 STATE_DIR = DEV_STAGING / "kim_shadow_pilot"
 CADENCE_PATH = STATE_DIR / "cadence_state.json"
 SESSION_LOG_DIR = STATE_DIR / "once_per_session_log"
+ORDER_LEDGER_PATH = STATE_DIR / "order_ledger.sqlite3"
+PEAK_EQUITY_PATH = STATE_DIR / "peak_equity_state.json"
 
 VALIDATE_ONLY = os.environ.get("KIM_SESSION_VALIDATE_ONLY") == "1"
 
@@ -99,6 +125,31 @@ class LiveView:
             return []
         rows = self._bars[symbol]
         return rows[-bars:] if bars > 0 else []
+
+
+class _ReadOnlyAlpacaBroker:
+    """Minimal find_by_client_order_id adapter over the existing GET-only,
+    host-allowlisted get_json helper -- reconciliation only ever reads,
+    never submits. NOT exercised against the live endpoint in production:
+    the ledger stays empty while submission_enabled() is False, so this
+    adapter is proven only via kim_order_simulation_tests' MockBroker-based
+    tests, same as the rest of the restart-safe-execution machinery."""
+
+    def __init__(self, headers: dict):
+        self._headers = headers
+
+    def find_by_client_order_id(self, client_order_id: str) -> dict | None:
+        status, body = get_json(
+            f"{PAPER_TRADING_HOST}/v2/orders:by_client_order_id?client_order_id={client_order_id}",
+            self._headers,
+        )
+        if status != 200 or not body:
+            return None
+        return {
+            "id": body.get("id"),
+            "status": body.get("status"),
+            "filled_qty": float(body.get("filled_qty") or 0),
+        }
 
 
 def load_cadence_state() -> dict:
@@ -233,9 +284,9 @@ def compute_target_orders(decision_weights: dict, equity_cents: int, mark_prices
     """Pure, testable. Enforces, independent of any caller-side logic:
       - every weight and equity_cents must be finite
       - risk.validate() must pass (max asset weight, max total exposure,
-        drawdown halt -- current_drawdown is caller-supplied; in shadow
-        mode it is always 0.0, so the halt is NOT actually enforced here,
-        only the exposure/weight bounds and finite-value checks are)
+        drawdown halt -- current_drawdown is caller-supplied; main() now
+        passes a real value computed from the persisted peak-equity
+        series, so the halt is genuinely enforced, not just logged)
       - a symbol in unavailable_symbols can NEVER appear in the resulting
         order list, buy or sell, regardless of target_weights or
         current_shares -- it is removed from both before compute_orders
@@ -276,6 +327,11 @@ def main():
     orders_status, orders = get_json(f"{PAPER_TRADING_HOST}/v2/orders?status=all&limit=50", headers)
     positions_status, positions = get_json(f"{PAPER_TRADING_HOST}/v2/positions", headers)
 
+    # --- crash-safe order ledger: reconcile every session, read-only.
+    # Stays a no-op today (ledger is always empty while submission is off).
+    ledger = PersistentIntentLedger(str(ORDER_LEDGER_PATH))
+    ledger_updates = broker_reconciliation.reconcile_ledger(ledger, _ReadOnlyAlpacaBroker(headers))
+
     equity = None
     buying_power = None
     if acct:
@@ -307,6 +363,11 @@ def main():
     decision = None
     intended_orders = None
     status = None
+    risk_drawdown_enforced = False
+    risk_drawdown_note = None
+    peak_equity_value = None
+    current_drawdown = None
+    first_submission_session_seeded_count = 0
 
     if already_evaluated:
         status = "already_evaluated"
@@ -329,13 +390,41 @@ def main():
         equity_cents = round(equity * 100)  # no-borrow: EQUITY only, never buying_power
         mark_prices_cents = {s: round(bars_by_symbol[s][-1]["adjusted_close"] * 100) for s in UNIVERSE}
         current_shares = shares_including_pending(positions, orders)
+
+        peak_equity_value, current_drawdown = peak_equity.record_and_get_drawdown(
+            PEAK_EQUITY_PATH, session_date, equity,
+        )
+        risk_drawdown_enforced = True
+        risk_drawdown_note = (
+            f"current_drawdown computed from the persisted peak-equity series "
+            f"(peak={peak_equity_value}, today's equity={equity}, drawdown={current_drawdown:.6f}); "
+            f"risk.validate()'s drawdown_halt_pct check is enforced for real, not a hardcoded 0.0."
+        )
+
+        # First submission-enabled session: seed the ledger from the
+        # broker's actual standing state before computing any delta, so a
+        # pre-existing position becomes the baseline instead of zero.
+        # submission_enabled() is hardcoded False above, so this branch is
+        # unreachable in production today -- real, wired, and proven only
+        # via kim_order_simulation_tests' MockBroker-based tests.
+        if submission_enabled() and broker_reconciliation.is_first_submission_session(ledger):
+            first_submission_session_seeded_count = broker_reconciliation.seed_ledger_from_broker_state(
+                ledger, positions, orders, session_date,
+            )
+
         try:
             intended_orders = compute_target_orders(
                 decision["weights"], equity_cents, mark_prices_cents, current_shares,
-                unavailable, genome, current_drawdown=0.0,
+                unavailable, genome, current_drawdown=current_drawdown,
             )
         except Exception as e:  # noqa: BLE001
             intended_orders = {"error": repr(e)}
+
+    if risk_drawdown_note is None:
+        risk_drawdown_note = (
+            f"no new decision this run (status={status}); peak-equity/drawdown is only "
+            f"computed and enforced when an order decision is actually made"
+        )
 
     record = {
         "run_timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -352,9 +441,12 @@ def main():
         "unavailable_symbols": unavailable,
         "equity_used_for_sizing": equity,
         "buying_power_ignored": buying_power,
-        "risk_drawdown_enforced": False,
-        "risk_drawdown_note": "current_drawdown passed as 0.0 -- no peak-equity history persisted yet; "
-                               "drawdown halt is NOT enforced in shadow mode, only weight/exposure bounds and finite checks are",
+        "risk_drawdown_enforced": risk_drawdown_enforced,
+        "risk_drawdown_note": risk_drawdown_note,
+        "peak_equity": peak_equity_value,
+        "current_drawdown": current_drawdown,
+        "order_ledger_reconciliation_updated_count": len(ledger_updates),
+        "first_submission_session_seeded_count": first_submission_session_seeded_count,
         "decision": decision,
         "intended_orders_not_submitted": intended_orders,
         "broker_account_status": acct.get("status") if acct else None,

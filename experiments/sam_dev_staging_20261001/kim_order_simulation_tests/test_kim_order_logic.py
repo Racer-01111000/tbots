@@ -9,8 +9,8 @@ import pytest
 
 from kim_order_logic import (
     DuplicateSubmissionError, IntendedOrderSpec, MockBroker, PersistentIntentLedger,
-    StaleDataError, UncertainSubmissionError, compute_order, submit_with_reconciliation,
-    validate_inputs_fresh,
+    StaleDataError, UncertainSubmissionError, build_client_order_id, compute_order,
+    submit_with_reconciliation, validate_inputs_fresh,
 )
 
 
@@ -166,7 +166,8 @@ def test_cutoff_never_cancels_pending_or_filled_positions(ledger, broker):
     """Documents and proves the cutoff policy: a position/order that is
     still open at 16:15 is recorded, never cancelled. MockBroker has no
     cancel() method at all -- the capability doesn't exist, matching the
-    standing 'no cancellations' constraint by absence, not just by policy."""
+    standing 'no cancellations' constraint by absence, not just by policy.
+    """
     spec = IntendedOrderSpec("kim-test-pending-at-cutoff", "DBC", 556, "buy")
     broker.queue_behavior(spec.client_order_id, "partial_fill")  # still open, not fully filled
     result = submit_with_reconciliation(broker, ledger, spec)
@@ -177,3 +178,83 @@ def test_cutoff_never_cancels_pending_or_filled_positions(ledger, broker):
     record_at_cutoff = ledger.get(spec.client_order_id)
     assert record_at_cutoff["status"] == "partially_filled"
 
+
+# --- 2026-10-03 restart-safe execution hardening -----------------------
+# Regression tests for the crash-mid-submission window: a crash that
+# happens strictly between record_intent() and the broker ever learning
+# about the order (or between the broker learning and our local record
+# being updated). The pre-existing tests above only exercised the
+# UncertainSubmissionError (explicit timeout) path; these cover the
+# silent-crash case where submit_with_reconciliation() is itself never
+# even entered on the first attempt.
+
+
+def test_crash_before_broker_ever_saw_it_submits_for_real_on_restart(tmp_path):
+    # True crash window: record_intent() succeeded, but the process died
+    # before broker.submit() was ever called (or even attempted). On
+    # restart, status is still 'intent_recorded' with no broker_order_id.
+    # The broker genuinely never saw this order, so recovery must
+    # actually submit it now -- not get stuck treating it as unresolved.
+    db_path = str(tmp_path / "crash_before_submit.sqlite3")
+    spec = IntendedOrderSpec("kim-crash-before", "DBC", 556, "buy")
+
+    ledger1 = PersistentIntentLedger(db_path)
+    ledger1.record_intent(spec)  # crash happens right here, before any broker call
+
+    broker = MockBroker()
+    ledger2 = PersistentIntentLedger(db_path)  # restart
+    result = submit_with_reconciliation(broker, ledger2, spec)
+
+    assert result["outcome"] == "filled"
+    assert result["record"]["status"] == "filled"
+    assert len(broker._orders) == 1
+
+
+def test_crash_after_broker_received_it_reconciles_without_duplicate(tmp_path):
+    # True crash window, other branch: the broker DID receive and accept
+    # the request before the crash (e.g. request sent, process died before
+    # the response was read), so the ledger never advanced past
+    # 'intent_recorded'. On restart, recovery must find the broker's
+    # existing order and adopt it -- never call submit() again, which
+    # would risk a real second order if the broker ever allowed it.
+    db_path = str(tmp_path / "crash_after_submit.sqlite3")
+    spec = IntendedOrderSpec("kim-crash-after", "DBC", 556, "buy")
+
+    ledger1 = PersistentIntentLedger(db_path)
+    ledger1.record_intent(spec)
+    # Simulate the broker having actually accepted the pre-crash request,
+    # independent of our local ledger ever being told:
+    broker = MockBroker()
+    broker.set_order_status(spec.client_order_id, "accepted", filled_qty=0,
+                             symbol=spec.symbol, qty=spec.qty)
+
+    ledger2 = PersistentIntentLedger(db_path)  # restart
+    result = submit_with_reconciliation(broker, ledger2, spec)
+
+    assert result["outcome"] == "reconciled_from_prior_crash"
+    assert result["record"]["status"] == "accepted"
+    assert len(broker._orders) == 1  # broker.submit() was never called again
+
+
+def test_restart_with_no_crash_is_idempotent_no_duplicate(tmp_path):
+    # A plain restart after full, successful resolution: must stay a no-op.
+    db_path = str(tmp_path / "plain_restart.sqlite3")
+    spec = IntendedOrderSpec("kim-plain-restart", "DBC", 556, "buy")
+    broker = MockBroker()
+
+    ledger1 = PersistentIntentLedger(db_path)
+    result1 = submit_with_reconciliation(broker, ledger1, spec)
+    assert result1["outcome"] == "filled"
+
+    ledger2 = PersistentIntentLedger(db_path)
+    result2 = submit_with_reconciliation(broker, ledger2, spec)
+    assert result2["outcome"] == "already_resolved_no_resubmit"
+    assert len(broker._orders) == 1
+
+
+def test_build_client_order_id_is_deterministic_per_session_and_symbol():
+    first = build_client_order_id("2026-10-03", "DBC")
+    second = build_client_order_id("2026-10-03", "DBC")
+    different_day = build_client_order_id("2026-10-04", "DBC")
+    assert first == second == "kim-2026-10-03-DBC"
+    assert different_day != first
