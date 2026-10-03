@@ -1,0 +1,74 @@
+{
+  "run_timestamp_utc": "2026-10-03T05:31:23.579157+00:00",
+  "mode": "END_TO_END_DRY_RUN -- mock broker only; real submission_enabled() never touched, no real HTTP call made",
+  "work_dir": "/home/ec2-user/fitness_v2_authoritative_transfer_20261001/tbots/experiments/sam_dev_staging_20261001/kim_shadow_pilot/dry_run/run_20261003T053123Z",
+  "scenarios": [
+    {
+      "scenario": "normal_full_cycle",
+      "attempted": 3,
+      "submitted": 3,
+      "blocked": 0,
+      "detail": {
+        "results": [
+          {
+            "client_order_id": "kim-2026-10-03-SPY-buy",
+            "outcome": "filled",
+            "record": {
+              "client_order_id": "kim-2026-10-03-SPY-buy",
+              "symbol": "SPY",
+              "qty": 10,
+              "side": "buy",
+              "status": "filled",
+              "broker_order_id": "broker-kim-2026-10-03-SPY-buy",
+              "filled_qty": 10.0
+            }
+          },
+          {
+            "client_order_id": "kim-2026-10-03-GLD-buy",
+            "outcome": "filled",
+            "record": {
+              "client_order_id": "kim-2026-10-03-GLD-buy",
+              "symbol": "GLD",
+              "qty": 5,
+              "side": "buy",
+              "status": "filled",
+              "broker_order_id": "broker-kim-2026-10-03-GLD-buy",
+              "filled_qty": 5.0
+            }
+          },
+          {
+            "client_order_id": "kim-2026-10-03-TLT-sell",
+            "outcome": "filled",
+            "record": {
+              "client_order_id": "kim-2026-10-03-TLT-sell",
+              "symbol": "TLT",
+              "qty": 3,
+              "side": "sell",
+              "status": "filled",
+              "broker_order_id": "broker-kim-2026-10-03-TLT-sell",
+              "filled_qty": 3.0
+            }
+          }
+        ],
+        "submitted": 3,
+        "blocked": 0,
+        "startup_blocked": false
+      }
+    },
+    {
+      "scenario": "crash_mid_send_and_restart",
+      "recovered_from_broker_record": "reconciled_from_prior_crash",
+      "submitted_fresh_on_restart": "filled",
+      "no_duplicate_order_created": true
+    },
+    {
+      "scenario": "first_submission_session_delta",
+      "seeded_from_broker_state": 1,
+      "computed_delta": {
+        "SPY": 10,
+        "DBC": 2
+      },
+      "delta_orders_submitted": 2
+    }
+  ]
+}

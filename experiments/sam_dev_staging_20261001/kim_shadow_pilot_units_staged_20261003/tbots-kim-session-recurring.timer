@@ -1,0 +1,12 @@
+[Unit]
+Description=Kim once-per-session shadow decision timer (recurring, hardened 2026-10-03; expires via tbots-kim-session-expiry.timer on 2026-11-01)
+
+[Timer]
+OnCalendar=Mon..Fri 16:45:00 America/New_York
+AccuracySec=1s
+RandomizedDelaySec=0
+Persistent=true
+Unit=tbots-kim-session-recurring.service
+
+[Install]
+WantedBy=timers.target

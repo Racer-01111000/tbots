@@ -1,0 +1,11 @@
+[Unit]
+Description=Kim recurring shadow session expiry trigger (one-time, 2026-11-01 00:00 America/New_York)
+
+[Timer]
+OnCalendar=2026-11-01 00:00:00 America/New_York
+AccuracySec=1s
+Persistent=true
+Unit=tbots-kim-session-expiry.service
+
+[Install]
+WantedBy=timers.target

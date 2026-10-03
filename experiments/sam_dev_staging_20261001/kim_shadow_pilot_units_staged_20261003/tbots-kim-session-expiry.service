@@ -1,0 +1,8 @@
+[Unit]
+Description=Kim recurring shadow session finite expiry (disables the recurring decision timer/service on 2026-11-01)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl disable --now tbots-kim-session-recurring.timer
+ExecStartPost=/usr/bin/systemctl stop tbots-kim-session-recurring.service
+RemainAfterExit=no

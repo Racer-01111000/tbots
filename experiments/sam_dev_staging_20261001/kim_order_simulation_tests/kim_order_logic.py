@@ -14,6 +14,9 @@ import math
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
+
+import order_limits
 
 
 class StaleDataError(RuntimeError):
@@ -198,6 +201,60 @@ def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: Int
     ledger.update_status(spec.client_order_id, response["id"], response["status"], response.get("filled_qty", 0))
     return {"outcome": response["status"], "record": ledger.get(spec.client_order_id)}
 
+
+# Orchestrates submit_with_reconciliation() for a batch of orders,
+# enforcing the kill switch and the per-day order cap -- a blocked order
+# never reaches submit_with_reconciliation()/broker.submit() at all.
+# Two checkpoints: (a) once at the start of this batch, before touching
+# anything -- if the kill switch is already present, nothing in the batch
+# is even attempted; (b) again immediately before every individual send --
+# a kill switch dropped mid-batch stops the NEXT send, not just a fresh
+# process start, and once the daily cap is hit, every remaining order in
+# this batch is blocked too (the cap is global for the day).
+def submit_orders_with_limits(broker, ledger: PersistentIntentLedger, specs: list[IntendedOrderSpec],
+                               kill_switch_path: Path, order_count_path: Path, session_date: str,
+                               max_orders_per_day: int = order_limits.DEFAULT_MAX_ORDERS_PER_DAY) -> dict:
+    results = []
+
+    try:
+        order_limits.check_kill_switch(kill_switch_path)
+    except order_limits.KillSwitchActive as e:
+        return {
+            "results": [{"client_order_id": s.client_order_id, "outcome": "blocked_kill_switch_at_startup"}
+                        for s in specs],
+            "submitted": 0, "blocked": len(specs), "startup_blocked": True, "detail": str(e),
+        }
+
+    blocked_from_here = False
+    for spec in specs:
+        if blocked_from_here:
+            results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_batch_halted"})
+            continue
+
+        try:
+            order_limits.check_kill_switch(kill_switch_path)
+        except order_limits.KillSwitchActive as e:
+            results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_kill_switch",
+                             "detail": str(e)})
+            blocked_from_here = True
+            continue
+
+        try:
+            order_limits.check_and_increment_order_count(order_count_path, session_date, max_orders_per_day)
+        except order_limits.DailyOrderLimitReached as e:
+            results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_daily_limit",
+                             "detail": str(e)})
+            blocked_from_here = True
+            continue
+
+        result = submit_with_reconciliation(broker, ledger, spec)
+        results.append({"client_order_id": spec.client_order_id, **result})
+
+    blocked_outcomes = {"blocked_kill_switch", "blocked_daily_limit", "blocked_batch_halted",
+                         "blocked_kill_switch_at_startup"}
+    submitted = sum(1 for r in results if r["outcome"] not in blocked_outcomes)
+    blocked = sum(1 for r in results if r["outcome"] in blocked_outcomes)
+    return {"results": results, "submitted": submitted, "blocked": blocked, "startup_blocked": False}
 
 class MockBroker:
     """Pure in-memory simulation. No network. Simulates realistic broker
