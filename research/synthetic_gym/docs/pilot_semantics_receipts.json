@@ -1,0 +1,140 @@
+{
+ "pilot_candidate": "e81ceab43bb481cf0ae5e1ce362f8b94bf44bd6a",
+ "mode": "in-memory mock broker; no network; no credentials",
+ "scenarios": [
+  {
+   "scenario": "two uncertain 8-share sells against 10 held (halted account)",
+   "status": "halt_liquidation_held",
+   "hold_reason": "recovering the unresolved SELLs together with pending sells would exceed the position; not recovering any of them",
+   "oversell_risk": [
+    "kim-2026-10-01-TLT"
+   ],
+   "broker_orders_created": [],
+   "post_requests": 0,
+   "total_sell_qty_at_broker": 0,
+   "position_held": 10,
+   "PASS": true
+  },
+  {
+   "scenario": "uncertain 8-share sell plus an existing pending 8-share sell, 10 held",
+   "status": "halt_liquidation_held",
+   "post_requests": 0,
+   "committed_at_broker": 8,
+   "PASS": true
+  },
+  {
+   "scenario": "Monday's accepted-but-invisible buy, then Tuesday (new date => new client_order_id)",
+   "monday": {
+    "status": "decided",
+    "broker_orders": [
+     {
+      "id": "kim-2026-10-05-SPY",
+      "symbol": "SPY",
+      "side": "buy",
+      "qty": "290",
+      "status": "accepted"
+     }
+    ],
+    "ledger": [
+     {
+      "id": "kim-2026-10-05-SPY",
+      "symbol": "SPY",
+      "side": "buy",
+      "qty": 290,
+      "status": "uncertain_unresolved",
+      "session": "2026-10-05"
+     }
+    ]
+   },
+   "tuesday": {
+    "status": "held_unresolved_prior_submission",
+    "unresolved_submissions": [
+     "kim-2026-10-05-SPY"
+    ],
+    "escalate": true
+   },
+   "broker_orders_after_tuesday": [
+    {
+     "id": "kim-2026-10-05-SPY",
+     "symbol": "SPY",
+     "side": "buy",
+     "qty": "290",
+     "status": "accepted"
+    }
+   ],
+   "PASS": true
+  },
+  {
+   "scenario": "POST times out AFTER the broker accepted it; order invisible to lookups for several checks",
+   "trace": [
+    {
+     "run": 1,
+     "status": "decided",
+     "broker_orders": 1,
+     "post_attempts": 1
+    },
+    {
+     "run": 2,
+     "status": "decided",
+     "broker_orders": 1,
+     "post_attempts": 2
+    },
+    {
+     "run": 3,
+     "status": "decided",
+     "broker_orders": 1,
+     "post_attempts": 2
+    }
+   ],
+   "final_broker_orders": [
+    {
+     "id": "kim-2026-10-05-SPY",
+     "symbol": "SPY",
+     "side": "buy",
+     "qty": "290",
+     "status": "accepted"
+    }
+   ],
+   "PASS": true
+  },
+  {
+   "scenario": "latched halt, six symbols held, normal cap 4, liquidation limit 8, ALL price bars missing",
+   "status": "halted",
+   "sells_sent": [
+    [
+     "EEM",
+     "12",
+     "sell"
+    ],
+    [
+     "EFA",
+     "11",
+     "sell"
+    ],
+    [
+     "GLD",
+     "15",
+     "sell"
+    ],
+    [
+     "IEF",
+     "13",
+     "sell"
+    ],
+    [
+     "SPY",
+     "10",
+     "sell"
+    ],
+    [
+     "TLT",
+     "14",
+     "sell"
+    ]
+   ],
+   "blocked": 0,
+   "PASS": true
+  }
+ ],
+ "all_pass": true
+}
