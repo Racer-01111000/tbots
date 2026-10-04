@@ -92,6 +92,8 @@ class RunResult:
     interest_cents: int = 0
     halted: bool = False
     decisions: list = field(default_factory=list)      # (idx, step, weights or None)
+    fill_log: list = field(default_factory=list)       # (idx, symbol, side, qty, fill_price_cents, fee_cents) when record_fills
+    cash_events: list = field(default_factory=list)    # (idx, kind, cents) interest/dividend/split-cash when record_fills
     violations: list = field(default_factory=list)
     final_shares: dict = field(default_factory=dict)
     final_cash_cents: int = 0
@@ -129,7 +131,7 @@ def _orders(target: dict, universe, equity_cents: int, price_cents: dict, shares
     return out
 
 
-def run(world: World, strat: Strategy, params: EngineParams, record_decisions: bool = False) -> RunResult:
+def run(world: World, strat: Strategy, params: EngineParams, record_decisions: bool = False, record_fills: bool = False) -> RunResult:
     P, cost, ov = params, params.cost, params.overlay
     N, NW = world.n, world.n_warmup
     res = RunResult(strat.name, world.world_id, P.start_cents, N - NW)
@@ -150,7 +152,10 @@ def run(world: World, strat: Strategy, params: EngineParams, record_decisions: b
                 frac = old * a.num / a.den - new
                 shares[a.symbol] = new
                 if frac > 0:
-                    cash += _cents(frac * world.open[a.symbol][idx])        # cash in lieu of the fractional share
+                    lieu = _cents(frac * world.open[a.symbol][idx])
+                    cash += lieu                                              # cash in lieu of the fractional share
+                    if record_fills:
+                        res.cash_events.append((idx, "split_lieu", lieu))
                 for o in pending:
                     if o["symbol"] == a.symbol:
                         o["qty"] = (o["qty"] * a.num) // a.den
@@ -163,6 +168,8 @@ def run(world: World, strat: Strategy, params: EngineParams, record_decisions: b
         due_pay = [r for r in recv if r[0] <= idx]
         if due_pay:
             cash += sum(r[1] for r in due_pay)
+            if record_fills:
+                res.cash_events.append((idx, "dividend_paid", sum(r[1] for r in due_pay)))
             recv = [r for r in recv if r[0] > idx]
         pending = [o for o in pending if o["qty"] > 0]
 
@@ -222,6 +229,8 @@ def run(world: World, strat: Strategy, params: EngineParams, record_decisions: b
                         cash += notional - fee; shares[s] -= q3
                     res.fills += 1; res.commission_cents += fee; res.traded_notional_cents += notional
                     res.slippage_cents += abs(fillp - oc) * q3
+                    if record_fills:
+                        res.fill_log.append((idx, s, o["side"], q3, fillp, fee))
                 if deferrable > 0:
                     defer(o, deferrable)
             pending = keep
@@ -230,6 +239,8 @@ def run(world: World, strat: Strategy, params: EngineParams, record_decisions: b
         if P.interest:
             inc = round(cash * world.policy_rate[idx] / 252.0)
             cash += inc; res.interest_cents += inc
+            if record_fills:
+                res.cash_events.append((idx, "interest", inc))
         pos_val = 0
         for s in SYMBOLS:
             if shares[s]:

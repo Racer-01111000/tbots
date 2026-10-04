@@ -62,6 +62,7 @@ class World:
                 pays.setdefault(a.pay_idx, []).append(a)
         self._pay_by_idx = pays
         self._adjuster = Adjuster(self)
+        self._month_starts = set(self.month_start_indices(self.n_warmup))
         return self
 
     def payments_at(self, idx):
