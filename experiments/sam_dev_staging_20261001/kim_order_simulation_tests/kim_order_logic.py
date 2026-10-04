@@ -41,7 +41,11 @@ class IntendedOrderSpec:
     qty: int
     side: str
     order_type: str = "market"
-    time_in_force: str = "opg"
+    # "day", not "opg": Alpaca REJECTS opg orders submitted between 09:28 and
+    # 19:00 ET (docs.alpaca.markets/docs/orders-at-alpaca), and the session job
+    # submits at ~16:45 ET. A day order submitted after the close is queued
+    # for the next trading day's open.
+    time_in_force: str = "day"
 
 
 def build_client_order_id(session_date: str, symbol: str) -> str:
@@ -84,36 +88,69 @@ def compute_order(equity_usd: float, target_weight: float, price: float,
 class PersistentIntentLedger:
     """SQLite-backed, survives process restarts. Intent is written BEFORE
     any broker call, so a crash between submission and local record-write
-    can be detected and reconciled rather than silently retried."""
+    can be detected and reconciled rather than silently retried.
+
+    Autocommit connection with explicit BEGIN IMMEDIATE transactions, so the
+    per-session cap check and the intent INSERT are one atomic step across
+    processes. synchronous=FULL so a committed intent survives power loss."""
 
     def __init__(self, db_path: str):
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path, timeout=30, isolation_level=None)
         self.conn.execute("PRAGMA journal_mode=WAL")
+        self.conn.execute("PRAGMA synchronous=FULL")
         self.conn.execute(
             """CREATE TABLE IF NOT EXISTS order_intents (
                 client_order_id TEXT PRIMARY KEY, symbol TEXT, qty INTEGER, side TEXT,
                 intent_recorded_at TEXT NOT NULL,
-                broker_order_id TEXT, status TEXT, filled_qty REAL, last_updated_at TEXT
+                broker_order_id TEXT, status TEXT, filled_qty REAL, last_updated_at TEXT,
+                session_date TEXT
             )"""
         )
-        self.conn.commit()
+        cols = {r[1] for r in self.conn.execute("PRAGMA table_info(order_intents)")}
+        if "session_date" not in cols:  # ledgers created by fe72d72
+            self.conn.execute("ALTER TABLE order_intents ADD COLUMN session_date TEXT")
 
-    def record_intent(self, spec: IntendedOrderSpec) -> None:
-        existing = self.conn.execute(
-            "SELECT client_order_id FROM order_intents WHERE client_order_id=?",
-            (spec.client_order_id,),
-        ).fetchone()
-        if existing:
-            raise DuplicateSubmissionError(
-                f"intent for {spec.client_order_id} already recorded -- will not submit again"
+    def count_for_session(self, session_date: str) -> int:
+        """Distinct order intents recorded for a session date. Rows seeded
+        from pre-existing broker state have session_date NULL and never
+        count against the cap."""
+        return self.conn.execute(
+            "SELECT COUNT(*) FROM order_intents WHERE session_date=?", (session_date,)
+        ).fetchone()[0]
+
+    def record_intent(self, spec: IntendedOrderSpec, session_date: str | None = None,
+                      max_per_session: int | None = None) -> None:
+        """Atomically: reject a duplicate client_order_id, enforce the
+        per-session cap (when session_date and max_per_session are given),
+        and insert. Replays of an existing intent raise DuplicateSubmission
+        BEFORE any cap accounting, so a restart never consumes cap."""
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            existing = self.conn.execute(
+                "SELECT 1 FROM order_intents WHERE client_order_id=?", (spec.client_order_id,),
+            ).fetchone()
+            if existing:
+                raise DuplicateSubmissionError(
+                    f"intent for {spec.client_order_id} already recorded -- will not submit again"
+                )
+            if session_date is not None and max_per_session is not None:
+                n = self.conn.execute(
+                    "SELECT COUNT(*) FROM order_intents WHERE session_date=?", (session_date,)
+                ).fetchone()[0]
+                if n >= max_per_session:
+                    raise order_limits.DailyOrderLimitReached(
+                        f"{n} order intents already recorded for {session_date}, cap is {max_per_session}"
+                    )
+            self.conn.execute(
+                "INSERT INTO order_intents (client_order_id, symbol, qty, side, intent_recorded_at, "
+                "status, session_date) VALUES (?,?,?,?,?,?,?)",
+                (spec.client_order_id, spec.symbol, spec.qty, spec.side,
+                 datetime.now(timezone.utc).isoformat(), "intent_recorded", session_date),
             )
-        self.conn.execute(
-            "INSERT INTO order_intents (client_order_id, symbol, qty, side, intent_recorded_at, status) "
-            "VALUES (?,?,?,?,?,?)",
-            (spec.client_order_id, spec.symbol, spec.qty, spec.side,
-             datetime.now(timezone.utc).isoformat(), "intent_recorded"),
-        )
-        self.conn.commit()
+            self.conn.execute("COMMIT")
+        except BaseException:
+            self.conn.execute("ROLLBACK")
+            raise
 
     def update_status(self, client_order_id: str, broker_order_id: str | None,
                        status: str, filled_qty: float = 0.0) -> None:
@@ -122,7 +159,6 @@ class PersistentIntentLedger:
             "WHERE client_order_id=?",
             (broker_order_id, status, filled_qty, datetime.now(timezone.utc).isoformat(), client_order_id),
         )
-        self.conn.commit()
 
     def get(self, client_order_id: str) -> dict | None:
         row = self.conn.execute(
@@ -170,19 +206,29 @@ class UncertainSubmissionError(RuntimeError):
     reconcile via broker.find_by_client_order_id(), never blindly retry."""
 
 
-def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: IntendedOrderSpec) -> dict:
+class BrokerLookupError(RuntimeError):
+    """A find_by_client_order_id() lookup could not be answered (5xx,
+    timeout, network). Distinct from 'not found' (None): the order's
+    existence is UNKNOWN, so the caller must not submit."""
+
+
+def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: IntendedOrderSpec,
+                               session_date: str | None = None,
+                               max_per_session: int | None = None) -> dict:
     existing = ledger.get(spec.client_order_id)
-    if existing and existing["status"] not in ("intent_recorded",):
+    if existing and existing["status"] not in ("intent_recorded", "uncertain_unresolved"):
         return {"outcome": "already_resolved_no_resubmit", "record": existing}
 
     if existing is None:
-        ledger.record_intent(spec)  # intent persisted BEFORE the broker call
-    elif existing["status"] == "intent_recorded":
-        # A prior run recorded intent but crashed before ever getting a
-        # confirmed response -- it may have died before OR after the
-        # broker actually received the request. Never guess: ask the
-        # broker directly first. If the broker already knows this
-        # client_order_id, adopt its answer instead of submitting again.
+        ledger.record_intent(spec, session_date, max_per_session)  # intent persisted BEFORE the broker call
+    elif existing["status"] in ("intent_recorded", "uncertain_unresolved"):
+        # A prior run recorded intent but never got a confirmed response
+        # (crash, or a timed-out POST whose lookup also found nothing). It may
+        # have died before OR after the broker received the request. Never
+        # guess: ask the broker directly first. If it knows this
+        # client_order_id, adopt its answer; if it answers 404, resubmit the
+        # SAME client_order_id (the broker rejects a duplicate id, so this is
+        # idempotent). A failed lookup raises BrokerLookupError -> no send.
         found = broker.find_by_client_order_id(spec.client_order_id)
         if found is not None:
             ledger.update_status(spec.client_order_id, found["id"], found["status"], found.get("filled_qty", 0))
@@ -191,7 +237,11 @@ def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: Int
     try:
         response = broker.submit(spec)
     except UncertainSubmissionError:
-        found = broker.find_by_client_order_id(spec.client_order_id)
+        try:
+            found = broker.find_by_client_order_id(spec.client_order_id)
+        except BrokerLookupError:
+            ledger.update_status(spec.client_order_id, None, "uncertain_unresolved")
+            return {"outcome": "uncertain_unresolved", "record": ledger.get(spec.client_order_id)}
         if found is None:
             ledger.update_status(spec.client_order_id, None, "uncertain_unresolved")
             return {"outcome": "uncertain_unresolved", "record": ledger.get(spec.client_order_id)}
@@ -212,7 +262,7 @@ def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: Int
 # process start, and once the daily cap is hit, every remaining order in
 # this batch is blocked too (the cap is global for the day).
 def submit_orders_with_limits(broker, ledger: PersistentIntentLedger, specs: list[IntendedOrderSpec],
-                               kill_switch_path: Path, order_count_path: Path, session_date: str,
+                               kill_switch_path: Path, session_date: str,
                                max_orders_per_day: int = order_limits.DEFAULT_MAX_ORDERS_PER_DAY) -> dict:
     results = []
 
@@ -240,21 +290,25 @@ def submit_orders_with_limits(broker, ledger: PersistentIntentLedger, specs: lis
             continue
 
         try:
-            order_limits.check_and_increment_order_count(order_count_path, session_date, max_orders_per_day)
+            result = submit_with_reconciliation(broker, ledger, spec, session_date, max_orders_per_day)
         except order_limits.DailyOrderLimitReached as e:
             results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_daily_limit",
                              "detail": str(e)})
             blocked_from_here = True
             continue
-
-        result = submit_with_reconciliation(broker, ledger, spec)
+        except BrokerLookupError as e:
+            results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_lookup_failed",
+                             "detail": str(e)})
+            blocked_from_here = True
+            continue
         results.append({"client_order_id": spec.client_order_id, **result})
 
     blocked_outcomes = {"blocked_kill_switch", "blocked_daily_limit", "blocked_batch_halted",
-                         "blocked_kill_switch_at_startup"}
+                         "blocked_kill_switch_at_startup", "blocked_lookup_failed"}
     submitted = sum(1 for r in results if r["outcome"] not in blocked_outcomes)
     blocked = sum(1 for r in results if r["outcome"] in blocked_outcomes)
     return {"results": results, "submitted": submitted, "blocked": blocked, "startup_blocked": False}
+
 
 class MockBroker:
     """Pure in-memory simulation. No network. Simulates realistic broker

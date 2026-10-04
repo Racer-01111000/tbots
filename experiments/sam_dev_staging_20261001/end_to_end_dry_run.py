@@ -36,14 +36,13 @@ def scenario_normal_full_cycle(work_dir: Path) -> dict:
     broker = MockBroker()
     ledger = PersistentIntentLedger(str(work_dir / "scenario_a_ledger.sqlite3"))
     kill_switch = work_dir / "scenario_a_KILL_SWITCH"
-    counts = work_dir / "scenario_a_order_count.json"
     specs = [
-        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "SPY") + "-buy", "SPY", 10, "buy"),
-        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "GLD") + "-buy", "GLD", 5, "buy"),
-        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "TLT") + "-sell", "TLT", 3, "sell"),
+        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "SPY"), "SPY", 10, "buy"),
+        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "GLD"), "GLD", 5, "buy"),
+        IntendedOrderSpec(build_client_order_id(SESSION_DATE, "TLT"), "TLT", 3, "sell"),
     ]
 
-    result = submit_orders_with_limits(broker, ledger, specs, kill_switch, counts, SESSION_DATE, max_orders_per_day=8)
+    result = submit_orders_with_limits(broker, ledger, specs, kill_switch, SESSION_DATE, max_orders_per_day=8)
     assert result["submitted"] == 3
     assert result["blocked"] == 0
     for s in specs:
@@ -61,7 +60,7 @@ def scenario_crash_mid_send_and_restart(work_dir: Path) -> dict:
     broker = MockBroker()
 
     # Sub-case 1: broker actually received the order before the crash.
-    spec_received = IntendedOrderSpec(build_client_order_id(SESSION_DATE, "EEM") + "-buy", "EEM", 7, "buy")
+    spec_received = IntendedOrderSpec(build_client_order_id(SESSION_DATE, "EEM"), "EEM", 7, "buy")
     ledger_before_crash = PersistentIntentLedger(db_path)
     ledger_before_crash.record_intent(spec_received)   # intent persisted BEFORE the broker call
     broker.submit(spec_received)                        # broker got it and accepted it...
@@ -70,7 +69,7 @@ def scenario_crash_mid_send_and_restart(work_dir: Path) -> dict:
     assert ledger_before_crash.get(spec_received.client_order_id)["status"] == "intent_recorded"
 
     # Sub-case 2: broker never received the order before the crash.
-    spec_lost = IntendedOrderSpec(build_client_order_id(SESSION_DATE, "VNQ") + "-buy", "VNQ", 4, "buy")
+    spec_lost = IntendedOrderSpec(build_client_order_id(SESSION_DATE, "VNQ"), "VNQ", 4, "buy")
     ledger_before_crash.record_intent(spec_lost)
     # (crash happens before broker.submit() is ever called for this one)
 
@@ -101,7 +100,6 @@ def scenario_first_submission_session_delta(work_dir: Path) -> dict:
     broker = MockBroker()
     ledger = PersistentIntentLedger(str(work_dir / "scenario_d_ledger.sqlite3"))
     kill_switch = work_dir / "scenario_d_KILL_SWITCH"
-    counts = work_dir / "scenario_d_order_count.json"
 
     assert broker_reconciliation.is_first_submission_session(ledger) is True
 
@@ -123,10 +121,10 @@ def scenario_first_submission_session_delta(work_dir: Path) -> dict:
     assert delta == {"DBC": 2, "SPY": 10}
 
     specs = [
-        IntendedOrderSpec(build_client_order_id(SESSION_DATE, sym) + "-buy", sym, qty, "buy")
+        IntendedOrderSpec(build_client_order_id(SESSION_DATE, sym), sym, qty, "buy")
         for sym, qty in delta.items() if qty > 0
     ]
-    result = submit_orders_with_limits(broker, ledger, specs, kill_switch, counts, SESSION_DATE, max_orders_per_day=8)
+    result = submit_orders_with_limits(broker, ledger, specs, kill_switch, SESSION_DATE, max_orders_per_day=8)
     assert result["submitted"] == len(specs)
     assert result["blocked"] == 0
 

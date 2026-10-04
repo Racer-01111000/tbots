@@ -24,7 +24,7 @@ def test_drawdown_computed_when_equity_drops_below_peak(tmp_path):
     record_and_get_drawdown(path, "2026-10-01", 100_000.0)
     peak, drawdown = record_and_get_drawdown(path, "2026-10-02", 90_000.0)
     assert peak == 100_000.0
-    assert drawdown == pytest.approx(0.10)
+    assert drawdown == pytest.approx(-0.10)
 
 
 def test_peak_persists_across_a_later_lower_session(tmp_path):
@@ -33,7 +33,7 @@ def test_peak_persists_across_a_later_lower_session(tmp_path):
     record_and_get_drawdown(path, "2026-10-02", 90_000.0)
     peak, drawdown = record_and_get_drawdown(path, "2026-10-03", 95_000.0)
     assert peak == 100_000.0  # still the historical high, not today's 95,000
-    assert drawdown == pytest.approx(0.05)
+    assert drawdown == pytest.approx(-0.05)
 
 
 def test_idempotent_restart_same_session_date_same_equity(tmp_path):

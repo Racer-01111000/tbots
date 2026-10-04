@@ -14,16 +14,23 @@ of the ledger starting blind.
 """
 from __future__ import annotations
 
-from kim_order_logic import IntendedOrderSpec
+from kim_order_logic import IntendedOrderSpec, BrokerLookupError
 
 
-def reconcile_ledger(ledger, broker) -> list[dict]:
+def reconcile_ledger(ledger, broker, errors: list | None = None) -> list[dict]:
     """For each unresolved ledger row, ask the broker for its current
     status (by client_order_id -- unique per row) and update the ledger
     to match. Returns the list of rows that were actually changed."""
     updated = []
     for row in ledger.get_unresolved():
-        found = broker.find_by_client_order_id(row["client_order_id"])
+        try:
+            found = broker.find_by_client_order_id(row["client_order_id"])
+        except BrokerLookupError as e:
+            # Lookup failed (5xx/timeout): the row's true state is UNKNOWN,
+            # not "absent". Leave it unresolved and report it.
+            if errors is not None:
+                errors.append({"client_order_id": row["client_order_id"], "error": str(e)})
+            continue
         if found is None:
             continue  # broker has no record yet (e.g. still 'intent_recorded') -- nothing to reconcile
         if found["status"] == row["status"] and found.get("filled_qty", 0) == row.get("filled_qty", 0):

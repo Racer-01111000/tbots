@@ -1,44 +1,58 @@
 """Persisted peak-equity series for Kim's drawdown halt. Pure logic, no
-network calls -- the caller supplies today's equity figure (already
-broker-sourced) and gets back the running peak and a real current_drawdown,
-so risk.validate()'s drawdown_halt_pct check can actually fire instead of
-being permanently inert on a hardcoded 0.0.
+network calls.
 
-Keyed by session date, same discipline as cadence_state.json: re-recording
-the same session date overwrites that date's entry rather than appending,
-so a restart mid-session can't double-count or distort the peak.
+SIGN CONVENTION (pinned by tests): drawdown is returned NEGATIVE or zero
+(-0.15 == 15% below peak), identical to execution.Portfolio
+.update_peak_and_drawdown() and to what risk.validate() compares against
+(`current_drawdown <= -drawdown_halt_pct`). fe72d72 returned a positive
+number into that check, so the halt could never fire.
+
+Keyed by session date: re-recording a date overwrites that date's entry.
+Writes are atomic. An existing-but-unreadable file raises StateCorrupt, and
+a missing file raises PeakStateMissing when the caller says prior sessions
+exist -- a silent reset would make drawdown 0.
 """
 from __future__ import annotations
 
-import json
+import math
 from pathlib import Path
 
+from atomic_io import write_json_atomic, read_json_strict
 
-def load_state(path: Path) -> dict:
+
+class PeakStateMissing(RuntimeError):
+    pass
+
+
+def load_state(path: Path, require_existing: bool = False) -> dict:
     if path.exists():
-        state = json.loads(path.read_text())
+        state = read_json_strict(path)
         state.setdefault("history", {})
         return state
+    if require_existing:
+        raise PeakStateMissing(f"{path} missing but earlier sessions were recorded; refusing to reset the peak")
     return {"peak_equity": None, "peak_session_date": None, "history": {}}
 
 
 def save_state(path: Path, state: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(state, indent=2))
+    write_json_atomic(path, state)
 
 
-def record_and_get_drawdown(path: Path, session_date: str, equity: float) -> tuple[float, float]:
-    """Record today's equity (idempotent per session_date -- a restart
-    that re-records the same date just overwrites that one entry) and
-    return (peak_equity, current_drawdown). current_drawdown is 0.0 when
-    today's equity is at or above the peak, including the very first
-    recording ever (peak == today's equity in that case)."""
-    state = load_state(path)
-    state["history"][session_date] = equity
-    peak_date = max(state["history"], key=lambda d: state["history"][d])
-    peak_equity = state["history"][peak_date]
-    state["peak_equity"] = peak_equity
-    state["peak_session_date"] = peak_date
-    current_drawdown = 0.0 if peak_equity <= 0 else max(0.0, (peak_equity - equity) / peak_equity)
-    save_state(path, state)
-    return peak_equity, current_drawdown
+def evaluate(state: dict, session_date: str, equity: float) -> tuple[dict, float, float]:
+    """Pure: returns (new_state, peak_equity, drawdown<=0) without touching disk."""
+    if not math.isfinite(equity) or equity <= 0:
+        raise ValueError(f"invalid equity for drawdown: {equity}")
+    hist = dict(state["history"])
+    hist[session_date] = equity
+    peak_date = max(hist, key=lambda d: hist[d])
+    peak = hist[peak_date]
+    new_state = {"peak_equity": peak, "peak_session_date": peak_date, "history": hist}
+    return new_state, peak, min(0.0, (equity - peak) / peak)
+
+
+def record_and_get_drawdown(path: Path, session_date: str, equity: float,
+                            require_existing: bool = False) -> tuple[float, float]:
+    state = load_state(path, require_existing)
+    new_state, peak, dd = evaluate(state, session_date, equity)
+    save_state(path, new_state)
+    return peak, dd
