@@ -10,7 +10,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("--store", required=True); ap.ad
 now = datetime.fromisoformat(a.now).astimezone(timezone.utc) if a.now else datetime.now(timezone.utc); et = now.astimezone(NY); day = et.date().isoformat(); root = Path(a.root)
 plan = min(PLANNED, key=lambda p: abs((et.hour * 60 + et.minute) - (p[0] * 60 + p[1]))); late_min = (et.hour * 60 + et.minute) - (plan[0] * 60 + plan[1])
 r = {"store": a.store, "et_date": day, "inspected_at_utc": now.isoformat(timespec="seconds"), "nearest_planned_et": "%02d:%02d" % plan, "minutes_after_planned": late_min,
-     "label": "LATE_INSPECTION" if late_min > 10 else "ON_TIME_INSPECTION", "read_only": True}
+     "label": "LATE_INSPECTION" if late_min > 10 else ("EARLY_OFF_SCHEDULE_INSPECTION" if late_min < -10 else "ON_TIME_INSPECTION"), "read_only": True}
 if a.store == "capture":
     d = sqlite3.connect(f"file:{root}/state/pipeline.sqlite3?mode=ro", uri=True)
     r["ticks_today"] = dict(d.execute("select outcome, count(*) from ticks where substr(started_utc,1,10) in (?, date(?,'+1 day')) group by 1", (day, day)).fetchall())

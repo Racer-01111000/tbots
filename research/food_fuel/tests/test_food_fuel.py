@@ -89,7 +89,7 @@ def test_verify_receipt_is_read_only_and_labels_late_inspection(tmp_path):
     from ffmod.pipeline import SCHEMA
     d.executescript(SCHEMA); d.commit(); d.close()
     before = (tmp_path / "state" / "pipeline.sqlite3").read_bytes()
-    for now, label in (("2026-10-05T09:47:00-04:00", "ON_TIME_INSPECTION"), ("2026-10-05T10:30:00-04:00", "LATE_INSPECTION")):
+    for now, label in (("2026-10-05T09:47:00-04:00", "ON_TIME_INSPECTION"), ("2026-10-05T10:30:00-04:00", "LATE_INSPECTION"), ("2026-10-05T06:45:00-04:00", "EARLY_OFF_SCHEDULE_INSPECTION")):
         out = subprocess.run([sys.executable, str(R / "scripts" / "verify_receipt.py"), "--store", "capture", "--root", str(tmp_path), "--now", now], capture_output=True, text=True, check=True).stdout.strip()
         assert json.loads(Path(out).read_text())["label"] == label
     assert (tmp_path / "state" / "pipeline.sqlite3").read_bytes() == before
