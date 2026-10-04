@@ -103,27 +103,38 @@ class PersistentIntentLedger:
                 client_order_id TEXT PRIMARY KEY, symbol TEXT, qty INTEGER, side TEXT,
                 intent_recorded_at TEXT NOT NULL,
                 broker_order_id TEXT, status TEXT, filled_qty REAL, last_updated_at TEXT,
-                session_date TEXT
+                session_date TEXT, order_class TEXT DEFAULT 'normal'
             )"""
         )
         cols = {r[1] for r in self.conn.execute("PRAGMA table_info(order_intents)")}
         if "session_date" not in cols:  # ledgers created by fe72d72
             self.conn.execute("ALTER TABLE order_intents ADD COLUMN session_date TEXT")
+        if "order_class" not in cols:   # ledgers created before the bounded liquidation exemption
+            self.conn.execute("ALTER TABLE order_intents ADD COLUMN order_class TEXT DEFAULT 'normal'")
 
-    def count_for_session(self, session_date: str) -> int:
-        """Distinct order intents recorded for a session date. Rows seeded
-        from pre-existing broker state have session_date NULL and never
-        count against the cap."""
+    def close(self) -> None:
+        self.conn.close()
+
+    def count_for_session(self, session_date: str, order_class: str | None = None) -> int:
+        """Distinct order intents recorded for a session date, optionally within one order class
+        ('normal' | 'liquidation'). Rows seeded from pre-existing broker state have session_date NULL
+        and never count against any cap."""
+        if order_class is None:
+            return self.conn.execute(
+                "SELECT COUNT(*) FROM order_intents WHERE session_date=?", (session_date,)).fetchone()[0]
         return self.conn.execute(
-            "SELECT COUNT(*) FROM order_intents WHERE session_date=?", (session_date,)
-        ).fetchone()[0]
+            "SELECT COUNT(*) FROM order_intents WHERE session_date=? AND COALESCE(order_class,'normal')=?",
+            (session_date, order_class)).fetchone()[0]
 
     def record_intent(self, spec: IntendedOrderSpec, session_date: str | None = None,
-                      max_per_session: int | None = None) -> None:
-        """Atomically: reject a duplicate client_order_id, enforce the
-        per-session cap (when session_date and max_per_session are given),
-        and insert. Replays of an existing intent raise DuplicateSubmission
-        BEFORE any cap accounting, so a restart never consumes cap."""
+                      max_per_session: int | None = None, order_class: str = "normal") -> None:
+        """Atomically: reject a duplicate client_order_id, enforce the per-session cap FOR THIS ORDER
+        CLASS (when session_date and max_per_session are given), and insert. Replays of an existing
+        intent raise DuplicateSubmission BEFORE any cap accounting, so a restart never consumes cap.
+        Classes are counted independently: normal trading keeps its own cap, and halt liquidation has
+        its own explicit finite limit."""
+        if order_class not in ("normal", "liquidation"):
+            raise ValueError(f"unknown order_class {order_class!r}")
         self.conn.execute("BEGIN IMMEDIATE")
         try:
             existing = self.conn.execute(
@@ -135,17 +146,18 @@ class PersistentIntentLedger:
                 )
             if session_date is not None and max_per_session is not None:
                 n = self.conn.execute(
-                    "SELECT COUNT(*) FROM order_intents WHERE session_date=?", (session_date,)
+                    "SELECT COUNT(*) FROM order_intents WHERE session_date=? AND COALESCE(order_class,'normal')=?",
+                    (session_date, order_class)
                 ).fetchone()[0]
                 if n >= max_per_session:
                     raise order_limits.DailyOrderLimitReached(
-                        f"{n} order intents already recorded for {session_date}, cap is {max_per_session}"
+                        f"{n} {order_class} order intents already recorded for {session_date}, cap is {max_per_session}"
                     )
             self.conn.execute(
                 "INSERT INTO order_intents (client_order_id, symbol, qty, side, intent_recorded_at, "
-                "status, session_date) VALUES (?,?,?,?,?,?,?)",
+                "status, session_date, order_class) VALUES (?,?,?,?,?,?,?,?)",
                 (spec.client_order_id, spec.symbol, spec.qty, spec.side,
-                 datetime.now(timezone.utc).isoformat(), "intent_recorded", session_date),
+                 datetime.now(timezone.utc).isoformat(), "intent_recorded", session_date, order_class),
             )
             self.conn.execute("COMMIT")
         except BaseException:
@@ -231,13 +243,13 @@ class BrokerLookupError(RuntimeError):
 
 def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: IntendedOrderSpec,
                                session_date: str | None = None,
-                               max_per_session: int | None = None) -> dict:
+                               max_per_session: int | None = None, order_class: str = "normal") -> dict:
     existing = ledger.get(spec.client_order_id)
     if existing and existing["status"] not in ("intent_recorded", "uncertain_unresolved"):
         return {"outcome": "already_resolved_no_resubmit", "record": existing}
 
     if existing is None:
-        ledger.record_intent(spec, session_date, max_per_session)  # intent persisted BEFORE the broker call
+        ledger.record_intent(spec, session_date, max_per_session, order_class)  # intent persisted BEFORE the broker call
     elif existing["status"] in ("intent_recorded", "uncertain_unresolved"):
         # A prior run recorded intent but never got a confirmed response
         # (crash, or a timed-out POST whose lookup also found nothing). It may
@@ -280,7 +292,8 @@ def submit_with_reconciliation(broker, ledger: PersistentIntentLedger, spec: Int
 # this batch is blocked too (the cap is global for the day).
 def submit_orders_with_limits(broker, ledger: PersistentIntentLedger, specs: list[IntendedOrderSpec],
                                kill_switch_path: Path, session_date: str,
-                               max_orders_per_day: int = order_limits.DEFAULT_MAX_ORDERS_PER_DAY) -> dict:
+                               max_orders_per_day: int = order_limits.DEFAULT_MAX_ORDERS_PER_DAY,
+                               order_class: str = "normal") -> dict:
     results = []
 
     try:
@@ -307,7 +320,7 @@ def submit_orders_with_limits(broker, ledger: PersistentIntentLedger, specs: lis
             continue
 
         try:
-            result = submit_with_reconciliation(broker, ledger, spec, session_date, max_orders_per_day)
+            result = submit_with_reconciliation(broker, ledger, spec, session_date, max_orders_per_day, order_class)
         except order_limits.DailyOrderLimitReached as e:
             results.append({"client_order_id": spec.client_order_id, "outcome": "blocked_daily_limit",
                              "detail": str(e)})

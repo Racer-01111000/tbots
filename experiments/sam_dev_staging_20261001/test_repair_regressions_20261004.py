@@ -58,22 +58,15 @@ def test_restart_replay_does_not_consume_cap(tmp_path):
     assert all(x["outcome"] == "already_resolved_no_resubmit" for x in r2["results"])
 
 
-def _record(args):
-    db, i, cap = args
-    try:
-        PersistentIntentLedger(db).record_intent(
-            IntendedOrderSpec(f"kim-2026-10-05-S{i}", f"S{i}", 1, "buy"), "2026-10-05", cap)
-        return True
-    except ol.DailyOrderLimitReached:
-        return False
-
-
 def test_concurrent_processes_never_exceed_cap(tmp_path):
-    """24 processes race to record intents against a cap of 8: exactly 8
-    may win, the rest must be refused -- no lost updates, no overshoot."""
+    """24 spawned processes race to record intents against a cap of 8: exactly 8 may win, the rest must be
+    refused -- no lost updates, no overshoot. (Spawn, not fork: a forked child inherits the parent's open
+    SQLite connection, which loses POSIX locks and can break mutual exclusion -- a test artifact.)"""
+    import race_helpers
     db = str(tmp_path / "race.sqlite3")
-    PersistentIntentLedger(db)  # create schema once
-    with mp.Pool(8) as pool:
-        got = pool.map(_record, [(db, i, 8) for i in range(24)])
-    assert sum(got) == 8
-    assert PersistentIntentLedger(db).count_for_session("2026-10-05") == 8
+    PersistentIntentLedger(db).close()
+    with mp.get_context("spawn").Pool(8) as pool:
+        got = pool.map(race_helpers.record_one, [(db, i, 8, "normal", "2026-10-05") for i in range(24)])
+    check = PersistentIntentLedger(db)
+    assert sum(got) == 8 and check.count_for_session("2026-10-05") == 8
+    check.close()

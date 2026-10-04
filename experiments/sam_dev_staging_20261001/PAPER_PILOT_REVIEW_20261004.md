@@ -2,7 +2,7 @@
 
 Branch `repair/paper-pilot-integration-review-20261004` (local only; not pushed, not relayed to EC2).
 Submission remains OFF: `alpaca_adapter._SUBMISSION_ENABLED_CONST = False` is untouched, no timer is installed.
-Tests: 91 at fe72d72 → 219 now (155 at the first review commit, 173 after the lineage-D shadow, 205 after quantity liquidation), all pass (`pytest` from the integration venv; see "Running the tests").
+Tests: 91 at fe72d72 → 247 now (155 at the first review commit, 173 after the lineage-D shadow, 205 after quantity liquidation, 219 after the review fixes), all pass (`pytest` from the integration venv; see "Running the tests").
 
 ## Defects found in fe72d72 (all reproduced red before the fix)
 
@@ -180,3 +180,24 @@ Both were reproduced on my own copy first (`oversold: 16 committed against 10 he
 **Pilot configuration decision (cap vs liquidation).** `max_orders_per_session = 4` applies to liquidation too, as instructed. With the 8-symbol universe and `max_positions=1` the account normally holds one or two symbols, so 4 is ample; it only delays liquidation if more than four distinct symbols are held, and the remainder then waits for the next session (escalated). Options: keep as is, or exempt `-liq` orders from the cap (lower safety against a runaway loop, faster exit).
 
 **Verification limits.** Tests were run on the local Python 3.13.5 venv (`/home/rick/tbots_integration_checkout_venv`), the same interpreter version EC2's `venv313` was built from, but **not** on EC2's venv313; that would require copying code to the instance, which is a deployment step and has not been authorized. No brokerage calls were made; all broker behaviour is the in-memory `fake_alpaca`.
+
+
+---
+
+# Addendum 4: bounded liquidation-cap exemption (Rick's GO; implemented for review, NOT accepted for activation)
+
+**Policy implemented.** Normal trading keeps `max_orders_per_session = 4`. A latched-halt liquidation may exit more than four held symbols in one session under its own explicit finite limit, `max_liquidation_orders_per_session` (committed value **8**). This authorizes implementation for review only: it does not accept the liquidation policy, the 8 % halt, or the Nov-1 expiry for activation. Submission is still hardcoded off; nothing is deployed.
+
+**How the limits are bounded**
+* **Separate, atomic accounting.** The ledger has an `order_class` (`normal` | `liquidation`). Each class is counted inside the same `BEGIN IMMEDIATE` transaction that inserts the intent, per session date, so concurrent processes cannot exceed either limit (24 racing processes against a limit of 7 → exactly 7). Neither class consumes the other's allowance; the structural worst case per session is 4 normal + 8 liquidation = 12 distinct orders, and a halted session runs only the liquidation path.
+* **Finite by construction.** The config key is mandatory and validated as an integer in `[max_orders_per_session, universe size]` (so 4 ≤ limit ≤ 8; booleans, floats, strings, 0, negatives and > 8 are refused). Independently of the cap, liquidation ids are `kim-{session}-{symbol}-liq`: one order per symbol per session, so 8 is also the structural maximum; the cap is a belt-and-braces bound if the id scheme ever changes.
+* **No duplicate sells.** The deterministic id plus ledger duplicate protection means a rerun, restart, or second pass in the same session cannot re-sell a symbol; across sessions, the quantity already committed to working sells (broker-visible and ledger-only) is subtracted before sizing.
+* **No overselling.** Unchanged and tested at six symbols: `floor(position) − ceil(committed)`, partial fills reduce only their remainder, and the aggregate per-symbol reservation still gates recovery of uncertain sells.
+* **All unresolved-order protections preserved.** An earlier unresolved BUY or an unrecoverable unresolved SELL still holds the entire liquidation; a prior-session unresolved order still holds normal trading; the kill switch still blocks every send (tested with six positions); a lookup 404 is still not grounds to abandon an uncertain order.
+* **Sells only.** `build_liquidation_specs` still raises on anything but positive-quantity sells; shorts and non-universe holdings are never touched.
+
+**Migration.** Ledgers created before this change gain the `order_class` column with default `normal`; liquidation orders that an earlier build recorded under that default are counted as normal for the session they were created in. Only matters for a ledger that already holds a same-day halt liquidation, which none do (nothing has been enabled).
+
+**Tests** (`test_liquidation_cap_20261004.py`, 28): six symbols exit in one session despite the normal cap of 4; normal trading still capped; finite limit enforced with the remainder flagged and finished next session without re-selling; boundary (limit == held succeeds, one fewer blocks one); class independence; atomic races (spawned processes: 24 racers vs a limit of 7 → exactly 7; normal and liquidation classes raced together → exactly 4 and 8); legacy-ledger migration; no double sell across rerun/restart/second pass; partial fills never oversell; pending sells reduce only their symbols; no buys even with a short present; kill switch; unresolved buy hold; aggregate reservation with many symbols; timeout/delayed-visibility with six symbols (one order per symbol); config boundaries 0/3/9/-1/"8"/4.5/missing refused and 4/5/8 accepted. 17 of these failed before the implementation.
+
+**Test-infrastructure finding while verifying this (not a ledger defect).** The first version of the new race test failed when run after the other tests in its file (11-12 "successes" against a limit of 7) yet passed alone. Cause: the parent pytest process still held an open SQLite connection to the race database when it `fork()`ed the workers. Forking with an open SQLite connection is a documented hazard (the child's `close()` of an inherited descriptor releases the parent's POSIX locks), so mutual exclusion silently breaks. Production never forks (one process per run), but this exposed two real hygiene gaps, both fixed: `PersistentIntentLedger` had no `close()`, and `run_session` never closed the connection it opened (it now closes every ledger it opens, including on exceptions). All race tests (including the earlier `test_concurrent_processes_never_exceed_cap`, which had the same latent fork pattern) now use `spawn`, via the import-light `race_helpers.py`, so no worker can inherit a connection. 15 consecutive repeats of the race tests, and 3 full-suite runs, were all green.

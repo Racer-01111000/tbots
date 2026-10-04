@@ -13,7 +13,7 @@ class PilotConfigError(RuntimeError):
 
 
 REQUIRED = {
-    "genome_id", "max_orders_per_session", "drawdown_halt_pct", "max_asset_weight",
+    "genome_id", "max_orders_per_session", "max_liquidation_orders_per_session", "drawdown_halt_pct", "max_asset_weight",
     "gross_exposure_ceiling", "min_cash_reserve_pct", "time_in_force", "kill_switch_file",
     "expiry_date", "session_zero_date", "rebalance_every_n_sessions",
 }
@@ -36,6 +36,10 @@ def load_pilot_config(path: Path, genome: dict, genome_id: str) -> dict:
         raise PilotConfigError("min_cash_reserve_pct must be in [0,1)")
     if not (1 <= int(cfg["max_orders_per_session"]) <= len(genome["universe"])):
         raise PilotConfigError("max_orders_per_session must be in [1, universe size]")
+    liq = cfg["max_liquidation_orders_per_session"]
+    if isinstance(liq, bool) or not isinstance(liq, int) or not (int(cfg["max_orders_per_session"]) <= liq <= len(genome["universe"])):
+        raise PilotConfigError("max_liquidation_orders_per_session must be an integer in "
+                               "[max_orders_per_session, universe size]")
     if cfg["time_in_force"] != "day":
         raise PilotConfigError("time_in_force must be 'day' (opg is rejected 09:28-19:00 ET)")
     if cfg["rebalance_every_n_sessions"] != genome["rebalance_every_n_sessions"]:

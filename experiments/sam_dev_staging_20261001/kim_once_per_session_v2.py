@@ -222,6 +222,7 @@ class Deps:
     validate_only: bool = False
     fetch_bars_fn: Callable | None = None
     trading_host: str = PAPER_TRADING_HOST
+    _ledgers: list = field(default_factory=list)   # connections opened by a run; closed when it ends
 
 
 def _finite(x) -> bool:
@@ -271,7 +272,7 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
     """
     live = gate_open and persist
     kill_path = d.state_dir / d.config["kill_switch_file"]
-    cap = d.config["max_orders_per_session"]
+    cap = d.config["max_liquidation_orders_per_session"]   # liquidation has its own explicit finite limit
 
     def hold(reason: str, **extra) -> dict:
         return finish("halt_liquidation_held", halt_hold_reason=reason, escalate=True, **extra)
@@ -303,7 +304,7 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
                         "not recovering any of them", unresolved_submissions=ids, oversell_risk=over)
         recover = [IntendedOrderSpec(r["client_order_id"], r["symbol"], int(r["qty"]), "sell", time_in_force="day")
                    for r in unresolved]
-        rec["halt_recovery"] = submit_orders_with_limits(d.broker, ledger, recover, kill_path, today_et, cap)
+        rec["halt_recovery"] = submit_orders_with_limits(d.broker, ledger, recover, kill_path, today_et, cap, "liquidation")
         still = [r["client_order_id"] for r in ledger.get_unresolved()
                  if r["status"] in ("intent_recorded", "uncertain_unresolved")]
         if still or rec["halt_recovery"]["blocked"]:
@@ -324,7 +325,7 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
 
     blocked = False
     if specs and live:
-        result = submit_orders_with_limits(d.broker, ledger, specs, kill_path, today_et, cap)
+        result = submit_orders_with_limits(d.broker, ledger, specs, kill_path, today_et, cap, "liquidation")
         rec["submission"] = result
         blocked = result["blocked"] > 0 or any(r["outcome"] == "uncertain_unresolved" for r in result["results"])
     elif specs:
@@ -356,6 +357,18 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
 
 
 def run_session(d: Deps) -> dict:
+    try:
+        return _run_session(d)
+    finally:
+        for ledger in d._ledgers:
+            try:
+                ledger.close()
+            except Exception:  # noqa: BLE001 - closing must never mask the run's own outcome
+                pass
+        d._ledgers.clear()
+
+
+def _run_session(d: Deps) -> dict:
     cfg = d.config
     now_utc = d.now_utc()
     now_et = now_utc.astimezone(NY_TZ)
@@ -422,6 +435,7 @@ def run_session(d: Deps) -> dict:
     ledger_updates: list = []
     if persist:  # validate-only must not create the ledger file, migrate it, or update rows
         ledger = PersistentIntentLedger(str(d.state_dir / "order_ledger.sqlite3"))
+        d._ledgers.append(ledger)
         ledger_updates = broker_reconciliation.reconcile_ledger(ledger, d.broker, lookup_errors)
     unfilled = [u for u in ledger_updates if u["status"] in ("canceled", "expired", "rejected")]
     rec.update(order_ledger_reconciliation_updated_count=len(ledger_updates),

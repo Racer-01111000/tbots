@@ -260,8 +260,9 @@ def test_kill_switch_blocks_liquidation_too(tmp_path):
     assert k.run_session(deps)["status"] == "halted" and len(fake.post_log) == 1
 
 
-def test_order_cap_still_applies_and_the_remainder_waits_for_the_next_session(tmp_path):
-    fake, deps, _ = make(tmp_path, gate=True, cfg={"max_orders_per_session": 1})
+def test_liquidation_limit_still_applies_and_the_remainder_waits_for_the_next_session(tmp_path):
+    # Liquidation is bounded by its OWN limit (max_liquidation_orders_per_session), not the normal cap.
+    fake, deps, _ = make(tmp_path, gate=True, cfg={"max_orders_per_session": 1, "max_liquidation_orders_per_session": 1})
     arm(tmp_path, fake, [pos("TLT", 40), pos("GLD", 10)])
     rec = k.run_session(deps)
     assert len(fake.post_log) == 1 and rec["submission"]["blocked"] == 1 and rec["escalate"] is True

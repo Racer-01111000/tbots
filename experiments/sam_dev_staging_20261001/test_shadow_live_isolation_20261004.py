@@ -29,7 +29,7 @@ FORBIDDEN_IN_SHADOW_SOURCE = ("cadence_state", "halt_state", "peak_equity_state"
 SHADOW_SOURCES = ("shadow_compare.py", "kim_shadow_compare.py", "lineage_d.py", "shadow_strategies.py")
 
 CFG = {
-    "genome_id": "x", "max_orders_per_session": 8, "drawdown_halt_pct": 0.08, "max_asset_weight": 0.18,
+    "genome_id": "x", "max_orders_per_session": 8, "max_liquidation_orders_per_session": 8, "drawdown_halt_pct": 0.08, "max_asset_weight": 0.18,
     "gross_exposure_ceiling": 0.18, "min_cash_reserve_pct": 0.10, "time_in_force": "day",
     "kill_switch_file": "KILL_SWITCH", "expiry_date": "2026-11-01", "session_zero_date": "2026-10-05",
     "rebalance_every_n_sessions": 50,

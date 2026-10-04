@@ -20,6 +20,11 @@ from pathlib import Path
 # single session date is treated as a runaway condition.
 DEFAULT_MAX_ORDERS_PER_DAY = 8
 
+# Halt liquidation has its OWN explicit finite limit, counted separately from normal trading. It can never
+# exceed the universe size: liquidation ids are one deterministic id per (session, symbol), so 8 is also the
+# structural maximum; the cap is belt-and-braces against any future change to the id scheme.
+DEFAULT_MAX_LIQUIDATION_ORDERS_PER_SESSION = 8
+
 
 class KillSwitchActive(RuntimeError):
     """Kill-switch sentinel present. Not a retryable condition."""

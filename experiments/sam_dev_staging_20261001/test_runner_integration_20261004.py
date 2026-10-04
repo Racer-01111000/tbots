@@ -24,7 +24,7 @@ from kim_order_logic import PersistentIntentLedger
 SEL = json.loads((HERE / "selected_development_bot.json").read_text())
 GENOME = SEL["selected_genome_definition"]
 CFG = {
-    "genome_id": "x", "max_orders_per_session": 8, "drawdown_halt_pct": 0.08, "max_asset_weight": 0.18,
+    "genome_id": "x", "max_orders_per_session": 8, "max_liquidation_orders_per_session": 8, "drawdown_halt_pct": 0.08, "max_asset_weight": 0.18,
     "gross_exposure_ceiling": 0.18, "min_cash_reserve_pct": 0.10, "time_in_force": "day",
     "kill_switch_file": "KILL_SWITCH", "expiry_date": "2026-11-01", "session_zero_date": "2026-10-05",
     "rebalance_every_n_sessions": 50,

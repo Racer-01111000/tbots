@@ -2,6 +2,7 @@
   "_status": "PROPOSED -- paper only. Submission is NOT enabled by this file: alpaca_adapter._SUBMISSION_ENABLED_CONST is hardcoded False and stays so until this config and the integration are reviewed.",
   "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
   "max_orders_per_session": 4,
+  "max_liquidation_orders_per_session": 8,
   "drawdown_halt_pct": 0.08,
   "max_asset_weight": 0.18,
   "gross_exposure_ceiling": 0.18,
