@@ -1,0 +1,68 @@
+{
+  "version": "gen-v1",
+  "hybrid": "filtered historical simulation: joint block resampling of volatility-standardized multi-asset residual vectors from regime-matched, split-disjoint development-lane block pools + Markov regime chain + GARCH-style volatility filter + bounded event overlays + jumps",
+  "block_mean_len": 10,
+  "block_cap": 40,
+  "severity_range": {
+    "training": [
+      0.6,
+      1.4
+    ],
+    "validation": [
+      1.2,
+      1.9
+    ],
+    "sealed_test": [
+      0.4,
+      2.2
+    ],
+    "engineering": [
+      0.6,
+      1.6
+    ]
+  },
+  "transition_noise_sd": {
+    "training": 0.25,
+    "validation": 0.45,
+    "sealed_test": 0.35,
+    "engineering": 0.25
+  },
+  "event_count_shift": {
+    "training": 0,
+    "validation": 1,
+    "sealed_test": 0,
+    "engineering": 0
+  },
+  "variant_probs": {
+    "normal": 0.62,
+    "priced_in": 0.14,
+    "muted": 0.14,
+    "reversed": 0.1
+  },
+  "policy_rate_level_range": [
+    0.0025,
+    0.055
+  ],
+  "world_vol_scale_range": [
+    0.85,
+    1.25
+  ],
+  "split_probability_per_world": 0.25,
+  "bond_flip_interval_sessions": [
+    60,
+    250
+  ],
+  "volume_participation_cap": 0.05,
+  "notes": "held-out variation: validation worlds use heavier event severity, noisier regime transitions and one extra event on average; sealed worlds use a wider severity range",
+  "drift_bias_correction_annual": {
+    "SPY": -0.00829,
+    "EFA": 0.01198,
+    "EEM": 0.00108,
+    "IEF": 0.01157,
+    "TLT": 0.01131,
+    "GLD": 0.07098,
+    "DBC": 0.00964,
+    "VNQ": 0.03433
+  },
+  "drift_bias_correction_basis": "mean over 120 ENGINEERING worlds (ENG-DRIFTCAL, indices 100-119 x 6 families) of [realized mean log return - drawn drift]; moment-matches the generator's ensemble mean to its priors; no strategy outcome and no sealed world was used"
+}
