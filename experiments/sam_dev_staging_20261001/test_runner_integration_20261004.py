@@ -380,3 +380,76 @@ def test_corrupt_halt_state_abstains(tmp_path):
     fake, deps, _ = make(tmp_path, gate=True)
     (tmp_path / "halt_state.json").write_text("{x")
     assert k.run_session(deps)["status"] == "abstained_halt_state_unusable" and fake.post_log == []
+
+
+# ----------------------------------------------- delayed broker visibility ---
+
+def test_delayed_visibility_after_timeout_never_creates_a_duplicate_order(tmp_path):
+    """POST times out AFTER the broker accepted the order, and the order stays invisible to lookups
+    for the next two checks. The client_order_id must carry us through: no second broker order, no
+    false 'resolved', and the entry is only spent once the order is actually seen."""
+    fake, deps, _ = make(tmp_path, gate=True)
+    fake.hide_new_for = 4     # lookups: run1 #1; run2 start-reconcile #2, retry #3, post-duplicate #4 -> all 404; run3 sees it
+    fake.fail["post"] = "timeout_after_accept_once"
+    r1 = k.run_session(deps)                                   # lookup #1 -> 404 (invisible)
+    assert r1["submission"]["results"][0]["outcome"] == "uncertain_unresolved"
+    assert len(fake.orders) == 1 and evaluated(tmp_path) is None
+    r2 = k.run_session(deps)                                   # lookup #2 404 -> resubmit same id -> broker says duplicate
+    assert len(fake.orders) == 1, "duplicate broker order created while the first was still invisible"
+    assert r2["submission"]["results"][0]["outcome"] == "uncertain_unresolved"
+    assert evaluated(tmp_path) is None and (state(tmp_path, "cadence_state.json") or {}).get("last_rebalanced_step") is None
+    r3 = k.run_session(deps)                                   # now visible -> adopted, no new POST needed
+    posts_before = len(fake.post_log)
+    assert len(fake.orders) == 1 and r3["status"] == "decided" and evaluated(tmp_path) == "2026-10-05"
+    assert state(tmp_path, "cadence_state.json")["last_rebalanced_step"] == 0
+    k.run_session(deps)
+    assert len(fake.post_log) == posts_before and len(fake.orders) == 1
+    ledger = PersistentIntentLedger(str(tmp_path / "order_ledger.sqlite3"))
+    assert ledger.count_for_session("2026-10-05") == 1
+    assert all(row["status"] not in ("intent_recorded", "uncertain_unresolved") for row in ledger.get_unresolved())
+
+def test_order_invisible_in_the_open_orders_list_is_not_sized_twice_next_run(tmp_path):
+    fake, deps, _ = make(tmp_path, gate=True)
+    fake.hide_new_for = 1
+    k.run_session(deps)                                        # accepted, but hidden from /v2/orders once
+    n = len(fake.orders)
+    k.run_session(deps)                                        # same session rerun: already_evaluated or retry-by-id only
+    assert len(fake.orders) == n
+
+
+# ------------------------------------------- halt: frequency and no prices ---
+
+def test_halt_with_no_prices_cannot_liquidate_but_latches_and_escalates(tmp_path):
+    fake, deps, _ = make(tmp_path, gate=True)
+    k.run_session(deps)
+    fake.fill_all()
+    advance(fake, deps)
+    fake.set_equity(88_000.0)
+    fake.missing_bars = set(["SPY", "EFA", "EEM", "IEF", "TLT", "GLD", "DBC", "VNQ"])
+    n = len(fake.post_log)
+    rec = k.run_session(deps)
+    assert rec["status"] == "abstained_data_not_ready"
+    assert state(tmp_path, "halt_state.json")["halted"] is True
+    assert len(fake.post_log) == n, "must not sell blind with no prices"
+    assert rec["halt_latched_but_unliquidated"] is True and rec["escalate"] is True
+    fake.missing_bars = set()                                   # prices back: liquidation happens at the next valid session
+    advance(fake, deps)
+    fake.set_equity(88_000.0)
+    rec2 = k.run_session(deps)
+    assert rec2["status"] == "halted" and all(b["side"] == "sell" for b in fake.post_log[n:]) and len(fake.post_log) > n
+
+
+def test_halt_with_one_unpriced_held_symbol_sells_the_rest_and_flags_that_one(tmp_path):
+    fake, deps, _ = make(tmp_path, gate=True)
+    fake.positions = [{"symbol": "TLT", "qty": "40"}, {"symbol": "GLD", "qty": "10"}]
+    (tmp_path / "halt_state.json").write_text(json.dumps({"halted": True}))
+    (tmp_path / "peak_equity_state.json").write_text(json.dumps(
+        {"peak_equity": 100000.0, "peak_session_date": "2026-10-01", "history": {"2026-10-01": 100000.0}}))
+    (tmp_path / "cadence_state.json").write_text(json.dumps(
+        {"session_zero_date": "2026-10-05", "last_evaluated_session_date": "2026-10-01"}))
+    fake.missing_bars = {"GLD"}
+    rec = k.run_session(deps)
+    # a missing price for ANY symbol means that symbol is never traded, even under a halt; the rest is liquidated
+    assert rec["status"] == "halted"
+    assert {(b["symbol"], b["side"]) for b in fake.post_log} == {("TLT", "sell")}
+    assert rec["halt_unliquidated_symbols"] == ["GLD"] and rec["escalate"] is True

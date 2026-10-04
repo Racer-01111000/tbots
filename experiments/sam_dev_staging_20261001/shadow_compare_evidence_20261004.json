@@ -1,0 +1,686 @@
+{
+  "data": "data/normalized/*.csv (accepted dataset), last session 2026-08-25",
+  "genome": {
+    "id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+    "independent_sha256_matches": true,
+    "lib_ids_matches": true
+  },
+  "windows": {
+    "2024-01-02_to_2026-08-25": {
+      "parity_lineage_d_vs_accepted_evaluator": {
+        "steps": 664,
+        "steps_compared": 664,
+        "steps_inputs_and_targets_exactly_equal": 664,
+        "accepted_final_equity_cents": 112377006,
+        "shadow_final_equity_cents": 112377006,
+        "accepted_order_count": 76,
+        "shadow_order_count": 76,
+        "accepted_turnover": 2.82637156,
+        "shadow_turnover": 2.82637156,
+        "accepted_halted": false,
+        "shadow_halted": false,
+        "PASS": true
+      },
+      "head_to_head": {
+        "champion": {
+          "final_return": 0.10826819999999993,
+          "max_drawdown": -0.05584297266424998,
+          "rebalances": 14,
+          "orders": 20,
+          "turnover_traded_notional_over_start": 2.52476383,
+          "mean_standing_exposure": 0.18,
+          "max_standing_exposure": 0.18,
+          "mean_target_turnover_per_rebalance_one_way": 0.08357142857142857,
+          "halted": false
+        },
+        "lineage_d": {
+          "final_return": 0.12377006000000002,
+          "max_drawdown": -0.032998111521689966,
+          "rebalances": 22,
+          "orders": 76,
+          "turnover_traded_notional_over_start": 2.82637156,
+          "mean_standing_exposure": 0.21,
+          "max_standing_exposure": 0.21,
+          "mean_target_turnover_per_rebalance_one_way": 0.05886363636363637,
+          "halted": false
+        }
+      },
+      "decision_differences": {
+        "sessions": 664,
+        "sessions_with_identical_standing_targets": 0,
+        "mean_l1_distance": 0.34231927710843374,
+        "sessions_with_no_symbol_overlap": 441,
+        "mean_exposure_gap_champion_minus_lineage_d": -0.03
+      },
+      "rebalance_targets": [
+        {
+          "date": "2024-01-02",
+          "champion": {
+            "EFA": 0.18
+          },
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-02-15",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-03-14",
+          "champion": {
+            "SPY": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2024-04-02",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-05-15",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2024-05-24",
+          "champion": {
+            "SPY": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2024-07-01",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2024-08-07",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2024-08-14",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-09-27",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-10-17",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2024-11-11",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2024-12-26",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0,
+            "EEM": 0,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0.21,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2024-12-30",
+          "champion": {
+            "SPY": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-02-12",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-03-14",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-03-28",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-05-13",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-05-27",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-06-27",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-08-07",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-08-12",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-09-25",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-10-17",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-11-07",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-12-23",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-12-30",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-02-09",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-03-13",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-03-25",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0,
+            "EEM": 0.105,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.105,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-05-08",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-05-26",
+          "champion": {
+            "EEM": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-06-24",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2026-08-06",
+          "champion": {
+            "DBC": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-08-07",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        }
+      ]
+    },
+    "2025-07-01_to_2026-08-25": {
+      "parity_lineage_d_vs_accepted_evaluator": {
+        "steps": 290,
+        "steps_compared": 290,
+        "steps_inputs_and_targets_exactly_equal": 290,
+        "accepted_final_equity_cents": 104019225,
+        "shadow_final_equity_cents": 104019225,
+        "accepted_order_count": 35,
+        "shadow_order_count": 35,
+        "accepted_turnover": 1.70564415,
+        "shadow_turnover": 1.70564415,
+        "accepted_halted": false,
+        "shadow_halted": false,
+        "PASS": true
+      },
+      "head_to_head": {
+        "champion": {
+          "final_return": 0.04089234000000008,
+          "max_drawdown": -0.06705746898918097,
+          "rebalances": 6,
+          "orders": 7,
+          "turnover_traded_notional_over_start": 0.5892559,
+          "mean_standing_exposure": 0.18,
+          "max_standing_exposure": 0.18,
+          "mean_target_turnover_per_rebalance_one_way": 0.045,
+          "halted": false
+        },
+        "lineage_d": {
+          "final_return": 0.04019225000000004,
+          "max_drawdown": -0.022613901707601358,
+          "rebalances": 10,
+          "orders": 35,
+          "turnover_traded_notional_over_start": 1.70564415,
+          "mean_standing_exposure": 0.21,
+          "max_standing_exposure": 0.21,
+          "mean_target_turnover_per_rebalance_one_way": 0.0805,
+          "halted": false
+        }
+      },
+      "decision_differences": {
+        "sessions": 290,
+        "sessions_with_identical_standing_targets": 0,
+        "mean_l1_distance": 0.33220689655172414,
+        "sessions_with_no_symbol_overlap": 219,
+        "mean_exposure_gap_champion_minus_lineage_d": -0.03
+      },
+      "rebalance_targets": [
+        {
+          "date": "2025-07-01",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-08-14",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-09-11",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-09-29",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-11-11",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2025-11-20",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2025-12-26",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-02-04",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-02-11",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-03-27",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0,
+            "EEM": 0,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0.21,
+            "DBC": 0,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-04-17",
+          "champion": {
+            "GLD": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-05-12",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0,
+            "EFA": 0.07,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        },
+        {
+          "date": "2026-06-26",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0,
+            "VNQ": 0.07
+          }
+        },
+        {
+          "date": "2026-06-30",
+          "champion": {
+            "EEM": 0.18
+          },
+          "lineage_d": null
+        },
+        {
+          "date": "2026-08-11",
+          "champion": null,
+          "lineage_d": {
+            "SPY": 0.07,
+            "EFA": 0,
+            "EEM": 0.07,
+            "IEF": 0,
+            "TLT": 0,
+            "GLD": 0,
+            "DBC": 0.07,
+            "VNQ": 0
+          }
+        }
+      ]
+    }
+  }
+}

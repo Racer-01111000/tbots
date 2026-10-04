@@ -2,7 +2,7 @@
 
 Branch `repair/paper-pilot-integration-review-20261004` (local only; not pushed, not relayed to EC2).
 Submission remains OFF: `alpaca_adapter._SUBMISSION_ENABLED_CONST = False` is untouched, no timer is installed.
-Tests: 91 at fe72d72 → 155 now, all pass (`pytest` from the integration venv; see "Running the tests").
+Tests: 91 at fe72d72 → 173 now (155 at the first review commit), all pass (`pytest` from the integration venv; see "Running the tests").
 
 ## Defects found in fe72d72 (all reproduced red before the fix)
 
@@ -48,7 +48,7 @@ Observations that matter more than the rank order:
 * **Selection bias favours the D rows:** they were picked *because* they ranked top in this very replay; the champion was frozen independently of it.
 * "Native" (5 bp) matrix is not comparable (each candidate vs a passive matched to its nominal 21–89 % cap); the champion's effective exposure is ≤18 % because `max_positions=1`. Use the 18 %-ceiling columns.
 * At 18 % exposure the genome's **12 % halt needs a ~67 % loss in the held asset** and is effectively inert.
-* **Runner support:** only the champion's `control_agent.decide` path is wired. D candidates need `s6a_runtime.decide_D` wiring plus a parity test against `replay_harness.simulate(use_decide_D=True)`. Not done.
+* **Runner support:** only the champion's `control_agent.decide` path is wired. D candidates need `s6a_runtime.decide_D` wiring plus a parity test against `replay_harness.simulate(use_decide_D=True)`. *Done afterwards, shadow-only: see the addendum.*
 
 ## Recommendation
 
@@ -84,3 +84,50 @@ PYTHONPATH=alpaca_adapter:kim_order_simulation_tests:.:../../scripts \
   <integration venv>/bin/python -m pytest -q --ignore=global_brief_feasibility --ignore=credential_installer .
 ```
 (`global_brief_feasibility` and `credential_installer` read real credentials/hit the network and are excluded.)
+
+---
+
+# Addendum (second brief, same day): lineage-D shadow wiring, delayed visibility, halt semantics
+
+Status: SHADOW ONLY. Nothing here can place or reserve an order. EC2 deployment, timer activation and enabling submission are all still pending. The 8 % halt and the 2026-11-01 expiry are **proposed, not accepted**.
+
+## 1. `gen_d890eb9f…` (D_primary_rank3) wiring
+* **Identity.** Genome copied verbatim from the primary run's `development_top_eight.json` into `lineage_d_genome_d890eb9f.json`. `lineage_d.load_verified_genome()` recomputes the hash with its own `hashlib` (not `lib.ids`) and refuses anything else; also checked: `lib.ids.genome_id`, the identical genome in the *reproduction* run's file, and `s6a_runtime.validate_genome("D", g)` (frozen schema + Trader-A isolation). A tampered copy is rejected (test).
+* **Decision logic.** Not reimplemented: `lineage_d.decide` calls the accepted `s6a_runtime.decide_D(genome, history, step)` unmodified and only drops the folded-in `CASH` residual, as the evaluator does.
+* **State semantics (the accepted evaluator's).** A bare `step` (sessions since the book's own session zero); D acts only when `step % 31 == 0`, otherwise `None` (hold); **no catch-up of a missed rebalance** (the champion pilot runner has catch-up, lineage D does not); external 12 % halt (`s6a_final.DRAWDOWN_HALT`) latches on the book's own hypothetical portfolio and liquidates to cash; fills at the next session's raw open with slippage + commission via `execution.Portfolio`.
+* **Where it lives.** `shadow_compare.py` (engine), `shadow_strategies.py`, `lineage_d.py`, `kim_shadow_compare.py` (live entrypoint, **not scheduled by any unit**). Each book persists to its own `state.json` under `kim_shadow_pilot/shadow_compare/<name>/`, plus an append-only `sessions.jsonl`.
+
+## 2. Parity proof (exact equality, identical inputs) — `shadow_compare_evidence_20261004.json`
+Reference = the accepted evaluator path: `replay_harness.simulate(... use_decide_D=True)` using the accepted primitives (`decide_D`, `execution.Portfolio`, `risk.validate`), on the accepted normalized dataset (`data/normalized`, last session 2026-08-25). I did **not** run `s6b_evaluator._simulate_admitted_episode` itself: it needs the sealed-lane bundle and admission token, and the previous GO deliberately kept this work out of the sealed S5 system.
+
+| Window | Steps | Inputs + targets exactly equal | Final equity (accepted vs shadow, cents) | Orders | Turnover | Result |
+|---|---|---|---|---|---|---|
+| 2024-01-02 → 2026-08-25 | 664 | 664 / 664 | 112,377,006 = 112,377,006 | 76 = 76 | 2.82637156 = 2.82637156 | PASS |
+| 2025-07-01 → 2026-08-25 | 290 | 290 / 290 | 104,019,225 = 104,019,225 | 35 = 35 | 1.70564415 = 1.70564415 | PASS |
+
+"Inputs equal" compares the last `regime_window+1` adjusted closes handed to `decide_D` at every step in both paths. The champion book is held to the same standard (final equity, order count, fill count and rebalance count equal to the accepted harness). Restart parity: a book stopped at session 60 and resumed equals an uninterrupted run, with no duplicate records.
+
+## 3. Head-to-head on identical completed sessions (hypothetical $100k books, 5 bp slippage + 5 bp commission, evaluator accounting)
+| | Window | Return | Max DD | Rebalances | Orders | Traded notional / start | Mean standing exposure |
+|---|---|---|---|---|---|---|---|
+| champion | 2024-01 → 2026-08-25 | 10.83 % | −5.58 % | 14 | 20 | 2.52× | 18 % |
+| lineage D | same | 12.38 % | −3.30 % | 22 | 76 | 2.83× | 21 % |
+| champion | 2025-07 → 2026-08-25 | 4.09 % | −6.71 % | 6 | 7 | 0.59× | 18 % |
+| lineage D | same | 4.02 % | −2.26 % | 10 | 35 | 1.71× | 21 % |
+
+Decision differences (664 sessions): **0** sessions with identical standing targets, 441 with no symbol in common, mean L1 weight distance 0.34, D carries +3 pp more exposure (21 % vs 18 %; at the pilot's 18 % ceiling they would be equal). D trades ~3–5× more orders for ~2.9× the turnover on the short window. The full per-rebalance target table is in the evidence file. These books ignore cash dividends (the live bars carry none); both are understated equally. **The live recorder has not run**: HOST has no Alpaca credentials and EC2 deployment is pending, so the numbers above are historical replays of the same code, not live sessions.
+
+## 4. Neither shadow can consume a paper-execution opportunity (tests: `test_shadow_live_isolation_20261004.py`)
+* **Structural:** shadow sources contain none of: `cadence_state`, `halt_state`, `peak_equity_state`, `order_ledger`, `KILL_SWITCH`, `pilot_config`, the broker class, `alpaca_adapter` imports, `submit`, POST, `/v2/orders`, `/v2/account`, `/v2/positions`.
+* **Request log:** a full live-path run makes only calendar and market-data GETs, zero POSTs; the only files written are `shadow_compare/{champion,lineage_d}/state.json` and `sessions.jsonl`.
+* **Interleaving, both orders:** shadow first, then the real pilot runner with the gate open → the pilot still places its entry and pilot state files are byte-identical before/after; pilot first, then shadow → unaffected.
+* **Robustness:** first run = session zero (never a backfill); missed sessions are processed in order; a data gap stops the books *before* advancing and escalates; holiday / too early / calendar failure change nothing; reruns are idempotent.
+
+## 5. Timeout recovery with delayed broker visibility (`test_delayed_visibility_*`)
+The POST times out **after** the broker accepted it; the order is invisible to `by_client_order_id` lookups for the next four checks (and absent from the order list). Result: run 1 → `uncertain_unresolved`; run 2 → lookups 404, same-id resubmit is refused by the broker as a duplicate (422 → mapped to *uncertain*, not *rejected*) → still unresolved; **the broker holds exactly one order throughout**; the session stays retryable and the rebalance is not spent. Run 3, once visible, the order is adopted with no further POST, the session is marked evaluated and the rebalance consumed. Safety rests on the deterministic `client_order_id = kim-{session}-{symbol}`; a lookup *failure* (5xx/timeout) blocks the send entirely.
+
+## 6. Halt: monitoring frequency and behaviour with no prices
+* **Frequency.** Once per valid trading session, at the ~16:45 ET timer run after the 16:15 data cutoff. Drawdown = broker **account equity** vs the persisted maximum of **end-of-session snapshots**. It is **not intraday**: an intraday breach that recovers by 16:45 is never seen, and the peak is the highest daily snapshot, not the intraday high. Pre-cutoff catch-up runs and holidays record nothing. Sessions the job never ran are not backfilled into the peak history.
+* **Breach response.** Latched at the snapshot; liquidation orders are `day` market orders submitted that evening and queued for the next open, so worst-case exposure after a breach is one more overnight plus the open gap.
+* **Prices unavailable.** Monitoring does not depend on bars (broker equity is enough), so drawdown is recorded and the halt **latches even if every price is missing**. But liquidation is sized from bars, so with no usable bars the session **abstains: no orders**, and the result now carries `halt_latched_but_unliquidated: true` and `escalate: true` (previously silent unless ≥3 abstentions). It retries every session until prices return. If only *some* symbols lack a price, the others are liquidated and each held-but-unpriced symbol is **never sold blind, even under a halt**; it is reported in `halt_unliquidated_symbols` with `escalate`.
+* **Decision for Rick:** whether a latched halt should be allowed to sell *by share quantity* without a price (a market sell needs none). Current behaviour is the conservative reading and keeps the no-sell-on-missing-price invariant absolute.

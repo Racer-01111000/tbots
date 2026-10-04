@@ -33,6 +33,9 @@ class FakeAlpaca:
         self.fail: dict = {}            # e.g. {"positions": 500, "calendar": 500, "post": "timeout"}
         self.missing_bars: set = set()
         self.price_scale = 1.0
+        self.get_log: list = []
+        self.hide_new_for = 0            # newly accepted orders stay invisible to this many lookups/list calls
+        self.hidden: dict = {}           # client_order_id -> remaining lookups that still return 404 (delayed visibility)
 
     # ---- helpers ----
     def set_equity(self, equity, cash=None):
@@ -66,7 +69,7 @@ class FakeAlpaca:
         out = []
         for i, d in enumerate(dates):
             px = (50 + 10 * idx) * (1.0003 + 0.00005 * (7 - idx)) ** i * (1 + 0.004 * math.sin(i / (3 + idx)))
-            out.append({"t": f"{d}T04:00:00Z", "c": round(px * self.price_scale, 4)})
+            out.append({"t": f"{d}T04:00:00Z", "o": round(px * self.price_scale * 0.999, 4), "c": round(px * self.price_scale, 4)})
         return out
 
     # ---- GET (runner) ----
@@ -74,6 +77,7 @@ class FakeAlpaca:
         u = urlparse(url)
         q = parse_qs(u.query)
         p = u.path
+        self.get_log.append(p)
         if "data.alpaca.markets" in url:
             sym = p.split("/")[3]
             return 200, {"bars": self._bars(sym)}
@@ -82,7 +86,8 @@ class FakeAlpaca:
         if p == "/v2/positions":
             return self.fail.get("positions", 200), (self.positions if "positions" not in self.fail else None)
         if p == "/v2/orders":
-            return self.fail.get("orders", 200), (list(self.orders) if "orders" not in self.fail else None)
+            visible = [o for o in self.orders if self.hidden.get(o["client_order_id"], 0) <= 0]
+            return self.fail.get("orders", 200), (visible if "orders" not in self.fail else None)
         if p == "/v2/calendar":
             if "calendar" in self.fail:
                 return self.fail["calendar"], None
@@ -106,11 +111,19 @@ class FakeAlpaca:
                      "symbol": b["symbol"], "qty": b["qty"], "side": b["side"],
                      "status": "accepted", "filled_qty": "0", "time_in_force": b["time_in_force"]}
             self.orders.append(order)
+            if self.hide_new_for:
+                self.hidden[b["client_order_id"]] = self.hide_new_for
+            if self.fail.get("post") == "timeout_after_accept_once":
+                del self.fail["post"]
+                raise TimeoutError("response lost after the broker accepted the order")
             return 200, dict(order)
         if method == "GET" and u.path == "/v2/orders:by_client_order_id":
             if "lookup" in self.fail:
                 return self.fail["lookup"], None
             cid = parse_qs(u.query)["client_order_id"][0]
+            if self.hidden.get(cid, 0) > 0:
+                self.hidden[cid] -= 1
+                return 404, {"message": "not found"}
             o = next((o for o in self.orders if o["client_order_id"] == cid), None)
             return (200, dict(o)) if o else (404, {"message": "not found"})
         raise AssertionError(f"unexpected {method} {url}")

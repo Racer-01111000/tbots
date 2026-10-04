@@ -344,8 +344,11 @@ def run_session(d: Deps) -> dict:
             cadence["abstained_sessions"] = (cadence["abstained_sessions"] + [today_et])[-30:]
             write_json_atomic(d.state_dir / "cadence_state.json", cadence)
         n = len(cadence["abstained_sessions"] if persist else cadence["abstained_sessions"] + [today_et])
+        # A latched halt that cannot liquidate because prices are unavailable is never silent.
+        stuck_halt = bool(rec.get("halt_latched")) and bool(positions)
         return finish(status, consecutive_abstained_sessions=n,
-                      escalate=n >= ESCALATE_AFTER_ABSTAINED_SESSIONS,
+                      halt_latched_but_unliquidated=stuck_halt,
+                      escalate=n >= ESCALATE_AFTER_ABSTAINED_SESSIONS or stuck_halt,
                       decision={"abstained": True, "reason": reason})
 
     # --- drawdown: recorded on EVERY valid session, rebalance or not ---
@@ -400,6 +403,12 @@ def run_session(d: Deps) -> dict:
         weights = {}
         rec["decision"] = {"halted": True, "reason": "drawdown halt latched; target is cash"}
         status = "halted"
+        # Positions in symbols with no usable price are NEVER sold blind (the no-sell-on-missing-price
+        # invariant holds even under a halt); they are reported and escalated for a human instead.
+        stuck = sorted(s for s in unavailable if current_shares.get(s, 0) > 0)
+        if stuck:
+            rec["halt_unliquidated_symbols"] = stuck
+            rec["escalate"] = True
     elif not rebalance_due:
         rec["decision"] = {"hold": True, "reason": f"no rebalance due (step {step}, last rebalanced step {last_reb})"}
         status = "hold"
