@@ -266,14 +266,15 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
         => HOLD every further submission and flag it (an uncertain *sell* may only be recovered by
         looking it up / resubmitting the SAME client_order_id; an uncertain *buy* is never resubmitted);
       * the ledger, duplicate protection, per-session order cap and kill switch apply unchanged;
-      * the halt stays latched no matter what; flat status is confirmed from the broker, not assumed.
+      * the halt stays latched no matter what; flatness is confirmed from the broker, not assumed, and is
+        reported at two scopes: the strategy's eight symbols, and the whole account.
     """
     live = gate_open and persist
     kill_path = d.state_dir / d.config["kill_switch_file"]
     cap = d.config["max_orders_per_session"]
 
     def hold(reason: str, **extra) -> dict:
-        return finish("halt_liquidation_held", halt_hold_reason=reason, escalate=True, halt_flat_confirmed=None, **extra)
+        return finish("halt_liquidation_held", halt_hold_reason=reason, escalate=True, **extra)
 
     if lookup_errors:
         return hold("ledger reconciliation could not reach the broker; position/order state unknown")
@@ -292,11 +293,14 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
         if pre is None:
             return hold("positions/open orders could not be read; refusing to recover an unresolved sell blind",
                         unresolved_submissions=ids)
-        held = {p_["symbol"]: math.floor(float(p_.get("qty") or 0) + 1e-9) for p_ in pre[0]}
-        too_big = [r["client_order_id"] for r in unresolved if int(r["qty"]) > held.get(r["symbol"], 0)]
-        if too_big:   # a stale intent could now oversell (or open a short): a human decides, nothing is sent
-            return hold("an unresolved earlier SELL is larger than the position now held; not recovering it",
-                        unresolved_submissions=ids, oversell_risk=too_big)
+        confirmed_sells = [r for r in ledger.get_unresolved()
+                           if r["side"] == "sell" and r["status"] not in ("intent_recorded", "uncertain_unresolved")]
+        # Each uncertain sell may already exist at the broker, so reserve ALL of them together with every
+        # confirmed pending sell against the position before recovering any (all-or-nothing).
+        over = session_guards.reserve_sell_recoveries(unresolved, pre[0], pre[1], confirmed_sells)
+        if over:
+            return hold("recovering the unresolved SELLs together with pending sells would exceed the position; "
+                        "not recovering any of them", unresolved_submissions=ids, oversell_risk=over)
         recover = [IntendedOrderSpec(r["client_order_id"], r["symbol"], int(r["qty"]), "sell", time_in_force="day")
                    for r in unresolved]
         rec["halt_recovery"] = submit_orders_with_limits(d.broker, ledger, recover, kill_path, today_et, cap)
@@ -327,16 +331,20 @@ def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, c
         rec["submission"] = {"skipped": True, "reason": "submission gate closed or validate-only; ledger untouched"}
 
     after = _get_fresh(d)
-    flat = session_guards.is_flat(after[0], after[1], UNIVERSE) if after else None
-    rec["halt_flat_confirmed"] = flat
+    uni_flat, acct_flat = session_guards.flat_status(after[0], after[1], UNIVERSE) if after else (None, None)
+    flat = uni_flat
+    rec["halt_strategy_universe_flat"] = uni_flat      # the eight strategy symbols only
+    rec["halt_account_flat"] = acct_flat               # nothing held or working anywhere in the account
     same_day = halt.get("last_flat_check_session") == today_et
     prev = halt.get("unflat_sessions", 0)
     unflat = 0 if flat else (prev if same_day else prev + 1)
-    progress = {**halt, "halted": True, "flat_confirmed": flat, "last_flat_check_session": today_et, "unflat_sessions": unflat}
+    progress = {**halt, "halted": True, "strategy_universe_flat": uni_flat, "account_flat": acct_flat,
+                "last_flat_check_session": today_et, "unflat_sessions": unflat}
     if persist:
         write_json_atomic(halt_path, progress)       # latch preserved; only progress fields change
     rec["escalate"] = bool(blocked or flat is None or notes["short_positions"] or notes["pending_buys"]
-                           or notes["fractional_residual"] or unflat >= 2 or rec.get("escalate"))
+                           or notes["fractional_residual"] or notes["non_universe_positions"]
+                           or acct_flat is False or unflat >= 2 or rec.get("escalate"))
 
     if persist and not blocked:
         cadence["last_evaluated_session_date"] = today_et
@@ -475,6 +483,18 @@ def run_session(d: Deps) -> dict:
             write_json_atomic(halt_path, halt)
     rec.update(peak_equity=peak_value, current_drawdown=dd, drawdown_halt_pct=halt_pct,
                halt_latched=bool(halt.get("halted")), risk_drawdown_enforced=True)
+
+    if ledger is not None and not halt.get("halted"):
+        # An earlier submission whose outcome is UNKNOWN blocks every new order. A later session builds a
+        # different date-based client_order_id, so the same-id duplicate protection cannot see it; without
+        # this hold an accepted-but-invisible order would be duplicated the next day. Same-session
+        # unresolved rows are left to the same-id recovery path in submit_with_reconciliation.
+        prior = [r for r in ledger.get_uncertain() if r["session_date"] != today_et]
+        if prior:
+            return finish("held_unresolved_prior_submission", escalate=True,
+                          unresolved_submissions=[r["client_order_id"] for r in prior],
+                          decision={"held": True, "reason": "an earlier session's submission is unresolved; no new "
+                                    "order is created until it is reconciled or an operator abandons it"})
 
     if halt.get("halted"):
         # Quantity-based liquidation: needs no price, so it runs BEFORE (and independent of) the

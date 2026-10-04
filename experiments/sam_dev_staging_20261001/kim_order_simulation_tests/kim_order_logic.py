@@ -31,7 +31,7 @@ class DuplicateSubmissionError(RuntimeError):
 # treats anything outside this set (including the ledger's own
 # "intent_recorded" and the live "accepted"/"new"/"partially_filled"/etc.)
 # as still needing attention.
-TERMINAL_ORDER_STATUSES = {"filled", "rejected", "canceled", "expired"}
+TERMINAL_ORDER_STATUSES = {"filled", "rejected", "canceled", "expired", "abandoned_by_operator"}
 
 
 @dataclass
@@ -182,12 +182,27 @@ class PersistentIntentLedger:
         well as live statuses like 'accepted'/'partially_filled'."""
         placeholders = ",".join("?" for _ in TERMINAL_ORDER_STATUSES)
         rows = self.conn.execute(
-            f"SELECT client_order_id, symbol, qty, side, status, broker_order_id, filled_qty "
+            f"SELECT client_order_id, symbol, qty, side, status, broker_order_id, filled_qty, session_date "
             f"FROM order_intents WHERE status IS NULL OR status NOT IN ({placeholders})",
             tuple(TERMINAL_ORDER_STATUSES),
         ).fetchall()
-        keys = ["client_order_id", "symbol", "qty", "side", "status", "broker_order_id", "filled_qty"]
+        keys = ["client_order_id", "symbol", "qty", "side", "status", "broker_order_id", "filled_qty", "session_date"]
         return [dict(zip(keys, row)) for row in rows]
+
+    def get_uncertain(self) -> list[dict]:
+        """Rows whose submission outcome is UNKNOWN (never got a confirmed broker answer)."""
+        return [r for r in self.get_unresolved() if r["status"] in ("intent_recorded", "uncertain_unresolved")]
+
+    def abandon(self, client_order_id: str, reason: str) -> None:
+        """Operator action, after verifying at the broker that the order does not exist (or is
+        otherwise dead): retire an unresolved row so it stops holding the account. Refuses anything
+        that is not currently unresolved, and records the reason."""
+        row = self.get(client_order_id)
+        if row is None or row["status"] not in ("intent_recorded", "uncertain_unresolved"):
+            raise ValueError(f"{client_order_id} is not an unresolved submission; refusing to abandon it")
+        if not reason or not reason.strip():
+            raise ValueError("an abandonment reason is required")
+        self.update_status(client_order_id, row.get("broker_order_id"), "abandoned_by_operator", row.get("filled_qty") or 0.0)
 
     def count_all(self) -> int:
         return self.conn.execute("SELECT COUNT(*) FROM order_intents").fetchone()[0]

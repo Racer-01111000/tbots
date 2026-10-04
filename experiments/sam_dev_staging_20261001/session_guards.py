@@ -76,39 +76,60 @@ def build_specs(orders: list[dict], session_date: str, time_in_force: str) -> li
 TERMINAL_STATUSES = {"filled", "canceled", "expired", "rejected", "done_for_day", "replaced"}
 
 
-def plan_halt_liquidation(positions: list, open_orders: list, ledger_nonterminal_sells: list,
-                          universe: list[str]) -> tuple[list[dict], dict]:
-    """Sell only the remaining UNCOMMITTED long quantity of each universe symbol.
-
-      sellable = floor(position_qty) - ceil(quantity already committed to live SELL orders)
-
-    committed = remaining (qty - filled_qty) of every non-terminal sell known to the
-    broker, plus remaining of every non-terminal sell known only to our ledger (an
-    accepted order not yet visible in the broker's list), de-duplicated by
-    client_order_id. Never produces a buy, never goes below zero, never touches a
-    short or a non-universe holding. Pending BUYs are reported, not cancelled
-    (cancelling is a different broker action this path does not take)."""
-    notes = {"short_positions": [], "non_universe_positions": [], "fractional_residual": {},
-             "pending_buys": [], "committed_sell_qty": {}}
+def committed_sell_quantities(open_orders: list, ledger_sells: list) -> tuple[dict, list]:
+    """Remaining quantity already committed to live SELL orders, per symbol: every non-terminal
+    broker sell plus every non-terminal ledger-only sell, de-duplicated by client_order_id.
+    Returns (committed_by_symbol, pending_buy_symbols)."""
     committed: dict[str, float] = {}
+    pending_buys: list = []
     seen: set = set()
     for o in open_orders or []:
         if o.get("status") in TERMINAL_STATUSES:
             continue
         sym = o.get("symbol")
         if o.get("side") == "buy":
-            notes["pending_buys"].append(sym)
+            pending_buys.append(sym)
             continue
         remaining = max(0.0, float(o.get("qty") or 0) - float(o.get("filled_qty") or 0))
         committed[sym] = committed.get(sym, 0.0) + remaining
         seen.add(o.get("client_order_id"))
-    for row in ledger_nonterminal_sells or []:
+    for row in ledger_sells or []:
         if row["client_order_id"] in seen or row.get("side") != "sell":
             continue
         remaining = max(0.0, float(row.get("qty") or 0) - float(row.get("filled_qty") or 0))
         committed[row["symbol"]] = committed.get(row["symbol"], 0.0) + remaining
-    notes["committed_sell_qty"] = {k: v for k, v in committed.items() if v}
+    return committed, pending_buys
 
+
+def reserve_sell_recoveries(unresolved_sells: list, positions: list, open_orders: list,
+                            ledger_confirmed_sells: list) -> list:
+    """AGGREGATE reservation for recovering uncertain sells. Each uncertain sell might already exist at
+    the broker, so in the worst case ALL of them plus every confirmed pending sell are live at once;
+    recovery is only allowed if that worst case still fits inside the long position.
+    Returns the ids that do NOT fit (empty list => safe to recover them all). All-or-nothing by design."""
+    held = {p.get("symbol"): math.floor(float(p.get("qty") or 0) + 1e-9) for p in positions or []}
+    committed, _ = committed_sell_quantities(open_orders, ledger_confirmed_sells)
+    available = {s: held.get(s, 0) - math.ceil(committed.get(s, 0.0) - 1e-9) for s in set(held) | {r["symbol"] for r in unresolved_sells}}
+    over = []
+    for r in sorted(unresolved_sells, key=lambda r: (r["symbol"], r["client_order_id"])):
+        q = int(r["qty"])
+        available[r["symbol"]] = available.get(r["symbol"], 0) - q
+        if available[r["symbol"]] < 0:
+            over.append(r["client_order_id"])
+    return over
+
+
+def plan_halt_liquidation(positions: list, open_orders: list, ledger_nonterminal_sells: list,
+                          universe: list[str]) -> tuple[list[dict], dict]:
+    """Sell only the remaining UNCOMMITTED long quantity of each universe symbol.
+
+      sellable = floor(position_qty) - ceil(quantity already committed to live SELL orders)
+
+    Never produces a buy, never goes below zero, never touches a short or a non-universe holding.
+    Pending BUYs are reported, not cancelled (a different broker action this path does not take)."""
+    committed, pending_buys = committed_sell_quantities(open_orders, ledger_nonterminal_sells)
+    notes = {"short_positions": [], "non_universe_positions": [], "fractional_residual": {},
+             "pending_buys": pending_buys, "committed_sell_qty": {k: v for k, v in committed.items() if v}}
     orders = []
     for pos in positions or []:
         sym = pos.get("symbol")
@@ -138,7 +159,12 @@ def build_liquidation_specs(orders: list[dict], session_date: str) -> list[Inten
                               int(o["shares"]), "sell", time_in_force="day") for o in orders]
 
 
-def is_flat(positions: list, open_orders: list, universe: list[str]) -> bool:
-    held = any(p.get("symbol") in universe and float(p.get("qty") or 0) != 0 for p in positions or [])
-    live = any(o.get("symbol") in universe and o.get("status") not in TERMINAL_STATUSES for o in open_orders or [])
-    return not held and not live
+def flat_status(positions: list, open_orders: list, universe: list[str]) -> tuple[bool, bool]:
+    """(strategy_universe_flat, account_flat). The first answers 'is the strategy out of its eight
+    symbols'; only the second says nothing at all is held or working anywhere in the account."""
+    def held(p): return float(p.get("qty") or 0) != 0
+    def live(o): return o.get("status") not in TERMINAL_STATUSES
+    uni = not any(p.get("symbol") in universe and held(p) for p in positions or []) and \
+        not any(o.get("symbol") in universe and live(o) for o in open_orders or [])
+    acct = not any(held(p) for p in positions or []) and not any(live(o) for o in open_orders or [])
+    return uni, acct

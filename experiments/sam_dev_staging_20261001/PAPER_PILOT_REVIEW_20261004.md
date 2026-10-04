@@ -2,7 +2,7 @@
 
 Branch `repair/paper-pilot-integration-review-20261004` (local only; not pushed, not relayed to EC2).
 Submission remains OFF: `alpaca_adapter._SUBMISSION_ENABLED_CONST = False` is untouched, no timer is installed.
-Tests: 91 at fe72d72 → 205 now (155 at the first review commit, 173 after the lineage-D shadow), all pass (`pytest` from the integration venv; see "Running the tests").
+Tests: 91 at fe72d72 → 219 now (155 at the first review commit, 173 after the lineage-D shadow, 205 after quantity liquidation), all pass (`pytest` from the integration venv; see "Running the tests").
 
 ## Defects found in fe72d72 (all reproduced red before the fix)
 
@@ -148,7 +148,7 @@ Once the halt is latched (persisted `halt_state.json`, never cleared by code), e
    * fresh positions or open orders cannot be read.
 2. **Sizing (`session_guards.plan_halt_liquidation`, pure):** per universe symbol, `sell = floor(position_qty) − ceil(committed)`, where `committed` is the remaining quantity (`qty − filled_qty`) of every non-terminal sell known to the broker plus every non-terminal sell known only to our ledger (accepted but not yet visible), de-duplicated by `client_order_id`. Never negative, never a buy, never a short; a short, a non-universe holding, a fractional residual, or a pending buy is **reported and escalated, not acted on** (cancelling a pending buy is a different broker action this path does not take).
 3. **Submission:** through the unchanged `submit_orders_with_limits`, so the persistent ledger, deterministic duplicate protection (`kim-{session}-{symbol}-liq`), the per-session order cap and the kill switch all apply. The kill switch blocks liquidation too. Sell-only is asserted in code (`build_liquidation_specs` raises on anything else).
-4. **After submission:** positions and open orders are re-read and **flat status is confirmed from the broker** (`halt_flat_confirmed`): no universe position and no live order. `unflat_sessions` is tracked in `halt_state.json`; two consecutive unflat sessions escalate. The latch is preserved through partial fills, expired orders and flat; recovery of equity never un-halts and never causes a buy.
+4. **After submission:** positions and open orders are re-read and **flat status is confirmed from the broker** (`halt_strategy_universe_flat` / `halt_account_flat` (see Addendum 3; the original single `halt_flat_confirmed` was misleadingly named). `unflat_sessions` is tracked in `halt_state.json`; two consecutive unflat sessions escalate. The latch is preserved through partial fills, expired orders and flat; recovery of equity never un-halts and never causes a buy.
 5. **Not live:** gate closed or validate-only plans and logs the sells but sends nothing and writes no ledger (validate-only writes no state file at all).
 
 ## Tests (`test_halt_liquidation_20261004.py`, 34 tests; the 9 runner-level behaviour tests fail on the previous commit)
@@ -160,3 +160,23 @@ Planner: full quantity, never a buy/short, non-universe, pending sells, partial-
 * **Monitoring is once per session on end-of-day snapshots**, not intraday.
 * **The per-session cap still applies**: more held symbols than the cap means the remainder waits for the next session (flagged).
 * The sell is sized from `/v2/positions` + open orders at ~16:45 ET; fills between that read and the order's execution are the broker's responsibility (an oversize sell is rejected by the broker, not partially honoured by us).
+
+
+---
+
+# Addendum 3: two activation-blocking defects in 67fe142 (found by an independent review; reproduced and fixed)
+
+Both were reproduced on my own copy first (`oversold: 16 committed against 10 held`; Tuesday created a second 290-share order) and the new regression tests are red on 67fe142. Submission stays disabled; nothing deployed.
+
+| # | Defect in 67fe142 | Fix |
+|---|---|---|
+| 1 | **Halt recovery could oversell.** Each unresolved SELL was compared with the whole position independently, and confirmed pending sells were ignored. With 10 TLT held, two uncertain 8-share sells were both submitted (16 committed); an uncertain 8 plus an existing pending 8 did the same. | `session_guards.reserve_sell_recoveries`: the worst case is that **every** uncertain sell already exists at the broker, so all of them plus every confirmed pending sell (broker-visible, and ledger-only accepted ones, de-duplicated by id) are reserved against the position **per symbol** before any is recovered. All-or-nothing: if the worst case does not fit, nothing is recovered and the session holds with `oversell_risk`. |
+| 2 | **An unresolved earlier submission did not block new orders in the normal path.** Monday's accepted-but-invisible 290-share buy stayed `uncertain_unresolved`; Tuesday computed a fresh order under a new date-based `client_order_id`, bypassing same-id duplicate protection → two broker orders. | Any uncertain ledger row from an **earlier session** now holds the session (`held_unresolved_prior_submission`, escalate, not marked evaluated) before any decision or order. It is never recovered by resubmitting a stale intent. The start-of-run reconciliation still adopts it if the broker has become able to show it. Same-session uncertain rows keep the same-id recovery path. |
+| 3 | **"Flat confirmed" only checked the eight symbols;** 10 AAPL shares returned `True`, and non-universe holdings were not an escalation condition. | Two explicitly scoped fields: `halt_strategy_universe_flat` (the eight symbols + live orders in them) and `halt_account_flat` (nothing held or working anywhere). A non-universe holding or live non-universe order escalates; `halt_state.json` stores both. The old `halt_flat_confirmed` name is gone. |
+| 4 | Order cap can delay liquidation. | Not a defect; unchanged. **Pilot configuration decision for Rick** (see below). |
+
+**Resolving a hold (operator procedure).** A prior-session unresolved row will hold the account until it is resolved. Check the broker for the `client_order_id`; if the order does not exist (or is dead), retire the row with `PersistentIntentLedger(<path>).abandon("<id>", "<what you verified>")`. It refuses anything that is not currently unresolved and requires a reason; the row becomes the terminal status `abandoned_by_operator`. If the order does exist, the next run's reconciliation adopts it automatically.
+
+**Pilot configuration decision (cap vs liquidation).** `max_orders_per_session = 4` applies to liquidation too, as instructed. With the 8-symbol universe and `max_positions=1` the account normally holds one or two symbols, so 4 is ample; it only delays liquidation if more than four distinct symbols are held, and the remainder then waits for the next session (escalated). Options: keep as is, or exempt `-liq` orders from the cap (lower safety against a runaway loop, faster exit).
+
+**Verification limits.** Tests were run on the local Python 3.13.5 venv (`/home/rick/tbots_integration_checkout_venv`), the same interpreter version EC2's `venv313` was built from, but **not** on EC2's venv313; that would require copying code to the instance, which is a deployment step and has not been authorized. No brokerage calls were made; all broker behaviour is the in-memory `fake_alpaca`.

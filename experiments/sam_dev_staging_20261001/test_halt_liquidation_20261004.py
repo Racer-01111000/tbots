@@ -129,18 +129,18 @@ def test_halt_stays_latched_and_flat_is_confirmed_from_the_broker_not_assumed(tm
     fake, deps, _ = make(tmp_path, gate=True)
     arm(tmp_path, fake, [pos("TLT", 40)])
     r1 = k.run_session(deps)
-    assert r1["halt_flat_confirmed"] is False                  # position still held + our sell still open
+    assert r1["halt_strategy_universe_flat"] is False                  # position still held + our sell still open
     assert state(tmp_path, "halt_state.json")["halted"] is True
     advance(fake, deps)                                        # fills the sell
     r2 = k.run_session(deps)
-    assert r2["halt_flat_confirmed"] is True and r2["status"] == "halted"
+    assert r2["halt_strategy_universe_flat"] is True and r2["status"] == "halted"
     h = state(tmp_path, "halt_state.json")
-    assert h["halted"] is True and h["flat_confirmed"] is True and h["unflat_sessions"] == 0
+    assert h["halted"] is True and h["strategy_universe_flat"] is True and h["unflat_sessions"] == 0
     fake.set_equity(100_000.0)                                 # recovery never un-halts, and nothing is bought
     n = len(fake.post_log)
     advance(fake, deps)
     r3 = k.run_session(deps)
-    assert r3["status"] == "halted" and len(fake.post_log) == n and r3["halt_flat_confirmed"] is True
+    assert r3["status"] == "halted" and len(fake.post_log) == n and r3["halt_strategy_universe_flat"] is True
 
 
 def test_partial_fill_then_next_session_only_sells_what_is_still_uncommitted(tmp_path):
@@ -154,11 +154,11 @@ def test_partial_fill_then_next_session_only_sells_what_is_still_uncommitted(tmp
     advance_only(fake)
     r = k.run_session(deps)
     assert len(fake.post_log) == n, "oversold: the remaining 25 are already committed to the working sell"
-    assert r["halt_flat_confirmed"] is False and state(tmp_path, "halt_state.json")["halted"] is True
+    assert r["halt_strategy_universe_flat"] is False and state(tmp_path, "halt_state.json")["halted"] is True
     liq["status"], liq["filled_qty"] = "filled", "40"
     fake.positions = []
     advance_only(fake)
-    assert k.run_session(deps)["halt_flat_confirmed"] is True
+    assert k.run_session(deps)["halt_strategy_universe_flat"] is True
 
 
 def advance_only(fake):
@@ -350,7 +350,7 @@ def test_persistent_unflat_is_escalated_after_two_sessions(tmp_path):
     fake.orders[0]["status"] = "accepted"
     advance_only(fake)
     r2 = k.run_session(deps)                                   # still held, working sell commits it: nothing new, not flat
-    assert r2["halt_flat_confirmed"] is False and r2["escalate"] is True
+    assert r2["halt_strategy_universe_flat"] is False and r2["escalate"] is True
     assert state(tmp_path, "halt_state.json")["unflat_sessions"] == 2
 
 
