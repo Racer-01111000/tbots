@@ -19,6 +19,7 @@ for base in ("research/synthetic_gym", "scripts", "evolution/protocol"):
         if p.is_file() and "__pycache__" not in p.parts and ".pytest_cache" not in p.parts and p.suffix not in (".pyc",) and "results" not in p.relative_to(REPO / base).parts[:1]:
             files.append(str(p.relative_to(REPO)))
 files.append(D)
+files.append("experiments/sam_15_month_replay_20261001/replay_harness.py")   # the accepted evaluator mirror, used by the parity tests
 for p in sorted((REPO / "experiments/sam_dev_staging_20261001").rglob("*")):
     rel = p.relative_to(REPO)
     if p.is_file() and p.suffix in (".py", ".json") and "dry_run" not in rel.parts and "blind_week_20261004" not in rel.parts and "kim_shadow_pilot" not in rel.parts and "__pycache__" not in rel.parts:
