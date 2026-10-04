@@ -1,0 +1,94 @@
+{
+  "manifest_version": 1,
+  "experiment": "synthetic_market_gym_20261004",
+  "source_cutoff_utc_frozen_before_generation": "2026-10-04T04:29:39+00:00",
+  "policy": "A source that cannot be verified contributes NO numerical calibration. The associated stress is an explicit hypothesis. Headline numbers asserted in the GO text are recorded below as assertions, not facts.",
+  "sources": [
+    {
+      "id": "IEA_OMR_2026_09",
+      "url": "https://www.iea.org/reports/oil-market-report-september-2026",
+      "publisher": "IEA",
+      "asserted_in_GO": "constrained Gulf flows, refining pressure and unusually tight diesel supply; recovery projections are forecasts",
+      "status": "UNVERIFIED_ACCESS_BLOCKED",
+      "kind_if_verified": "mixed observation + forecast",
+      "attempts": [
+        {
+          "client": "WebFetch tool",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "outcome": "server returned 403 Forbidden; no body retrieved"
+        },
+        {
+          "client": "curl, browser-like User-Agent",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 5735,
+          "sha256_of_response": "3d1769f27011a7271f26abb2ce800c1e2d79da3dc5607a41fd0449259a1f1024",
+          "archived_as": "sources/www_iea_org_reports_oil_market_report_se.html",
+          "outcome": "Cloudflare 'Just a moment...' JavaScript challenge page, not the report"
+        }
+      ],
+      "usage_in_gym": "HYPOTHESIS ONLY: separate crude-oil and refined-fuel (diesel) shocks as distinct factors with independent timing and sign. No numeric value taken."
+    },
+    {
+      "id": "FAO_FFPI_2026_10",
+      "url": "https://www.fao.org/worldfoodsituation/foodpricesindex",
+      "publisher": "FAO",
+      "asserted_in_GO": "October 2 release: September index 136.0, up 1.5% month-on-month",
+      "status": "UNVERIFIED_ACCESS_BLOCKED",
+      "kind_if_verified": "observation",
+      "attempts": [
+        {
+          "client": "WebFetch tool",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "outcome": "server returned 403 Forbidden; no body retrieved"
+        },
+        {
+          "client": "curl, browser-like User-Agent",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 5695,
+          "sha256_of_response": "862d4dbf5219765d0a42d689cca1ab06573edc53077d224f8772c2eec08ffdd3",
+          "archived_as": "sources/www_fao_org_worldfoodsituation_foodprice.html",
+          "outcome": "Cloudflare 'Just a moment...' JavaScript challenge page, not the data"
+        }
+      ],
+      "usage_in_gym": "HYPOTHESIS ONLY: an agricultural-supply factor with weather/transport/input-cost channels and good-harvest counter-cases. The asserted 136.0 / +1.5% is NOT used."
+    },
+    {
+      "id": "IMF_WEO_2026_07",
+      "url": "https://www.imf.org/en/publications/weo/issues/2026/07/08/world-economic-outlook-update-july-2026",
+      "publisher": "IMF",
+      "asserted_in_GO": "stalled disinflation and interacting war/technology risks (July 2026 vintage forecast)",
+      "status": "UNVERIFIED_ACCESS_BLOCKED",
+      "kind_if_verified": "forecast (dated vintage, not an October observation)",
+      "attempts": [
+        {
+          "client": "WebFetch tool",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "outcome": "server returned 403 Forbidden; no body retrieved"
+        },
+        {
+          "client": "curl, browser-like User-Agent",
+          "at_utc": "2026-10-04T04:29:39+00:00",
+          "http_status": 403,
+          "content_type": "text/html",
+          "bytes": 490,
+          "sha256_of_response": "f5ccba0078101a1b18f02ae0581512c6f136a9bd07f807802775ea94e9f5bafd",
+          "archived_as": "sources/www_imf_org_en_publications_weo_issues_2.html",
+          "outcome": "Akamai 'Access Denied' page, not the document"
+        }
+      ],
+      "usage_in_gym": "HYPOTHESIS ONLY: both an inflationary-stagnation regime and a growth/technology regime are included, as the brief requires, without any forecast value."
+    }
+  ],
+  "not_done": [
+    "No attempt was made to defeat the sites' bot protection (JavaScript-challenge solving, headless browsers, proxies).",
+    "No substitute data source was substituted silently; the GO named these three sources only.",
+    "Consequence: the gym has NO current-macro conditioning of initial states. All generator calibration is historical (development lane only) plus declared assumptions."
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "experiment_id": "SYNGYM-20261004-V1",
+  "version": 1,
+  "status": "FROZEN before any evolution/validation/test result exists; changing any field below requires a NEW experiment version with rationale (old leaderboard kept)",
+  "nature": "hypothetical synthetic worlds; not forecasts of 2026-2031; not real-market evidence; shares one simulator across splits",
+  "candidate_status_ceiling": "RESEARCH_CANDIDATE (does not replace Kim, change admission, or become a paper/live trader)",
+  "universe": [
+    "SPY",
+    "EFA",
+    "EEM",
+    "IEF",
+    "TLT",
+    "GLD",
+    "DBC",
+    "VNQ"
+  ],
+  "long_only": true,
+  "leverage": "none",
+  "shorting": "none",
+  "starting_capital_usd": 100000,
+  "world": {
+    "eval_years": 5,
+    "synthetic_calendar_start": "2100-01-04",
+    "note": "far-future label so no world resembles a forecast of a real year",
+    "eval_sessions": "as given by the synthetic NYSE-style calendar (approx 1,255-1,260)",
+    "warmup_sessions": 320,
+    "warmup_rule": ">= longest permitted lookback: champion trend family 296 bars; D family regime_window max+1; asserted in code"
+  },
+  "splits": {
+    "training": {
+      "worlds": 12,
+      "per_family": 2
+    },
+    "validation": {
+      "worlds": 6,
+      "per_family": 1
+    },
+    "sealed_test": {
+      "worlds": 6,
+      "per_family": 1
+    },
+    "seed_rule": "int(sha256(experiment_id|split|family|index)[:8]) -- disjoint by construction",
+    "source_block_pools": "development-lane quarter-blocks (63 sessions) assigned to train/validation/test pools 50/25/25, stratified by volatility regime, so no historical block feeds two splits",
+    "held_out_variation": "validation and sealed-test worlds use different event-severity ranges and regime-transition parameters than training (see generator config); sealed worlds are not generated or opened until the nominee passes validation"
+  },
+  "families": [
+    "energy_shipping_squeeze",
+    "fertilizer_harvest_stress",
+    "stagflation_rates",
+    "recession_credit_shock",
+    "technology_boom_reversal",
+    "normalization_whipsaw"
+  ],
+  "execution_reference": {
+    "decision": "daily, at session close, using only information available then",
+    "fill": "next session's raw open",
+    "slippage_bps_reference": 10,
+    "commission_bps": 5,
+    "slippage_bps_sensitivity": [
+      5,
+      25
+    ],
+    "slippage_note": "slippage allowance already represents typical spread/impact; modeled half-spread enters only as max(allowance, half_spread) so it is never added on top",
+    "cash": "no borrowing; buys limited to available cash minus reserved buys and fees; no credit for unfilled sells; unaffordable gap fills are reduced to the affordable quantity and the reduction is logged",
+    "order_sequence": "sells fill before buys within a session",
+    "volume_limit": "fills capped at a fixed share of session volume with deferral (parameters in generator config)",
+    "stress_overlays": "gaps, partial fills, rejections, stale/missing feeds, halts, outages are SEPARATE overlays, not part of the reference case"
+  },
+  "cash_yield": "world policy-rate path accrues daily on cash for every portfolio (strategies, passive18, cash reference) identically",
+  "overlay": {
+    "common_gross_ceiling": 0.18,
+    "scaling": "weights scaled so gross <= 0.18 (same as the accepted replay harness 18% overlay arm)",
+    "native_exposure": "separate sensitivity for references only; never mixed into the primary score"
+  },
+  "lineage_semantics": {
+    "halt": "accepted external drawdown halt s6a_final.DRAWDOWN_HALT (12%) latches and liquidates, as in the accepted evaluator",
+    "cadence": "lineage rebalance_sessions / rebalance_every_n_sessions anchored at step 0 = first evaluation session, no catch-up",
+    "decision_inputs": "adjusted series built ONLY from corporate actions effective on or before the decision date"
+  },
+  "controls": {
+    "passive18": {
+      "weights": "equal weight 2.25% each of eight instruments (18% gross)",
+      "rebalance": "monthly (first session of each calendar month; initial purchase at step 0)",
+      "costs": "identical to strategies"
+    },
+    "cash": "no trading; earns the same cash yield"
+  },
+  "reference_genomes": {
+    "champion": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+    "sam": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+    "d_primary_rank3": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+    "immutable": true
+  },
+  "evolution": {
+    "supported_mutation_schemas": [
+      "D (s6a_runtime.mutate, frozen domain)"
+    ],
+    "unsupported_in_v1": "champion trend family (no frozen schema/mutation machinery -- reference only); lineages B,C,E,F,G (state/parity not established in this gym)",
+    "population": 32,
+    "generations": 5,
+    "population_composition": "3 immutable references + up to 29 distinct bounded D mutations",
+    "crossover": "none (no cross-family crossover; schema-compatible behaviour not demonstrated)",
+    "parent_selection": "4-way tournament over (eligible first, then primary score) with seeded RNG",
+    "survivors_per_generation": "all 3 references + top 8 eligible by primary ordering; remaining slots filled by new children",
+    "mutation_retries": "<= 4 seeded attempts per child; if the generation cannot be filled with valid distinct children it STOPS (no looping)",
+    "mutation_cannot_touch": [
+      "risk enforcement",
+      "data visibility",
+      "costs",
+      "scoring",
+      "broker simulation",
+      "generator"
+    ],
+    "workers": 1
+  },
+  "primary_objective": {
+    "name": "lower_quartile_excess_vs_passive18",
+    "definition": "25th percentile (linear interpolation between order statistics, position 0.25*(n-1), n=12 training worlds) of [annualized net return of genome - annualized net return of passive18] per world",
+    "annualized_net_return": "(final_equity / start_equity) ** (252 / evaluation_sessions) - 1, equity = cash + receivables + shares x raw close",
+    "maximize": true
+  },
+  "eligibility": {
+    "no_lookahead": true,
+    "no_invalid_values": true,
+    "no_shorting": true,
+    "no_borrowing": true,
+    "no_execution_integrity_violations": true,
+    "max_peak_to_trough_account_drawdown": 0.08,
+    "scope": "every training world; every validation world for the nominee; every sealed world for the nominee",
+    "note": "the 8% is a synthetic research criterion, NOT acceptance of the proposed live pilot halt",
+    "ineligible_candidates": "reported, never silently dropped; 'no qualifying winner' is a valid outcome"
+  },
+  "tie_breaks": [
+    "lower worst-world max drawdown",
+    "lower turnover (traded notional / start equity, mean over worlds)",
+    "genome_id ascending"
+  ],
+  "secondary_reporting": [
+    "median and worst-world net return",
+    "median/worst max drawdown and recovery duration (sessions)",
+    "daily expected shortfall 5% (historical simulation)",
+    "Sharpe and Sortino with the world's cash rate as the risk-free rate",
+    "turnover and costs",
+    "realized exposure",
+    "time in cash",
+    "by-family robustness",
+    "by-seed robustness",
+    "by-cost-case robustness (5/10/25 bps)",
+    "failed/uncertain execution counts"
+  ],
+  "nomination_and_validation": {
+    "nominee": "the best ELIGIBLE genome of the final generation by (primary score, tie-breaks); if none eligible the outcome is 'no qualifying winner' and validation/test are NOT run",
+    "validation_run": "exactly once, frozen nominee + references, on the 6 validation worlds",
+    "validation_pass_rule": "nominee eligible in all 6 validation worlds AND validation lower-quartile excess vs passive18 (same definition, n=6, position 1.25) > 0",
+    "sealed_test": "run ONLY if validation passes; once; nominee + references; pass = eligible in all 6 sealed worlds AND lower-quartile excess > 0; no detailed test outcome feeds back into this run"
+  },
+  "budgets": {
+    "max_generations": 5,
+    "population": 32,
+    "workers": 1,
+    "wall_seconds_total": 7200,
+    "memory_cap_mib": 800,
+    "memory_cap_basis": "25% of free RAM measured in preflight (3,272 MiB available -> 818 MiB) which is below the 2 GiB ceiling",
+    "output_cap_mib": 1024,
+    "output_cap_basis": "below min(2 GiB, 25% of 26 GB free disk)",
+    "cpu": "1 vCPU equivalent (CPUQuota=100%)",
+    "network": "denied for simulation/evolution runs (private network namespace)",
+    "on_exhaustion": "halt cleanly at a generation boundary; no extra seeds; report completed work"
+  },
+  "determinism": "all randomness from random.Random(seed).random() only, via a local RNG helper; outputs rounded to fixed decimals before hashing; regenerated worlds must hash identically on HOST and EC2",
+  "metric_change_policy": "any change creates a new immutable experiment version; every reference and candidate is re-evaluated on training data; the old leaderboard is kept; the sealed test set is never used to tune"
+}
