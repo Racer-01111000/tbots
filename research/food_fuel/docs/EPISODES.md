@@ -1,6 +1,6 @@
 # Episode case studies (descriptive; discovery-grade; original WASDE vintages)
 
-Futures are continuous front-month (roll gaps possible). Price = close on release day. STU = ending stocks/total use of newest marketing year as published that day.
+Futures are continuous front-month series: **roll gaps are present and inflate some 20-day returns** (e.g. the 2013-07-11 corn row, -33.9%, spans the July->December roll and is largely an artifact; the 2012 and 2007-08 rows may contain similar jumps). Read levels and direction, not exact magnitudes. Price = close on release day. STU = ending stocks/total use of newest marketing year as published that day.
 
 ## 2007-08 food stress - wheat (ZW)
 
