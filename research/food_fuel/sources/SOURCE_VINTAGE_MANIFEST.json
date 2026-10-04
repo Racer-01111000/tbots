@@ -1,0 +1,142 @@
+{
+ "generated_from": "cache/MANIFEST.jsonl (every request: url, retrieved_at, sha256, bytes, outcome)",
+ "total_requests_logged": 1345,
+ "outcomes": {
+  "OK": 1344,
+  "HTTP_404": 1
+ },
+ "sources": [
+  {
+   "id": "USDA_WASDE",
+   "publisher": "USDA WAOB via ESMIS archive (esmis.nal.usda.gov)",
+   "access": "FULL (original published files)",
+   "vintage": "ORIGINAL contemporaneous vintages (199 releases 2006-10..2022-12; 195 usable, 4 non-WASDE notices skipped)",
+   "publication_time": "12:00 ET on release date (listing shows nominal 12:00Z)",
+   "reference_period": "marketing year of the newest column; previous-month projection from the same document",
+   "units": "million bushels; bu/acre; ratio computed",
+   "geography": "United States (national)",
+   "revisions": "monthly projection revisions are the signal; later survey benchmark revisions NOT used",
+   "class": "forecast (interpretation of NASS/FAS data)",
+   "url": "https://esmis.nal.usda.gov/publication/world-agricultural-supply-and-demand-estimates",
+   "requests_ok": 221,
+   "first_retrieved_utc": "2026-10-04T05:39:42+00:00",
+   "last_retrieved_utc": "2026-10-04T07:19:10+00:00"
+  },
+  {
+   "id": "USDA_NASS_CROP_PROGRESS",
+   "publisher": "USDA NASS via ESMIS",
+   "access": "FULL",
+   "vintage": "ORIGINAL weekly text (562 releases Apr-Nov 2007-2022)",
+   "publication_time": "Monday 16:00 ET (Tuesday after holiday); listing nominal 12:00Z",
+   "reference_period": "week ending Sunday",
+   "units": "percent of crop",
+   "geography": "18 major states weighted + individual states",
+   "revisions": "none used (preliminary; final in Weekly Weather and Crop Bulletin)",
+   "class": "observation (survey)",
+   "url": "https://esmis.nal.usda.gov/publication/crop-progress",
+   "requests_ok": 131,
+   "first_retrieved_utc": "2026-10-04T06:04:27+00:00",
+   "last_retrieved_utc": "2026-10-04T07:19:15+00:00"
+  },
+  {
+   "id": "USDM",
+   "publisher": "US Drought Monitor (NDMC/USDA/NOAA) via usdmdataservices.unl.edu",
+   "access": "FULL via API (FIPS-coded areas)",
+   "vintage": "LATEST-VINTAGE (retrieved 2026-10-04); excluded from claims of contemporaneous predictability",
+   "publication_time": "map date Tuesday, published Thursday 08:30 ET",
+   "reference_period": "weekly map",
+   "units": "percent area D0-D4 cumulative",
+   "geography": "CONUS + IA IL IN NE MN KS SD OH MO",
+   "revisions": "occasional re-issues; not tracked",
+   "class": "observation (expert assessment)",
+   "url": "https://usdmdataservices.unl.edu/api",
+   "requests_ok": 165,
+   "first_retrieved_utc": "2026-10-04T06:11:49+00:00",
+   "last_retrieved_utc": "2026-10-04T07:19:23+00:00"
+  },
+  {
+   "id": "EIA_WPSR_BULK",
+   "publisher": "US EIA bulk file PET.zip (keyless)",
+   "access": "FULL (bulk); weekly xls pages also reachable",
+   "vintage": "LATEST-VINTAGE only (no real-time vintages); weekly release date inferred as Wednesday 10:30 ET (+1 day if Monday holiday)",
+   "publication_time": "inferred (see vintage)",
+   "reference_period": "week ending Friday",
+   "units": "thousand barrels; percent; kb/d; $/gal; $/bbl",
+   "geography": "United States (PADD totals)",
+   "revisions": "EIA revises history; not captured",
+   "class": "observation (survey)",
+   "url": "https://www.eia.gov/opendata/bulkfiles.php",
+   "requests_ok": 1,
+   "first_retrieved_utc": "2026-10-04T05:42:11+00:00",
+   "last_retrieved_utc": "2026-10-04T05:42:11+00:00"
+  },
+  {
+   "id": "NOAA_CPC_ONI",
+   "publisher": "NOAA CPC",
+   "access": "FULL",
+   "vintage": "LATEST-VINTAGE",
+   "publication_time": "monthly",
+   "reference_period": "3-month season",
+   "units": "deg C anomaly",
+   "geography": "Nino 3.4",
+   "revisions": "ONI is periodically re-based",
+   "class": "observation",
+   "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+   "requests_ok": 1,
+   "first_retrieved_utc": "2026-10-04T06:12:37+00:00",
+   "last_retrieved_utc": "2026-10-04T06:12:37+00:00"
+  },
+  {
+   "id": "WORLD_BANK_PINK_SHEET",
+   "publisher": "World Bank Commodity Markets",
+   "access": "FULL (monthly xlsx)",
+   "vintage": "LATEST-VINTAGE (restated history): context only, EXCLUDED from predictive tests",
+   "publication_time": "monthly (~2nd business day)",
+   "reference_period": "month",
+   "units": "$/mt, $/bbl, $/mmbtu",
+   "geography": "global benchmark prices",
+   "revisions": "restated",
+   "class": "observation (price assessment)",
+   "url": "https://www.worldbank.org/en/research/commodity-markets",
+   "requests_ok": 1,
+   "first_retrieved_utc": "2026-10-04T06:12:39+00:00",
+   "last_retrieved_utc": "2026-10-04T06:12:39+00:00"
+  },
+  {
+   "id": "YAHOO_CHART",
+   "publisher": "Yahoo Finance public chart endpoint",
+   "access": "FULL daily history (37 symbols; 1 failed ticker corrected)",
+   "vintage": "daily bars as served 2026-10-04; continuous front-month futures with ROLL GAPS; not an official exchange feed",
+   "publication_time": "session close",
+   "reference_period": "session",
+   "units": "price units per contract/share",
+   "geography": "US/Asia/Europe",
+   "revisions": "adjusted history may be restated",
+   "class": "market price (indicative)",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/",
+   "requests_ok": 37,
+   "first_retrieved_utc": "2026-10-04T05:44:08+00:00",
+   "last_retrieved_utc": "2026-10-04T05:45:06+00:00"
+  },
+  {
+   "id": "FAO_FFPI",
+   "access": "BLOCKED - bot protection (not circumvented); PARTIAL via AMIS page only",
+   "note": "FAO Food Price Index not used"
+  },
+  {
+   "id": "IEA_OMR_DATA",
+   "access": "BLOCKED (403); not used",
+   "note": "IEA stock/refinery data unavailable under free access"
+  },
+  {
+   "id": "USDA_FAS_EXPORT_SALES",
+   "access": "NOT FOUND as machine-readable free page; PSD page reachable but not parsed",
+   "note": "export flows are a data gap"
+  },
+  {
+   "id": "USDA_OCE_WASDE_PAGE",
+   "access": "BLOCKED; ESMIS used instead",
+   "note": "same documents via ESMIS"
+  }
+ ]
+}

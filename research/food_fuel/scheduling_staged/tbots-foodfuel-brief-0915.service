@@ -1,0 +1,23 @@
+# STAGED ONLY - NOT INSTALLED, NOT ENABLED. Read-only research brief (09:15 ET edition). Cannot place orders; no broker credential access.
+[Unit]
+Description=TBOTS food/fuel pre-market evidence brief 0915 edition (read-only, idempotent)
+Documentation=file:///opt/tbots-foodfuel/research/food_fuel/docs/BRIEF.md
+
+[Service]
+Type=oneshot
+User=tbotsgym
+Group=tbotsgym
+Environment=TZ=America/New_York
+WorkingDirectory=/opt/tbots-foodfuel/research/food_fuel
+ExecStart=/bin/sh -c '/opt/python-3.13.5-isolated/bin/python3.13 scripts/run_brief.py "$(date +%%F)" 0915 /var/lib/tbots-foodfuel/briefs /var/lib/tbots-foodfuel/cache'
+TimeoutStartSec=240
+CPUQuota=100%
+MemoryMax=800M
+MemorySwapMax=0
+TasksMax=32
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+PrivateTmp=yes
+ReadWritePaths=/var/lib/tbots-foodfuel
+InaccessiblePaths=/home/ec2-user/.config

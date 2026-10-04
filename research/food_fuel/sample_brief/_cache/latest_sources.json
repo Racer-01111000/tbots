@@ -1,0 +1,64 @@
+{
+ "asof": "2026-10-05",
+ "wasde": {
+  "released_listing": "2026-09-11T12:00:00Z",
+  "url": "https://esmis.nal.usda.gov/sites/default/release-files/796054/wasde0926.txt",
+  "cache": "wasde_2026-09-11_wasde0926.txt",
+  "retrieved_at_utc": "2026-10-04T07:19:56+00:00"
+ },
+ "crop_progress": [
+  {
+   "released_listing": "2026-09-21T12:00:00Z",
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/796068/prog3826_0.txt",
+   "cache": "crop_progress_2026-09-21_prog3826_0.txt",
+   "retrieved_at_utc": "2026-10-04T07:19:56+00:00"
+  },
+  {
+   "released_listing": "2026-09-28T12:00:00Z",
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/796082/prog3926.txt",
+   "cache": "crop_progress_2026-09-28_prog3926.txt",
+   "retrieved_at_utc": "2026-10-04T07:19:56+00:00"
+  }
+ ],
+ "usdm": {
+  "weeks": [
+   {
+    "map_date": "2026-09-01",
+    "belt_d1": 15.136000000000001
+   },
+   {
+    "map_date": "2026-09-08",
+    "belt_d1": 12.432
+   },
+   {
+    "map_date": "2026-09-15",
+    "belt_d1": 14.559999999999999
+   },
+   {
+    "map_date": "2026-09-22",
+    "belt_d1": 13.486
+   },
+   {
+    "map_date": "2026-09-29",
+    "belt_d1": 14.584
+   }
+  ],
+  "url": "https://usdmdataservices.unl.edu/api/StateStatistics (FIPS 19,17,18,31,27; cumulative)",
+  "retrieved_at_utc": "2026-10-04T07:19:56+00:00"
+ },
+ "eia": {
+  "release_assumed": "2026-09-30",
+  "week_ending": "2026-09-25",
+  "dist_surprise": -1088.2,
+  "crude_surprise": 32.799999999999955,
+  "util_chg": -1.5,
+  "levels": {
+   "distillate_stocks_kbbl": 105180,
+   "crude_stocks_ex_spr_kbbl": 427320,
+   "refinery_utilization_pct": 92.5
+  },
+  "url": "https://www.eia.gov/opendata/bulkfiles.php (PET.zip)",
+  "retrieved_at_utc": "2026-10-04T05:42:17+00:00",
+  "extract_last_updated": "2026-09-30T17:52:00-04:00"
+ }
+}

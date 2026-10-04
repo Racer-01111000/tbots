@@ -1,0 +1,12 @@
+# STAGED ONLY - NOT INSTALLED, NOT ENABLED. Weekdays 09:29 America/New_York; the service itself skips weekends/NYSE holidays and never rewrites an existing edition.
+[Unit]
+Description=TBOTS food/fuel brief 0929 edition timer
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:29:00 America/New_York
+Persistent=false
+AccuracySec=5s
+Unit=tbots-foodfuel-brief-0929.service
+
+[Install]
+WantedBy=timers.target

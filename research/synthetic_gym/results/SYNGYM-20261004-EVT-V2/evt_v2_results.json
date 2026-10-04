@@ -1,0 +1,466 @@
+{
+ "experiment": "SYNGYM-20261004-EVT-V2",
+ "worlds": 72,
+ "bases": {
+  "sam": {
+   "base_genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+   "event_aware_id": "evt_cd90938960ead81473fea25e43ccc71992151cfab6f945531987082584f55601",
+   "price_only_mean_ann": 0.030748532948925576,
+   "conditions": {
+    "clean": {
+     "mean_diff_ann": 1.2924530483139475e-05,
+     "ci95": [
+      -3.4884203104490474e-05,
+      5.845698529147181e-05
+     ],
+     "frac_improved": 0.09722222222222222,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 9.210250296796951e-05,
+     "mean_turnover_diff": 0.007562808333333334,
+     "by_family": {
+      "energy_shipping_squeeze": 6.847394872720274e-05,
+      "fertilizer_harvest_stress": 9.073234171634118e-06,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "delayed": {
+     "mean_diff_ann": 1.210843836757822e-05,
+     "ci95": [
+      -2.4742542866033428e-05,
+      5.404166589717849e-05
+     ],
+     "frac_improved": 0.08333333333333333,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 4.805436728301835e-05,
+     "mean_turnover_diff": 0.006979611111111111,
+     "by_family": {
+      "energy_shipping_squeeze": 1.0275430453528708e-05,
+      "fertilizer_harvest_stress": 6.237519975194061e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "missing": {
+     "mean_diff_ann": 4.07742143109112e-06,
+     "ci95": [
+      -2.894699866410086e-05,
+      3.83262560268068e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.06944444444444445,
+     "mean_maxdd_diff": 6.04369013320693e-05,
+     "mean_turnover_diff": 0.005581077777777778,
+     "by_family": {
+      "energy_shipping_squeeze": 6.847394872720274e-05,
+      "fertilizer_harvest_stress": -4.400942014065601e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "revised": {
+     "mean_diff_ann": 5.537015528985408e-06,
+     "ci95": [
+      -1.5054310558075082e-05,
+      2.914033187623794e-05
+     ],
+     "frac_improved": 0.05555555555555555,
+     "frac_worsened": 0.041666666666666664,
+     "mean_maxdd_diff": 1.2479147608869997e-05,
+     "mean_turnover_diff": 0.005369104166666667,
+     "by_family": {
+      "energy_shipping_squeeze": 1.0275430453528708e-05,
+      "fertilizer_harvest_stress": 2.2946662720383742e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "contradictory": {
+     "mean_diff_ann": 1.2924530483139475e-05,
+     "ci95": [
+      -3.4884203104490474e-05,
+      5.845698529147181e-05
+     ],
+     "frac_improved": 0.09722222222222222,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 9.210250296796951e-05,
+     "mean_turnover_diff": 0.007562808333333334,
+     "by_family": {
+      "energy_shipping_squeeze": 6.847394872720274e-05,
+      "fertilizer_harvest_stress": 9.073234171634118e-06,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "placebo": {
+     "mean_diff_ann": -2.3652814750724227e-05,
+     "ci95": [
+      -7.564339371485571e-05,
+      2.1781827029770324e-05
+     ],
+     "frac_improved": 0.1388888888888889,
+     "frac_worsened": 0.16666666666666666,
+     "mean_maxdd_diff": -1.660381035113117e-05,
+     "mean_turnover_diff": 0.014081122222222223,
+     "by_family": {
+      "energy_shipping_squeeze": -8.344652410297027e-05,
+      "fertilizer_harvest_stress": -3.931713754233105e-05,
+      "stagflation_rates": -1.9153226859044043e-05,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    }
+   }
+  },
+  "d_primary_rank3": {
+   "base_genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+   "event_aware_id": "evt_eb32e1423cc2ff72534f7517916a70a6f650b51535f276d6068985ac2be03ccd",
+   "price_only_mean_ann": 0.031867850323645946,
+   "conditions": {
+    "clean": {
+     "mean_diff_ann": 1.1227701533448072e-05,
+     "ci95": [
+      -4.334050338821357e-05,
+      6.207530025296849e-05
+     ],
+     "frac_improved": 0.09722222222222222,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 4.813343191548907e-05,
+     "mean_turnover_diff": 0.007562386111111111,
+     "by_family": {
+      "energy_shipping_squeeze": 7.965640642121352e-05,
+      "fertilizer_harvest_stress": -1.2290197220525082e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "delayed": {
+     "mean_diff_ann": 1.1394767226551799e-05,
+     "ci95": [
+      -3.0515308991890195e-05,
+      5.8451731285121454e-05
+     ],
+     "frac_improved": 0.08333333333333333,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 5.0598376755488385e-05,
+     "mean_turnover_diff": 0.006872665277777777,
+     "by_family": {
+      "energy_shipping_squeeze": 2.0370112130352336e-05,
+      "fertilizer_harvest_stress": 4.799849122895846e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "missing": {
+     "mean_diff_ann": 3.7455238780329894e-06,
+     "ci95": [
+      -3.226473524806403e-05,
+      4.0345939590563036e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.06944444444444445,
+     "mean_maxdd_diff": 2.0657964302492338e-05,
+     "mean_turnover_diff": 0.0073773388888888885,
+     "by_family": {
+      "energy_shipping_squeeze": 7.965640642121352e-05,
+      "fertilizer_harvest_stress": -5.7183263153015584e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "revised": {
+     "mean_diff_ann": 1.1339343455830776e-05,
+     "ci95": [
+      -1.3619731473429875e-05,
+      3.9843759433496854e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 4.102976924060592e-05,
+     "mean_turnover_diff": 0.007984134722222223,
+     "by_family": {
+      "energy_shipping_squeeze": 6.399303387235229e-05,
+      "fertilizer_harvest_stress": 2.1008207387300064e-05,
+      "stagflation_rates": -1.6965180524667705e-05,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "contradictory": {
+     "mean_diff_ann": 1.1227701533448072e-05,
+     "ci95": [
+      -4.334050338821357e-05,
+      6.207530025296849e-05
+     ],
+     "frac_improved": 0.09722222222222222,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": 4.813343191548907e-05,
+     "mean_turnover_diff": 0.007562386111111111,
+     "by_family": {
+      "energy_shipping_squeeze": 7.965640642121352e-05,
+      "fertilizer_harvest_stress": -1.2290197220525082e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "placebo": {
+     "mean_diff_ann": -3.3356318545381245e-05,
+     "ci95": [
+      -9.12432673178069e-05,
+      1.5964400311929694e-05
+     ],
+     "frac_improved": 0.1111111111111111,
+     "frac_worsened": 0.19444444444444445,
+     "mean_maxdd_diff": -7.873309077088214e-05,
+     "mean_turnover_diff": 0.016201581944444446,
+     "by_family": {
+      "energy_shipping_squeeze": -0.00011503611402500595,
+      "fertilizer_harvest_stress": -6.274728795966726e-05,
+      "stagflation_rates": -2.2354509287614288e-05,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    }
+   }
+  },
+  "champion": {
+   "base_genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+   "event_aware_id": "evt_80860dd70e3bce079ea980650b313067f6ea6728ed1bcc07ba881260a956e4b9",
+   "price_only_mean_ann": 0.030706062188176897,
+   "conditions": {
+    "clean": {
+     "mean_diff_ann": -7.061056578540799e-06,
+     "ci95": [
+      -9.523346132677936e-05,
+      7.733578030307769e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.06944444444444445,
+     "mean_maxdd_diff": 3.2043295444052054e-05,
+     "mean_turnover_diff": 0.0038444111111111115,
+     "by_family": {
+      "energy_shipping_squeeze": -4.200524548268284e-05,
+      "fertilizer_harvest_stress": -3.61093988561952e-07,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "delayed": {
+     "mean_diff_ann": 1.6637895833646362e-05,
+     "ci95": [
+      -6.334628150374123e-05,
+      9.260048769305701e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.041666666666666664,
+     "mean_maxdd_diff": 3.391616825806601e-05,
+     "mean_turnover_diff": 0.004446956944444445,
+     "by_family": {
+      "energy_shipping_squeeze": -4.200524548268284e-05,
+      "fertilizer_harvest_stress": 0.00014183262048456102,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "missing": {
+     "mean_diff_ann": -5.0257581810193695e-05,
+     "ci95": [
+      -0.00012392618774509058,
+      1.7798491214964734e-06
+     ],
+     "frac_improved": 0.013888888888888888,
+     "frac_worsened": 0.05555555555555555,
+     "mean_maxdd_diff": -1.9865405037622352e-06,
+     "mean_turnover_diff": 3.4230555555555636e-05,
+     "by_family": {
+      "energy_shipping_squeeze": -3.41236646578813e-05,
+      "fertilizer_harvest_stress": -0.00026742182620328087,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "revised": {
+     "mean_diff_ann": -2.8124917193009554e-05,
+     "ci95": [
+      -9.536310209200106e-05,
+      2.8339760901354952e-05
+     ],
+     "frac_improved": 0.013888888888888888,
+     "frac_worsened": 0.041666666666666664,
+     "mean_maxdd_diff": 4.314655479885508e-06,
+     "mean_turnover_diff": 0.003398697222222222,
+     "by_family": {
+      "energy_shipping_squeeze": -9.456387251718008e-05,
+      "fertilizer_harvest_stress": -7.418563064087724e-05,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "contradictory": {
+     "mean_diff_ann": -7.061056578540799e-06,
+     "ci95": [
+      -9.523346132677936e-05,
+      7.733578030307769e-05
+     ],
+     "frac_improved": 0.06944444444444445,
+     "frac_worsened": 0.06944444444444445,
+     "mean_maxdd_diff": 3.2043295444052054e-05,
+     "mean_turnover_diff": 0.0038444111111111115,
+     "by_family": {
+      "energy_shipping_squeeze": -4.200524548268284e-05,
+      "fertilizer_harvest_stress": -3.61093988561952e-07,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    },
+    "placebo": {
+     "mean_diff_ann": -1.8052389093436367e-05,
+     "ci95": [
+      -0.00011688465058279979,
+      6.783563574016795e-05
+     ],
+     "frac_improved": 0.1111111111111111,
+     "frac_worsened": 0.06944444444444445,
+     "mean_maxdd_diff": 0.00013023321252660555,
+     "mean_turnover_diff": 0.0015972791666666664,
+     "by_family": {
+      "energy_shipping_squeeze": 2.3899112427024544e-05,
+      "fertilizer_harvest_stress": -0.00013221344698764273,
+      "stagflation_rates": 0.0,
+      "recession_credit_shock": 0.0,
+      "technology_boom_reversal": 0.0,
+      "normalization_whipsaw": 0.0
+     },
+     "violations": 0
+    }
+   }
+  }
+ },
+ "world_hashes": {
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:0": "6d00fe98bfa187b02f0b0d965ba211377528fb36d8af5bbc32a9cecba56b31bd",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:1": "68a33be5c50734b972c50df278cc0638f7ab43f2ac83451c34617ea3f0ea5a26",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:2": "bbe4b9b15dbe97e0d9430b1f4720168dfccf9b93395a9ef4170cb067eb3eec46",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:3": "7476dfb2ca4203ebf968f2947819fe0995aa26d2e839163b284fa8b2fb93e16d",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:4": "c978341c6c484a2ae20cddd64120822807ae8a929391afcbb2183a562102ff9b",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:5": "2aa5c16fb330c370f4b4f15ace29cae31556ca0f6c9996a37391cb41aa8831c5",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:6": "ebc3d2734e1791baca0872c6de7b06106853ea14a822579105fa0990cb9ea655",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:7": "00d60e832110a72f20201e19d4514f6fb59196761631bfd061ed0e961745ca55",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:8": "479c942f049a15b40c9a62eb10041b3afe991a72331f7ea12b1ed467fd691fd3",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:9": "ce3d22d43e8faf85f365ea82b1fb6abfbb428738a9320041ac18373b3b44a1ee",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:10": "12798a5f7087dc734a9cc57a2cfd338012e2c416412823ca625167e40eb07694",
+  "SYNGYM-20261004-EVT-V2:training:energy_shipping_squeeze:11": "630c633fe2b1544cc33830a8d0ef5611c6058dd544720e8e537e7c0bffec7082",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:0": "05107ecb7a082226a253a2483e5302ed2996ff8fffacb958583e2912f0ef017b",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:1": "6434d54311c417db5dfb8ae42fa1dbd3d412e56435d3c8e0314785f2048c4815",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:2": "2e17a98ee3ee3744d85ef66d87801e2457bc392dc4f3af3e277d3518736cbd66",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:3": "0e49e98cc78cbf58ccd8bfc0f8e2514b1323d7e1d17393fc1ccad752ffaddc59",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:4": "727f0016d3a058a882ac63686cfcfb857f0f92f97ec805b574218bd5c71c2f3d",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:5": "faaa8793f78cd36d11b126800bcc08d01adca866d6b4974ae8d4b4e1166a9ad7",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:6": "fdb2795341cbd80f65ac3040614c62f428a49c73a450658337d1c0425e844592",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:7": "202ef3dad52c4a9314ac7251fbb17a2940ae5a8a1e568df42da26b21568a1d03",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:8": "ebac31a2aef9c89b53b9c4149cbd6cbdb1bc969e46f9f8a21beba0dc7a0c8a90",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:9": "861bc91514bc6dd82770432dd3463655358137c3976a0c96620be94510cd8b5f",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:10": "29e2d230ece1a37b73ce5d0a9d2cef8bb5c9c5d1f12be5f1ab4beb3f5b65ee04",
+  "SYNGYM-20261004-EVT-V2:training:fertilizer_harvest_stress:11": "a44b1d4523b23aa4f1d6b9b4dadc4e9800ff6efed08a4f2630da128daa3a3cce",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:0": "a198e66e0b12dc45c17117f59655039546a0c3a03cabc88d7eb47d1f4040dd0f",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:1": "655fe97b6b53aaee626650a70bbdfdf6dfe9b0a241f4f9e0cee9bcf5d0dd64ba",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:2": "530493bf6dd29232b6ea22915b9cfdedd9ecafc477ce2b9a92723cf6de1dc871",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:3": "e7f08cff48163447d720c05f1a37374b0462fb7e365f94499d3b2dfd3de2d55f",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:4": "7b4b53a20e7a910a5eb1fb6c06ef1da0b56804000416195d4ea44f78a9248973",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:5": "f25c3aba5fa323378619a87126de50c6627ae5b661f174e7e22596f0994c7db9",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:6": "18f06d7bf2ee49bb83cc5a9ad086c6304458a5040b97370bd316264a77083d73",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:7": "15ae20f0ea214088cd45607243aa8b8440ebbf9618e8350114146929fe32aa83",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:8": "74f6ced8e5e8176dbf9215591cb1eff8fe874de44f4e410d035c715517a0278b",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:9": "50c46afb70d1d4680f2c2d7b422e45625ef8b63a439c180f273fdf0537a072a0",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:10": "c607b81b5e33387f16ba4418af21ed83d634714a2b179659b66f4d821a329660",
+  "SYNGYM-20261004-EVT-V2:training:stagflation_rates:11": "2c2431f91018b7ea9c954daff0b1ec3582bb932d2c55ab615d3e2681b510fffd",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:0": "91f19019597112588e1e4ecff423954661c8e75a71b8dbc5866980712d02de62",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:1": "df3093b2fdd9b9b9bed949900a0847e1b038057109decdf2b977e4d017eb6714",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:2": "4c72f951d9b0e141fc508aeb9929c77a37ed66024b19857d8cb87c8eac93a87b",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:3": "ad20e6321ca4e2165f33a0ddd9932b44f63bc89bfa28090f8d4c4c089c70ab38",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:4": "a2fafd4b0fac0bd872e473813864b6608688259fee34a98539a41122c0a75384",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:5": "8c053bcf3f72609cf5424557b0f608874fa8be831f1f47d2298296e246b4b466",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:6": "e10f9f9b52d59ec3426f71b803d1dc2579fe6bb96b08fc4cd0f21269c546875c",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:7": "f2e0d02de44ac5fd641c9233a7ce6e5f073aca315f319e2c775181cb9cc89ba2",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:8": "93ff52017b56239817d52797e6b443d5f0ecbcf92234bb2477198958012b8019",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:9": "7d9424b92142c73a6242a266551ce9a2435dd4b88353464235802f997f2b7348",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:10": "f2dfc00817bc6950b25c1055307cdbc072c58e41890100941ff5bc129e03ccc6",
+  "SYNGYM-20261004-EVT-V2:training:recession_credit_shock:11": "923d95e45edea9accc05e0a9c008aefb53724524b6910075b51282c786b2e69b",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:0": "a218fdbc77da7f01f31327fd46d089d31781fd8cc4237365dfccaf790aecbe61",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:1": "acd4ac21a28a75d98668af8d85e8b9c46095e2dca808615553bc2926d10a2afd",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:2": "5a9a81a2f3fea51b0660352c819e2efd5d6d23a764f3dc41d02083a47275c466",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:3": "23b0ee06d927d9bb07c30cc031fcc87eaa034a7a5ee102dc8c1f24f3e9c1128b",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:4": "54513fe10c521bb907fe1386e6041bae6596b666d496172902a06b76390885fc",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:5": "36a24e80affa39a0eba48d7998b3eff7ed8f2ac67e2621f37ef5558b49768d9c",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:6": "0138be1c9e91ba86b3e3dae783cfe134b96c440ae5de1bdd7d9b943d51f60458",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:7": "852d107376d2a573fd9e892483b078a8de41edd2a51d824159f6e313fedca743",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:8": "25faa346fbc0a9672af75ae9905b89987e24938c1e717621663d0a88748c461a",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:9": "ed6354bfc8724e819347ad707cc0d1f5e978228af40f3a75e5bfbc3647770a7a",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:10": "8ed862cfb025a57f9d36a16c6e41d418fea156613bdd0445f940dc79498ca4f2",
+  "SYNGYM-20261004-EVT-V2:training:technology_boom_reversal:11": "5d3802be0656abc1fa7796bcbddfc1673e4a88146b5ebd3b9c1cf2111c88c342",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:0": "be546d96cc42805d65910d8a1c3ae8154b3c01c2204f07421344e2b22c8008ff",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:1": "f52f3cb2e61928fea1596118bd66cb7fc6d009183fac06cb3bfdcfb94a62dd9c",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:2": "f2613a9d55d825f2496869b6c1466b7c16fa36d502b77301434705104617fceb",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:3": "efe93b2422b96814cf84f0b75762b7984ef03bd31de48566c53d00507cd30626",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:4": "571ce46c6a1316de3b4e2132522988eb29da53d7bdefc8428a197aa285949e80",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:5": "fe42078c3fd24a7a3488d832dc73b55167e4c6c6cfc26e3e27f33f0fd9ee439f",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:6": "6ac7468456cad8a443b38e825deeee8d941d08f496ca4ea075bdd1405d4fb194",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:7": "367f784bd490869ae7d1723f7e7dcae5e7f898bcc5be0a42906b101410b5562d",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:8": "a05fc198243711ad45536af977a821a500df97d149950075286976f793416dec",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:9": "42734b88dff8f2b00e10fd9742c5bea2a018070dccf0e82ea0e021972d7fd315",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:10": "fb8f600c1d27279b0056699b5de343b116bfffe8c762029de4d52916057def29",
+  "SYNGYM-20261004-EVT-V2:training:normalization_whipsaw:11": "d344c0c4c0ec7a15851c2f3ef1a5d4f7a16b812436bfa20b7ea54ee7da2ca9e0"
+ },
+ "resource": {
+  "wall_s": 50.902456521987915,
+  "cpu_s": 50.961639176,
+  "maxrss_mib": 366.7109375
+ }
+}

@@ -1,0 +1,703 @@
+{
+ "edition_key": "2026-10-05_0915",
+ "edition_target_time_utc": "2026-10-05T13:15:00+00:00",
+ "actual_run_time_utc": "2026-10-04T07:19:56+00:00",
+ "asof_session_date": "2026-10-05",
+ "trading_day_check": {
+  "is_trading_day": true,
+  "basis": "rule-based NYSE calendar, not exchange-verified"
+ },
+ "scope_notes": [
+  "Research brief only; it cannot issue orders and does not alter any bot.",
+  "ETF/equity/futures quotes are proxies, NOT spot commodity prices and NOT opening-auction data.",
+  "Evidence labels come from FEATURE_SPEC_v1 tests: indicators are priced on release; no post-release drift was supported."
+ ],
+ "sources": [
+  {
+   "source": "USDA WASDE",
+   "publication_time": "2026-09-11T12:00:00Z",
+   "retrieval_time_utc": "2026-10-04T07:19:56+00:00",
+   "reference_period": "marketing year 2026/27",
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/796054/wasde0926.txt",
+   "units": "mil bu, bu/acre; stocks-to-use ratio",
+   "kind": "forecast (USDA projection); previous-month projection from the same document"
+  },
+  {
+   "source": "USDA NASS Crop Progress",
+   "publication_time": "2026-09-28T12:00:00Z",
+   "retrieval_time_utc": "2026-10-04T07:19:56+00:00",
+   "reference_period": "week ending 2026-09-27",
+   "url": "https://esmis.nal.usda.gov/sites/default/release-files/796082/prog3926.txt",
+   "units": "percent of crop",
+   "kind": "observation (NASS survey)"
+  },
+  {
+   "source": "US Drought Monitor",
+   "publication_time": "2026-09-29 (Tuesday map; published Thursday 08:30 ET)",
+   "retrieval_time_utc": "2026-10-04T07:19:56+00:00",
+   "reference_period": "map 2026-09-29",
+   "url": "https://usdmdataservices.unl.edu/api/StateStatistics (FIPS 19,17,18,31,27; cumulative)",
+   "units": "percent area D1+, mean of IA/IL/IN/NE/MN",
+   "kind": "observation (expert-assessed map)"
+  },
+  {
+   "source": "EIA Weekly Petroleum Status (bulk PET)",
+   "publication_time": "2026-09-30T10:30 ET (assumed Wednesday schedule)",
+   "retrieval_time_utc": "2026-10-04T05:42:17+00:00",
+   "reference_period": "week ending 2026-09-25",
+   "url": "https://www.eia.gov/opendata/bulkfiles.php (PET.zip)",
+   "units": "thousand bbl; percent",
+   "kind": "observation (weekly survey)"
+  }
+ ],
+ "items": [
+  {
+   "area": "food",
+   "commodity": "corn",
+   "feature": "w_stu_chg_pp",
+   "value": -0.438,
+   "observed_level": {
+    "stocks_to_use": 0.0968,
+    "yield": 178.5
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": {
+    "react": "SUGGESTIVE"
+   },
+   "mechanism": "WASDE revision of stocks-to-use for the new marketing year: tighter stocks raise price needed to ration demand",
+   "competing_explanations": [
+    "revisions already anticipated by private estimates/trade surveys",
+    "demand-side revision (exports/ethanol) vs supply-side revision (yield/acres)",
+    "policy or currency moves the same day"
+   ],
+   "transmission_horizon": "same session; carried-over effects beyond 1 day not detected",
+   "invalidation": "price moves >2 sd the OPPOSITE way on release day; revision sign flips next month without a price reversal"
+  },
+  {
+   "area": "food",
+   "commodity": "corn",
+   "feature": "w_yield_rev_pct",
+   "value": -1.217,
+   "observed_level": {
+    "stocks_to_use": 0.0968,
+    "yield": 178.5
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": {
+    "react": "SUGGESTIVE"
+   },
+   "mechanism": "yield revision changes expected production, then ending stocks",
+   "competing_explanations": [
+    "acreage revisions offset yield",
+    "carry-in stock changes",
+    "NASS survey-based vs model-based yield (month-dependent method)"
+   ],
+   "transmission_horizon": "same session",
+   "invalidation": "reaction sign opposite expected for two consecutive August/September reports"
+  },
+  {
+   "area": "food",
+   "commodity": "wheat",
+   "feature": "w_stu_chg_pp",
+   "value": 0.0,
+   "observed_level": {
+    "stocks_to_use": 0.3826,
+    "yield": 47.8
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "WASDE revision of stocks-to-use for the new marketing year: tighter stocks raise price needed to ration demand",
+   "competing_explanations": [
+    "revisions already anticipated by private estimates/trade surveys",
+    "demand-side revision (exports/ethanol) vs supply-side revision (yield/acres)",
+    "policy or currency moves the same day"
+   ],
+   "transmission_horizon": "same session; carried-over effects beyond 1 day not detected",
+   "invalidation": "price moves >2 sd the OPPOSITE way on release day; revision sign flips next month without a price reversal"
+  },
+  {
+   "area": "food",
+   "commodity": "wheat",
+   "feature": "w_yield_rev_pct",
+   "value": 0.0,
+   "observed_level": {
+    "stocks_to_use": 0.3826,
+    "yield": 47.8
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "yield revision changes expected production, then ending stocks",
+   "competing_explanations": [
+    "acreage revisions offset yield",
+    "carry-in stock changes",
+    "NASS survey-based vs model-based yield (month-dependent method)"
+   ],
+   "transmission_horizon": "same session",
+   "invalidation": "reaction sign opposite expected for two consecutive August/September reports"
+  },
+  {
+   "area": "food",
+   "commodity": "soybeans",
+   "feature": "w_stu_chg_pp",
+   "value": -0.259,
+   "observed_level": {
+    "stocks_to_use": 0.0678,
+    "yield": 52.8
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "WASDE revision of stocks-to-use for the new marketing year: tighter stocks raise price needed to ration demand",
+   "competing_explanations": [
+    "revisions already anticipated by private estimates/trade surveys",
+    "demand-side revision (exports/ethanol) vs supply-side revision (yield/acres)",
+    "policy or currency moves the same day"
+   ],
+   "transmission_horizon": "same session; carried-over effects beyond 1 day not detected",
+   "invalidation": "price moves >2 sd the OPPOSITE way on release day; revision sign flips next month without a price reversal"
+  },
+  {
+   "area": "food",
+   "commodity": "soybeans",
+   "feature": "w_yield_rev_pct",
+   "value": 0.19,
+   "observed_level": {
+    "stocks_to_use": 0.0678,
+    "yield": 52.8
+   },
+   "source": "WASDE 2026-09-11",
+   "class": "forecast revision (interpretation of NASS/FAS inputs)",
+   "evidence_support": {
+    "react": "SUPPORTED"
+   },
+   "mechanism": "yield revision changes expected production, then ending stocks",
+   "competing_explanations": [
+    "acreage revisions offset yield",
+    "carry-in stock changes",
+    "NASS survey-based vs model-based yield (month-dependent method)"
+   ],
+   "transmission_horizon": "same session",
+   "invalidation": "reaction sign opposite expected for two consecutive August/September reports"
+  },
+  {
+   "area": "food",
+   "commodity": "corn",
+   "feature": "c_ge_chg_pp",
+   "value": 0,
+   "observed_level": {
+    "good_excellent_pct": 57
+   },
+   "source": "Crop Progress 2026-09-28",
+   "class": "observation",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "weekly drop in good+excellent corn/soy condition signals yield risk",
+   "competing_explanations": [
+    "weather forecast changes already priced before Monday 16:00",
+    "ratings noise/rater subjectivity",
+    "price move preceding the release (anticipation) rather than following"
+   ],
+   "transmission_horizon": "next session (released after the close Monday); possible days-weeks via yield revisions",
+   "invalidation": "rating change and next-session return uncorrelated over a full growing season"
+  },
+  {
+   "area": "food",
+   "commodity": "soybeans",
+   "feature": "c_ge_chg_pp",
+   "value": 0,
+   "observed_level": {
+    "good_excellent_pct": 58
+   },
+   "source": "Crop Progress 2026-09-28",
+   "class": "observation",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "weekly drop in good+excellent corn/soy condition signals yield risk",
+   "competing_explanations": [
+    "weather forecast changes already priced before Monday 16:00",
+    "ratings noise/rater subjectivity",
+    "price move preceding the release (anticipation) rather than following"
+   ],
+   "transmission_horizon": "next session (released after the close Monday); possible days-weeks via yield revisions",
+   "invalidation": "rating change and next-session return uncorrelated over a full growing season"
+  },
+  {
+   "area": "food",
+   "commodity": "corn/soybeans",
+   "feature": "d_belt_d1_chg_pp",
+   "value": 1.1,
+   "observed_level": {
+    "belt_d1_pct": 14.58
+   },
+   "source": "USDM 2026-09-29",
+   "class": "observation",
+   "evidence_support": "none (all targets UNSUPPORTED)",
+   "mechanism": "expanding drought coverage in the corn belt signals yield risk",
+   "competing_explanations": [
+    "rainfall/forecast information already in price",
+    "crop stage (drought matters most in Jun-Aug)",
+    "latest-vintage map (not contemporaneous)"
+   ],
+   "transmission_horizon": "weekly; effect on prices spread over 1-5 sessions in discovery",
+   "invalidation": "sign of correlation unstable across growing seasons",
+   "season_note": "feature defined for Apr-Sep only; outside the window it is context, not a tested signal"
+  },
+  {
+   "area": "fuel",
+   "commodity": "distillate",
+   "feature": "e_dist_stock_surprise_kbbl",
+   "value": -1088.2,
+   "observed_level": {
+    "distillate_stocks_kbbl": 105180,
+    "crude_stocks_ex_spr_kbbl": 427320,
+    "refinery_utilization_pct": 92.5
+   },
+   "source": "EIA week ending 2026-09-25",
+   "class": "observation",
+   "evidence_support": {
+    "react": "SUPPORTED",
+    "pre": "SUGGESTIVE(ANTICIPATION: market moved first)"
+   },
+   "mechanism": "distillate inventory draw vs seasonal norm tightens diesel supply -> higher HO; diesel is an input to farm operation and freight costs",
+   "competing_explanations": [
+    "refinery outages vs demand; export flows",
+    "crude price moves the same day",
+    "API estimate released the day before"
+   ],
+   "transmission_horizon": "release session (10:30 ET); further 1-5 session drift not supported",
+   "invalidation": "reaction sign reverses for a full year"
+  },
+  {
+   "area": "fuel",
+   "commodity": "crude",
+   "feature": "e_crude_stock_surprise_kbbl",
+   "value": 32.8,
+   "observed_level": {
+    "distillate_stocks_kbbl": 105180,
+    "crude_stocks_ex_spr_kbbl": 427320,
+    "refinery_utilization_pct": 92.5
+   },
+   "source": "EIA week ending 2026-09-25",
+   "class": "observation",
+   "evidence_support": {
+    "react": "SUPPORTED"
+   },
+   "mechanism": "commercial crude inventory surprise vs seasonal norm moves crude",
+   "competing_explanations": [
+    "SPR changes, import timing, OPEC news"
+   ],
+   "transmission_horizon": "release session",
+   "invalidation": "as above"
+  },
+  {
+   "area": "fuel",
+   "commodity": "distillate",
+   "feature": "e_util_chg_pp",
+   "value": -1.5,
+   "observed_level": {
+    "distillate_stocks_kbbl": 105180,
+    "crude_stocks_ex_spr_kbbl": 427320,
+    "refinery_utilization_pct": 92.5
+   },
+   "source": "EIA week ending 2026-09-25",
+   "class": "observation",
+   "evidence_support": {
+    "react": "SUGGESTIVE"
+   },
+   "mechanism": "refinery utilization change: product supply vs crude demand (direction ambiguous a priori)",
+   "competing_explanations": [
+    "maintenance seasons, outages, hurricane effects"
+   ],
+   "transmission_horizon": "not established",
+   "invalidation": "n/a (no directional claim)"
+  }
+ ],
+ "markets": {
+  "asia": [
+   {
+    "name": "Nikkei 225",
+    "symbol": "^N225",
+    "kind": "index",
+    "available": true,
+    "price": 68309.46,
+    "prior_close": 65877.62,
+    "pct": 3.691450905482041,
+    "event_time_utc": "2026-10-02T06:45:03+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Asia/Tokyo",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Hang Seng",
+    "symbol": "^HSI",
+    "kind": "index",
+    "available": true,
+    "price": 23972.29,
+    "prior_close": 24761.13,
+    "pct": -3.1857996787707177,
+    "event_time_utc": "2026-10-02T08:08:32+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Asia/Hong_Kong",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "CSI 300 (mainland, Shanghai)",
+    "symbol": "000300.SS",
+    "kind": "index",
+    "available": true,
+    "price": 4357.616,
+    "prior_close": 4345.209,
+    "pct": 0.2855328708009308,
+    "event_time_utc": "2026-09-30T07:00:34+00:00",
+    "event_local_date": "2026-09-30",
+    "session_label": "stale_5d_unverified_cause",
+    "venue_tz": "Asia/Shanghai",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "KOSPI",
+    "symbol": "^KS11",
+    "kind": "index",
+    "available": true,
+    "price": 7003.74,
+    "prior_close": 7080.92,
+    "pct": -1.0899713596538296,
+    "event_time_utc": "2026-10-02T11:05:40+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Asia/Seoul",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "S&P/ASX 200",
+    "symbol": "^AXJO",
+    "kind": "index",
+    "available": true,
+    "price": 8682.1,
+    "prior_close": 8665.0,
+    "pct": 0.19734564339295435,
+    "event_time_utc": "2026-10-02T07:02:14+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_4d_unverified_cause",
+    "venue_tz": "Australia/Sydney",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   }
+  ],
+  "europe": [
+   {
+    "name": "FTSE 100",
+    "symbol": "^FTSE",
+    "kind": "index",
+    "available": true,
+    "price": 10461.95,
+    "prior_close": 10695.3,
+    "pct": -2.1817994820154563,
+    "event_time_utc": "2026-10-02T15:35:29+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Europe/London",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "DAX Performance Index",
+    "symbol": "^GDAXI",
+    "kind": "index",
+    "available": true,
+    "price": 25231.2,
+    "prior_close": 25408.64,
+    "pct": -0.69834512984559,
+    "event_time_utc": "2026-10-02T16:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Europe/Berlin",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Euro Stoxx 50",
+    "symbol": "^STOXX50E",
+    "kind": "index",
+    "available": true,
+    "price": 6238.5,
+    "prior_close": 6301.28,
+    "pct": -0.9963055125307818,
+    "event_time_utc": "2026-10-02T16:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "Europe/Zurich",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   }
+  ],
+  "us_futures": [
+   {
+    "name": "S&P 500 futures (ES)",
+    "symbol": "ES=F",
+    "kind": "future",
+    "available": true,
+    "price": 7777.25,
+    "prior_close": 7732.0,
+    "pct": 0.5852302121055253,
+    "event_time_utc": "2026-10-02T21:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Nasdaq futures (NQ)",
+    "symbol": "NQ=F",
+    "kind": "future",
+    "available": true,
+    "price": 31061.75,
+    "prior_close": 30613.25,
+    "pct": 1.4650518974627103,
+    "event_time_utc": "2026-10-02T20:59:58+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   }
+  ],
+  "commodities_fx": [
+   {
+    "name": "WTI Crude (CL)",
+    "symbol": "CL=F",
+    "kind": "future",
+    "available": true,
+    "price": 91.11,
+    "prior_close": 89.38,
+    "pct": 1.9355560528082405,
+    "event_time_utc": "2026-10-02T21:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Brent Crude (BZ)",
+    "symbol": "BZ=F",
+    "kind": "future",
+    "available": true,
+    "price": 102.25,
+    "prior_close": 102.59,
+    "pct": -0.3314163173798623,
+    "event_time_utc": "2026-10-02T20:59:52+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Gold (GC)",
+    "symbol": "GC=F",
+    "kind": "future",
+    "available": true,
+    "price": 4162.3,
+    "prior_close": 4179.7,
+    "pct": -0.41629782041772145,
+    "event_time_utc": "2026-10-02T20:59:58+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "ICE US Dollar Index, spot/cash (DXY)",
+    "symbol": "DX-Y.NYB",
+    "kind": "index",
+    "available": true,
+    "price": 101.924,
+    "prior_close": 101.37,
+    "pct": 0.5465127749827436,
+    "event_time_utc": "2026-10-02T20:59:59+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   }
+  ],
+  "food_fuel_proxies": [
+   {
+    "name": "Corn futures (ZC, front-month continuous)",
+    "symbol": "ZC=F",
+    "kind": "future",
+    "available": true,
+    "price": 497.75,
+    "prior_close": 522.0,
+    "pct": -4.645593869731801,
+    "event_time_utc": "2026-10-02T18:19:59+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Soybean futures (ZS)",
+    "symbol": "ZS=F",
+    "kind": "future",
+    "available": true,
+    "price": 1278.25,
+    "prior_close": 1297.75,
+    "pct": -1.5026006549797688,
+    "event_time_utc": "2026-10-02T18:19:58+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Chicago wheat futures (ZW)",
+    "symbol": "ZW=F",
+    "kind": "future",
+    "available": true,
+    "price": 683.0,
+    "prior_close": 692.75,
+    "pct": -1.4074341392998901,
+    "event_time_utc": "2026-10-02T18:19:57+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Heating oil / ULSD futures (HO)",
+    "symbol": "HO=F",
+    "kind": "future",
+    "available": true,
+    "price": 4.501,
+    "prior_close": 4.898,
+    "pct": -8.105349122090633,
+    "event_time_utc": "2026-10-02T20:59:58+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Natural gas futures (NG)",
+    "symbol": "NG=F",
+    "kind": "future",
+    "available": true,
+    "price": 3.035,
+    "prior_close": 3.011,
+    "pct": 0.7970773829292677,
+    "event_time_utc": "2026-10-02T20:59:59+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Corn ETF proxy (CORN)",
+    "symbol": "CORN",
+    "kind": "etf_proxy",
+    "available": true,
+    "price": 18.85,
+    "prior_close": 19.73,
+    "pct": -4.460212873796243,
+    "event_time_utc": "2026-10-02T20:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Agriculture ETF proxy (DBA)",
+    "symbol": "DBA",
+    "kind": "etf_proxy",
+    "available": true,
+    "price": 28.21,
+    "prior_close": 28.54,
+    "pct": -1.1562718990889898,
+    "event_time_utc": "2026-10-02T20:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Oil ETF proxy (USO)",
+    "symbol": "USO",
+    "kind": "etf_proxy",
+    "available": true,
+    "price": 147.37,
+    "prior_close": 148.33,
+    "pct": -0.6472055551810185,
+    "event_time_utc": "2026-10-02T20:00:00+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "CF Industries (fertilizer equity)",
+    "symbol": "CF",
+    "kind": "equity",
+    "available": true,
+    "price": 115.01,
+    "prior_close": 114.67,
+    "pct": 0.2965030086334641,
+    "event_time_utc": "2026-10-02T20:02:18+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   },
+   {
+    "name": "Mosaic (fertilizer equity)",
+    "symbol": "MOS",
+    "kind": "equity",
+    "available": true,
+    "price": 21.07,
+    "prior_close": 23.01,
+    "pct": -8.43111690569318,
+    "event_time_utc": "2026-10-02T20:00:02+00:00",
+    "event_local_date": "2026-10-02",
+    "session_label": "stale_3d_unverified_cause",
+    "venue_tz": "America/New_York",
+    "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"
+   }
+  ]
+ },
+ "coverage": {
+  "quotes_total": 24,
+  "unavailable": [],
+  "stale": [
+   "^N225",
+   "^HSI",
+   "000300.SS",
+   "^KS11",
+   "^AXJO",
+   "^FTSE",
+   "^GDAXI",
+   "^STOXX50E",
+   "ES=F",
+   "NQ=F",
+   "CL=F",
+   "BZ=F",
+   "GC=F",
+   "DX-Y.NYB",
+   "ZC=F",
+   "ZS=F",
+   "ZW=F",
+   "HO=F",
+   "NG=F",
+   "CORN",
+   "DBA",
+   "USO",
+   "CF",
+   "MOS"
+  ],
+  "not_covered_by_this_module": [
+   "FAO Food Price Index (page blocked: bot protection, not circumvented)",
+   "IEA Oil Market Report (blocked)",
+   "USDA FAS export sales (no accessible machine-readable page found)",
+   "freight/shipping indices",
+   "fertilizer spot prices (World Bank monthly, latest-vintage only)"
+  ]
+ },
+ "status": "OK"
+}

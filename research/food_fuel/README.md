@@ -1,0 +1,2 @@
+# research/food_fuel
+Food-first, fuel-second evidence module. Start with `REPORT.md`. Layout: `scripts/` collection and analysis, `ffmod/` library (prices, events, stats, evaluator, WASDE/crop parsers, brief), `features/` frozen spec + evidence map, `results/` frozen-test outputs, `derived/` parsed tables, `sources/` access survey + vintage manifest + ESMIS indexes, `docs/` evidence map, episodes, brief, `sample_brief/`, `scheduling_staged/` (not installed), `tests/`. `cache/raw` (305 MiB) is not committed; `cache/MANIFEST.jsonl` records every request with sha256.

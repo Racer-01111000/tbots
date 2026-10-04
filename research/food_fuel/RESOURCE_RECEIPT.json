@@ -1,0 +1,5 @@
+{
+ "collection_and_parsing": {"host": "HOST workstation (not the EC2 instance)", "why": "public read-only downloads and pure-Python parsing needed outbound network, which the EC2 sandbox denies by design", "requests_logged": 1345, "rate": "<= 1 request/second, <= 2 attempts", "cache_on_disk_mib": 305, "paid_services": 0, "credentials_used": 0},
+ "ec2_instance": {"id": "i-035547b52ca11d1c3 (existing research instance; no resize)", "sandbox": "systemd-run, user tbotsgym, PrivateNetwork, CPUQuota 100%, MemoryMax 800M", "gym_evt_v2_run": {"wall_s": 51, "cpu_s": 51, "max_rss_mib": 367, "workers": 1}, "tests": {"food_fuel": "9 passed, 1 skipped, 0.3 s CPU", "gym_evt_v2 + events": "12 passed, 10.7 s CPU"}, "disk_added": "< 10 MiB"},
+ "not_touched": ["broker/credentials", "NODE", "KESTREL", "paper runner and its timers", "v1 gym generator/metrics/results", "instance size", "recurring timers"]
+}

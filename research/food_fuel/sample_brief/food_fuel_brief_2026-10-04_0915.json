@@ -1,0 +1,16 @@
+{
+ "edition_key": "2026-10-04_0915",
+ "edition_target_time_utc": "2026-10-04T13:15:00+00:00",
+ "actual_run_time_utc": "2026-10-04T07:20:24+00:00",
+ "asof_session_date": "2026-10-04",
+ "trading_day_check": {
+  "is_trading_day": false,
+  "basis": "weekend or NYSE holiday (rule-based table, not exchange-verified)"
+ },
+ "scope_notes": [
+  "Research brief only; it cannot issue orders and does not alter any bot.",
+  "ETF/equity/futures quotes are proxies, NOT spot commodity prices and NOT opening-auction data.",
+  "Evidence labels come from FEATURE_SPEC_v1 tests: indicators are priced on release; no post-release drift was supported."
+ ],
+ "status": "NO_BRIEF_NOT_A_US_TRADING_DAY"
+}

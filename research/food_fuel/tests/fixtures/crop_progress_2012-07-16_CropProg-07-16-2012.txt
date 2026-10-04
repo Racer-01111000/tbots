@@ -1,0 +1,813 @@
+
+Crop Progress
+
+ISSN: 1948-3007
+
+Released July 16, 2012, by the National Agricultural Statistics Service 
+(NASS), Agricultural Statistics Board, United States Department of 
+Agriculture (USDA).
+
+Cotton Squaring - Selected States
+[These 15 States planted 99% of the 2011 cotton acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Alabama .........:     47         87           91         71     
+Arizona .........:     82         85           90         84     
+Arkansas ........:     96         99          100         97     
+California ......:     71         70           85         84     
+Georgia .........:     68         85           91         76     
+Kansas ..........:     66         67           79         75     
+Louisiana .......:    100         91           98         97     
+Mississippi .....:     92         94           98         95     
+Missouri ........:     79         79           90         85     
+North Carolina ..:     92         65           90         93     
+Oklahoma ........:     27         40           52         55     
+South Carolina ..:     74         62           80         72     
+Tennessee .......:     81         76           84         89     
+Texas ...........:     60         61           76         67     
+Virginia ........:     90         65           90         76     
+                 :                                               
+15 States .......:     68         70           82         75     
+-----------------------------------------------------------------
+
+Cotton Setting Bolls - Selected States
+[These 15 States planted 99% of the 2011 cotton acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Alabama .........:    22          25          39          30     
+Arizona .........:    41          35          55          48     
+Arkansas ........:    57          70          87          57     
+California ......:    41          30          45          42     
+Georgia .........:    37          45          59          35     
+Kansas ..........:     4          10          19           4     
+Louisiana .......:    84          53          75          72     
+Mississippi .....:    36          41          63          51     
+Missouri ........:    22          12          19          35     
+North Carolina ..:    56           5          28          44     
+Oklahoma ........:     1           6           9           9     
+South Carolina ..:    39          10          20          20     
+Tennessee .......:    20          17          37          27     
+Texas ...........:    19          15          25          20     
+Virginia ........:     8           7          10          25     
+                 :                                               
+15 States .......:    28          23          36          29     
+-----------------------------------------------------------------
+
+Cotton Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Alabama ........:     6          11          64          19           -     
+Arizona ........:     1          10          24          42          23     
+Arkansas .......:     5           8          26          41          20     
+California .....:     -           -           5          35          60     
+Georgia ........:     -           4          38          48          10     
+Kansas .........:     2           9          53          33           3     
+Louisiana ......:     -           2          33          52          13     
+Mississippi ....:     1           6          22          53          18     
+Missouri .......:    12          30          41          15           2     
+North Carolina .:     -           4          32          54          10     
+Oklahoma .......:     2          10          44          43           1     
+South Carolina .:     -           2          35          55           8     
+Tennessee ......:     5          14          35          43           3     
+Texas ..........:     7          18          40          31           4     
+Virginia .......:     -           1           5          94           -     
+                :                                                           
+15 States ......:     5          13          37          37           8     
+                :                                                           
+Previous week ..:     4          14          38          36           8     
+Previous year ..:    21          19          32          24           4     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Corn Silking - Selected States
+[These 18 States planted 92% of the 2011 corn acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Colorado ........:     6           9          20          14     
+Illinois ........:    52          77          93          53     
+Indiana .........:    23          60          79          39     
+Iowa ............:    23          48          74          27     
+Kansas ..........:    46          61          71          58     
+Kentucky ........:    40          66          76          58     
+Michigan ........:     9           8          44          20     
+Minnesota .......:     8          41          77          23     
+Missouri ........:    65          75          88          61     
+Nebraska ........:    27          50          70          38     
+North Carolina ..:    96          94          98          95     
+North Dakota ....:     3          14          42          11     
+Ohio ............:     5          41          67          29     
+Pennsylvania ....:    25          37          52          28     
+South Dakota ....:     1          24          36           6     
+Tennessee .......:    80          93          96          86     
+Texas ...........:    79          79          83          77     
+Wisconsin .......:     8          11          36          13     
+                 :                                               
+18 States .......:    28          50          71          36     
+-----------------------------------------------------------------
+
+Corn Dough - Selected States
+[These 18 States planted 92% of the 2011 corn acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Colorado .......:      -           (NA)            -             -      
+Illinois .......:      3           (NA)           20             6      
+Indiana ........:      -           (NA)            7             1      
+Iowa ...........:      -           (NA)            4             -      
+Kansas .........:      8           (NA)           30             7      
+Kentucky .......:      -           (NA)           15             3      
+Michigan .......:      -           (NA)            -             -      
+Minnesota ......:      -           (NA)            -             -      
+Missouri .......:      8           (NA)           43             9      
+Nebraska .......:      1           (NA)            8             2      
+North Carolina .:     51           (NA)           56            51      
+North Dakota ...:      -           (NA)            -             -      
+Ohio ...........:      -           (NA)            3             1      
+Pennsylvania ...:      -           (NA)            3             3      
+South Dakota ...:      -           (NA)            3             -      
+Tennessee ......:     20           (NA)           50            23      
+Texas ..........:     54           (NA)           68            57      
+Wisconsin ......:      -           (NA)            -             -      
+                :                                                       
+18 States ......:      3           (NA)           12             4      
+------------------------------------------------------------------------
+-     Represents zero.                                                  
+(NA)  Not available.                                                    
+
+Corn Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Colorado .......:    17          21          29          29           4     
+Illinois .......:    26          30          33          10           1     
+Indiana ........:    37          34          21           7           1     
+Iowa ...........:     8          19          37          32           4     
+Kansas .........:    21          30          34          14           1     
+Kentucky .......:    38          39          17           5           1     
+Michigan .......:    27          29          26          16           2     
+Minnesota ......:     2           7          24          56          11     
+Missouri .......:    38          34          21           6           1     
+Nebraska .......:     9          18          30          39           4     
+North Carolina .:     3          14          27          43          13     
+North Dakota ...:     1           8          29          56           6     
+Ohio ...........:    19          28          34          18           1     
+Pennsylvania ...:     5          11          45          30           9     
+South Dakota ...:     7          20          36          33           4     
+Tennessee ......:    25          30          27          17           1     
+Texas ..........:     5           6          33          42          14     
+Wisconsin ......:    19          24          27          25           5     
+                :                                                           
+18 States ......:    16          22          31          27           4     
+                :                                                           
+Previous week ..:    12          18          30          34           6     
+Previous year ..:     4           7          23          50          16     
+----------------------------------------------------------------------------
+
+Soybeans Blooming - Selected States
+[These 18 States planted 95% of the 2011 soybean acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Arkansas ........:    44          70          80          46     
+Illinois ........:    37          42          70          42     
+Indiana .........:    26          44          64          36     
+Iowa ............:    54          52          74          54     
+Kansas ..........:    26          31          46          33     
+Kentucky ........:    26          37          52          35     
+Louisiana .......:    85          76          86          82     
+Michigan ........:    20          26          53          36     
+Minnesota .......:    28          57          80          40     
+Mississippi .....:    84          90          94          90     
+Missouri ........:    27          30          45          25     
+Nebraska ........:    35          37          64          42     
+North Carolina ..:    25          11          20          19     
+North Dakota ....:    23          43          70          43     
+Ohio ............:     9          36          60          39     
+South Dakota ....:    31          45          74          41     
+Tennessee .......:    38          43          62          46     
+Wisconsin .......:    24          16          39          29     
+                 :                                               
+18 States .......:    34          44          66          42     
+-----------------------------------------------------------------
+
+Soybeans Setting Pods - Selected States
+[These 18 States planted 95% of the 2011 soybean acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Arkansas .......:     19           (NA)           56            22      
+Illinois .......:      7           (NA)           15             8      
+Indiana ........:      -           (NA)           12             5      
+Iowa ...........:      4           (NA)           12             9      
+Kansas .........:      -           (NA)            5             2      
+Kentucky .......:      -           (NA)           13             6      
+Louisiana ......:     66           (NA)           67            64      
+Michigan .......:      -           (NA)            -             5      
+Minnesota ......:      1           (NA)           17             4      
+Mississippi ....:     38           (NA)           81            61      
+Missouri .......:      5           (NA)            7             4      
+Nebraska .......:      2           (NA)           13             5      
+North Carolina .:      5           (NA)            5             3      
+North Dakota ...:      -           (NA)           18             6      
+Ohio ...........:      1           (NA)            6             5      
+South Dakota ...:      -           (NA)           12             3      
+Tennessee ......:     10           (NA)           30            19      
+Wisconsin ......:      -           (NA)            5             2      
+                :                                                       
+18 States ......:      5           (NA)           16             9      
+------------------------------------------------------------------------
+-     Represents zero.                                                  
+(NA)  Not available.                                                    
+
+Soybean Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Arkansas .......:     3          16          34          39           8     
+Illinois .......:    16          25          42          16           1     
+Indiana ........:    25          32          32          10           1     
+Iowa ...........:     5          15          42          34           4     
+Kansas .........:    14          27          39          19           1     
+Kentucky .......:    21          31          32          15           1     
+Louisiana ......:     1           7          31          51          10     
+Michigan .......:    16          34          28          21           1     
+Minnesota ......:     1           8          26          57           8     
+Mississippi ....:     2           5          20          50          23     
+Missouri .......:    25          34          31           9           1     
+Nebraska .......:     7          16          43          33           1     
+North Carolina .:     1           5          33          55           6     
+North Dakota ...:     -           6          32          56           6     
+Ohio ...........:    14          28          36          20           2     
+South Dakota ...:     3          17          39          37           4     
+Tennessee ......:    10          17          39          32           2     
+Wisconsin ......:    16          23          31          25           5     
+                :                                                           
+18 States ......:    10          20          36          30           4     
+                :                                                           
+Previous week ..:     9          18          33          35           5     
+Previous year ..:     3           7          26          51          13     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Sorghum Headed - Selected States
+[These 11 States planted 98% of the 2011 sorghum acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Arkansas .......:     70            86            92            73      
+Colorado .......:     15             5            10            15      
+Illinois .......:     13            15            17            17      
+Kansas .........:      2             4            10             2      
+Louisiana ......:     97            93            94            94      
+Missouri .......:      4            17            31            14      
+Nebraska .......:      -             1             3             1      
+New Mexico .....:      1             3             4             3      
+Oklahoma .......:     27            21            32            17      
+South Dakota ...:      2             4            12            11      
+Texas ..........:     71            63            64            67      
+                :                                                       
+11 States ......:     27            26            30            26      
+------------------------------------------------------------------------
+-  Represents zero.                                                     
+
+Sorghum Coloring - Selected States
+[These 11 States planted 98% of the 2011 sorghum acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Arkansas .......:     14            19            39            10      
+Colorado .......:      -             -             -             4      
+Illinois .......:      -             1             2             1      
+Kansas .........:      -             -             -             -      
+Louisiana ......:     53            46            72            39      
+Missouri .......:      -             1             2             1      
+Nebraska .......:      -             -             -             -      
+New Mexico .....:      -             -             -             -      
+Oklahoma .......:      -             -             7             1      
+South Dakota ...:      -             -             -             -      
+Texas ..........:     66            56            57            58      
+                :                                                       
+11 States ......:     21            18            19            18      
+------------------------------------------------------------------------
+-  Represents zero.                                                     
+
+Sorghum Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Arkansas .......:     6          14          32          40           8     
+Colorado .......:     9          14          26          46           5     
+Illinois .......:    43          36          18           3           -     
+Kansas .........:    14          30          43          12           1     
+Louisiana ......:     -           -          31          66           3     
+Missouri .......:    14          33          40          12           1     
+Nebraska .......:    10          15          45          29           1     
+New Mexico .....:    38          24          32           6           -     
+Oklahoma .......:     2          21          44          33           -     
+South Dakota ...:     -          11          60          28           1     
+Texas ..........:     7          11          29          43          10     
+                :                                                           
+11 States ......:    11          21          38          26           4     
+                :                                                           
+Previous week ..:     9          20          39          28           4     
+Previous year ..:    15          20          34          28           3     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Peanuts Pegging - Selected States
+[These 8 States planted 98% of the 2011 peanut acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Alabama .........:    24          60          68          33     
+Florida .........:    54          49          67          57     
+Georgia .........:    56          62          73          55     
+North Carolina ..:    82          47          68          80     
+Oklahoma ........:    68          39          61          72     
+South Carolina ..:    62          55          68          68     
+Texas ...........:    42          32          55          51     
+Virginia ........:    51          40          65          53     
+                 :                                               
+8 States ........:    52          55          69          55     
+-----------------------------------------------------------------
+
+Peanut Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Alabama ........:     -           1          34          65           -     
+Florida ........:     -           3          15          67          15     
+Georgia ........:     -           2          27          57          14     
+North Carolina .:     -           4          41          45          10     
+Oklahoma .......:     -           2          19          74           5     
+South Carolina .:     1           2          31          57           9     
+Texas ..........:     -           5          54          39           2     
+Virginia .......:     -           2          28          70           -     
+                :                                                           
+8 States .......:     -           2          30          58          10     
+                :                                                           
+Previous week ..:     -           2          32          57           9     
+Previous year ..:     5          16          43          31           5     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Rice Headed - Selected States
+[These 6 States planted 100% of the 2011 rice acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Arkansas .......:     12            21            42            11      
+California .....:      -             -             -             1      
+Louisiana ......:     66            70            78            60      
+Mississippi ....:     28            43            59            25      
+Missouri .......:      1             4             9             6      
+Texas ..........:     63            47            58            63      
+                :                                                       
+6 States .......:     22            26            39            21      
+------------------------------------------------------------------------
+-  Represents zero.                                                     
+
+Rice Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acres]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Arkansas .......:     3          10          29          47          11     
+California .....:     -           -          10          20          70     
+Louisiana ......:     -           1          31          58          10     
+Mississippi ....:     1           7          18          53          21     
+Missouri .......:     -           5          23          52          20     
+Texas ..........:     3           3          15          66          13     
+                :                                                           
+6 States .......:     2           5          23          45          25     
+                :                                                           
+Previous week ..:     2           6          23          43          26     
+Previous year ..:     4           7          29          41          19     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Winter Wheat Harvested - Selected States
+[These 18 States harvested 88% of the 2011 winter wheat acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Arkansas ........:    100         100         100         100    
+California ......:     84          95          97          93    
+Colorado ........:     48          97          99          50    
+Idaho ...........:      -           -           -           -    
+Illinois ........:     92          99         100          92    
+Indiana .........:     92          99         100          90    
+Kansas ..........:     97         100         100          96    
+Michigan ........:     26          66          97          35    
+Missouri ........:     98         100         100          95    
+Montana .........:      -           -           3           1    
+Nebraska ........:     23          93          97          39    
+North Carolina ..:    100         100         100         100    
+Ohio ............:     90          87         100          85    
+Oklahoma ........:    100         100         100          94    
+Oregon ..........:      1           -           7          11    
+South Dakota ....:      1          41          82          15    
+Texas ...........:    100          99         100          95    
+Washington ......:      1           -           -           4    
+                 :                                               
+18 States .......:     64          75          80          65    
+-----------------------------------------------------------------
+-  Represents zero.                                              
+
+Spring Wheat Headed - Selected States
+[These 6 States planted 98% of the 2011 spring wheat acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Idaho ...........:    71           83          92         74     
+Minnesota .......:    85          100         100         87     
+Montana .........:    39           61          78         63     
+North Dakota ....:    39           96          99         74     
+South Dakota ....:    89          100         100         95     
+Washington ......:    79           75          93         93     
+                 :                                               
+6 States ........:    54           88          94         77     
+-----------------------------------------------------------------
+
+Spring Wheat Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+-----------------------------------------------------------------------------
+      State      : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+-----------------------------------------------------------------------------
+                 :                          percent                          
+                 :                                                           
+Idaho ...........:     1           2          39          50           8     
+Minnesota .......:     2           7          26          53          12     
+Montana .........:     3          11          31          42          13     
+North Dakota ....:     -           3          24          60          13     
+South Dakota ....:     2          24          28          40           6     
+Washington ......:     1           5          23          67           4     
+                 :                                                           
+6 States ........:     1           7          27          54          11     
+                 :                                                           
+Previous week ...:     1           6          27          54          12     
+Previous year ...:     1           4          22          58          15     
+-----------------------------------------------------------------------------
+-  Represents zero.                                                          
+
+Oats Harvested - Selected States
+[These 9 States harvested 65% of the 2011 oat acreage]
+------------------------------------------------------------------------
+                :               Week ending               :             
+                :-----------------------------------------:             
+      State     :  July 15,   :   July 8,   :  July 15,   :  2007-2011  
+                :    2011     :    2012     :    2012     :   Average   
+------------------------------------------------------------------------
+                :                        percent                        
+                :                                                       
+Iowa ...........:     16            45            72            13      
+Minnesota ......:      -             6            19             2      
+Nebraska .......:     21            85            89            25      
+North Dakota ...:      -             1             4             -      
+Ohio ...........:      6             9            43             9      
+Pennsylvania ...:      1             9            14             4      
+South Dakota ...:      1            20            48             3      
+Texas ..........:     95            98            99            97      
+Wisconsin ......:      1            13            30             3      
+                :                                                       
+9 States .......:     12            24            38            14      
+------------------------------------------------------------------------
+-  Represents zero.                                                     
+
+Oat Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+-----------------------------------------------------------------------------
+      State      : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+-----------------------------------------------------------------------------
+                 :                          percent                          
+                 :                                                           
+Iowa ............:     4          18          34          38           6     
+Minnesota .......:     1           6          23          61           9     
+Nebraska ........:     1          13          42          44           -     
+North Dakota ....:     -           2          31          61           6     
+Ohio ............:     4           8          36          46           6     
+Pennsylvania ....:     -           5          20          51          24     
+South Dakota ....:    11          12          30          42           5     
+Texas ...........:     4           7          28          35          26     
+Wisconsin .......:    11           8          27          44          10     
+                 :                                                           
+9 States ........:     4           8          29          44          15     
+                 :                                                           
+Previous week ...:     3           7          27          48          15     
+Previous year ...:    14           8          19          49          10     
+-----------------------------------------------------------------------------
+-  Represents zero.                                                          
+
+Barley Headed - Selected States
+[These 5 States planted 71% of the 2011 barley acreage]
+-----------------------------------------------------------------
+                 :            Week ending            :           
+                 :-----------------------------------:           
+      State      : July 15,  :  July 8,  : July 15,  : 2007-2011 
+                 :   2011    :   2012    :   2012    :  Average  
+-----------------------------------------------------------------
+                 :                    percent                    
+                 :                                               
+Idaho ...........:    71           83          95         77     
+Minnesota .......:    79          100         100         85     
+Montana .........:    45           74          94         64     
+North Dakota ....:    44           92          99         77     
+Washington ......:    77           75          90         92     
+                 :                                               
+5 States ........:    56           82          95         73     
+-----------------------------------------------------------------
+
+Barley Condition - Selected States: Week Ending July 15, 2012
+[National crop conditions for selected States are weighted based on 2011
+planted acreage]
+-----------------------------------------------------------------------------
+      State      : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+-----------------------------------------------------------------------------
+                 :                          percent                          
+                 :                                                           
+Idaho ...........:     3           4          26          51          16     
+Minnesota .......:     1           4          26          58          11     
+Montana .........:     6          15          35          35           9     
+North Dakota ....:     -           4          27          58          11     
+Washington ......:     2           3          19          74           2     
+                 :                                                           
+5 States ........:     3           8          29          49          11     
+                 :                                                           
+Previous week ...:     5           7          31          45          12     
+Previous year ...:     1           3          20          60          16     
+-----------------------------------------------------------------------------
+-  Represents zero.                                                          
+
+Pasture and Range Condition - Selected States: Week Ending July 15, 2012
+[National pasture and range conditions for selected States are weighted
+based on pasture acreage and/or livestock inventories]
+----------------------------------------------------------------------------
+      State     : Very poor :   Poor    :   Fair    :   Good    : Excellent 
+----------------------------------------------------------------------------
+                :                          percent                          
+                :                                                           
+Alabama ........:     9          25          44          21           1     
+Arizona ........:    64          16          13           5           2     
+Arkansas .......:    51          32          14           3           -     
+California .....:    15          60          20           5           -     
+Colorado .......:    38          35          22           5           -     
+Connecticut ....:     -          27          37          36           -     
+Delaware .......:    38          35          19           8           -     
+Florida ........:     1           3          21          55          20     
+Georgia ........:     9          20          45          24           2     
+Idaho ..........:     7          18          27          46           2     
+Illinois .......:    48          35          15           2           -     
+Indiana ........:    56          31          12           1           -     
+Iowa ...........:    26          36          29           8           1     
+Kansas .........:    42          36          19           3           -     
+Kentucky .......:    39          34          22           5           -     
+Louisiana ......:     2          10          35          46           7     
+Maine ..........:     -           -          16          52          32     
+Maryland .......:    14          23          31          30           2     
+Massachusetts ..:     -           -          48          52           -     
+Michigan .......:    36          28          27           8           1     
+Minnesota ......:     9          16          32          38           5     
+Mississippi ....:     1          16          40          40           3     
+Missouri .......:    60          32           7           1           -     
+Montana ........:    27          26          30          16           1     
+Nebraska .......:    35          39          20           6           -     
+Nevada .........:    42          38          14           5           1     
+New Hampshire ..:     1           8          38          51           2     
+New Jersey .....:     5          30          50          15           -     
+New Mexico .....:    49          36          12           3           -     
+New York .......:    19          33          34          14           -     
+North Carolina .:     7          18          36          37           2     
+North Dakota ...:     4          24          37          32           3     
+Ohio ...........:    29          36          26           8           1     
+Oklahoma .......:    10          28          47          15           -     
+Oregon .........:     1           9          29          56           5     
+Pennsylvania ...:    16          40          31           8           5     
+Rhode Island ...:     -          12          58          30           -     
+South Carolina .:     2          10          42          43           3     
+South Dakota ...:    14          29          37          18           2     
+Tennessee ......:    34          34          24           8           -     
+Texas ..........:    16          25          38          19           2     
+Utah ...........:    15          34          30          21           -     
+Vermont ........:     -          20          47          33           -     
+Virginia .......:    13          30          39          17           1     
+Washington .....:     -           5          24          41          30     
+West Virginia ..:    12          35          32          20           1     
+Wisconsin ......:    36          27          22          14           1     
+Wyoming ........:    36          34          23           7           -     
+                :                                                           
+48 States ......:    24          30          28          16           2     
+                :                                                           
+Previous week ..:    21          29          29          18           3     
+Previous year ..:    17          15          22          35          11     
+----------------------------------------------------------------------------
+-  Represents zero.                                                         
+
+Crop Progress and Condition Tables Expected Next Week
+
+Barley: Harvested, Condition
+Corn: Silking, Dough, Dent, Condition
+Cotton: Squaring, Setting Bolls, Condition
+Oats: Harvested, Condition
+Pasture and Range: Condition
+Peanuts: Pegging, Condition
+Rice: Headed, Condition
+Sorghum: Headed, Coloring, Condition
+Soybeans: Blooming, Setting Pods, Condition
+Spring Wheat: Headed, Harvested, Condition
+Winter Wheat: Harvested
+
+Statistical Methodology
+
+Survey Procedures: Crop progress and condition estimates are based on survey 
+data collected each week from early April through the end of November. The 
+non-probability crop progress and condition surveys include input from 
+approximately 4,000 respondents whose occupations provide them opportunities 
+to make visual observations and frequently bring them in contact with farmers 
+in their counties. Based on standard definitions, these respondents 
+subjectively estimate the progress of crops through various stages of 
+development, as well as the progress of producer activities. They also 
+provide subjective evaluations of crop conditions.
+
+Most respondents complete their questionnaires on Friday or early Monday 
+morning and submit them to the National Agricultural Statistics Service 
+(NASS) Field Offices in their States by mail, telephone, fax, e-mail, or 
+through a secured internet website. A small number of reports are completed 
+on Thursday, Saturday, and Sunday. Regardless of when questionnaires are 
+completed, respondents are asked to report for the entire week ending on 
+Sunday. For reports submitted prior to the Sunday reference date, a degree of 
+uncertainty is introduced by projections for weekend changes in progress and 
+condition. By the end of the 2011 season, over 90 percent of the data were 
+being submitted through the internet website. As a result, the majority of 
+all data are submitted on Monday morning, significantly reducing projection 
+uncertainty.
+
+Respondents are sent written reporting instructions at the beginning of each 
+season and are contacted periodically to ensure proper reporting. Terms and 
+definitions of crop stages and condition categories used as reporting 
+guidelines are available on the NASS website at 
+www.nass.usda.gov/Publications/National_Crop_Progress.
+
+Estimating Procedures: Reported data are reviewed for reasonableness and 
+consistency by comparing with data reported the previous week and data 
+reported in surrounding counties for the current week. Each State Field 
+Office summarizes the reported data to district and State levels, weighting 
+each county's reported data by NASS county acreage estimates. Summarized 
+indications are compared with previous week estimates, and progress items are 
+compared with earlier stages of development and historical averages to ensure 
+reasonableness. Weather events and respondent comments are also taken into 
+consideration. State estimates are submitted to the Agricultural Statistics 
+Board (ASB) along with supporting comments, where they are compared with 
+surrounding States and compiled into a National level summary by weighting 
+each State by its acreage estimates.
+ 
+Revision Policy: Progress and condition estimates in the Crop Progress report 
+are released after 4:00 pm ET on the first business day of the week. These 
+estimates are subject to revision the following week.
+
+Information Contacts
+
+Listed below are the commodity statisticians in the Crops Branch of the 
+National Agricultural Statistics Service to contact for additional 
+information. E-mail inquiries may be sent to nass@nass.usda.gov
+
+Lance Honig, Chief, Crops Branch........................... (202) 720-2127
+
+Jacqueline Moore, Head, Field Crops Section................ (202) 720-2127
+     Suzanne Avilla - Peanuts, Rice........................ (202) 720-7688
+     Bryan Durham - Oats, Rye, Wheat....................... (202) 720-8068
+     Steve Maliszewski - Cotton, Cotton Ginnings, Sorghum.. (202) 720-5944
+     Anthony Prillaman - Corn, Flaxseed, Proso Millet...... (202) 720-9526
+     Julie Schmidt - Crop Weather, Barley, Hay............. (202) 720-7621
+     Travis Thorson - Soybeans, Sunflower, Other Oilseeds.. (202) 720-7369
+
+Access to NASS Reports
+
+For your convenience, you may access NASS reports and products the following 
+ways:
+
+ 	All reports are available electronically, at no cost, on the NASS web 
+site: http://www.nass.usda.gov
+
+ 	Both national and state specific reports are available via a free e-
+mail subscription. To set-up this free subscription, visit 
+http://www.nass.usda.gov and in the "Follow NASS" box under "Receive 
+reports by Email," click on "National" or "State" to select the reports 
+you would like to receive. 
+
+ 	Printed reports may be purchased from the National Technical 
+Information Service (NTIS) by calling toll-free (800) 999-6779, or 
+(703) 605-6220 if calling from outside the United States or Canada. 
+Accepted methods of payment are Visa, MasterCard, check, or money 
+order.  
+
+For more information on NASS surveys and reports, call the NASS Agricultural 
+Statistics Hotline at (800) 727-9540, 7:30 a.m. to 4:00 p.m. ET, or e-mail: 
+nass@nass.usda.gov. 
+                                                                                
+The United States Department of Agriculture (USDA) prohibits discrimination 
+in all its programs and activities on the basis of race, color, national 
+origin, age, disability, and where applicable, sex, marital status, familial 
+status, parental status, religion, sexual orientation, political beliefs, 
+genetic information, reprisal, or because all or a part of an individual's 
+income is derived from any public assistance program. (Not all prohibited 
+bases apply to all programs.) Persons with disabilities who require 
+alternative means for communication of program information (Braille, large 
+print, audiotape, etc.) should contact USDA's TARGET Center at (202) 720-2600 
+(voice and TDD).
+
+To file a complaint of discrimination, write to USDA, Assistant Secretary for 
+Civil Rights, Office of the Assistant Secretary for Civil Rights, 1400 
+Independence Avenue, S.W., Stop 9410, Washington, DC 20250-9410, or call 
+toll-free at (866) 632-9992 (English) or (800) 877-8339 (TDD) or (866) 377-
+8642 (English Federal-relay) or (800) 845-6136 (Spanish Federal-relay). USDA 
+is an equal opportunity provider and employer.
+
