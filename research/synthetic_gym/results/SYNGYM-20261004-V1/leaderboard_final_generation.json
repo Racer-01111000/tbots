@@ -1,0 +1,682 @@
+[
+ {
+  "family": "TREND",
+  "genome_id": "gen_81bb9383881c5f723068a1f4e398403eeb7b9e8d4615ea4667899aab3cac9cb4",
+  "name": "g2s13",
+  "origin": {
+   "attempt": 0,
+   "generation": 2,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 2139869431545797017
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.455774966666667,
+   "median_net_return": 0.1930535,
+   "primary_score": -0.004392714179700552,
+   "worst_drawdown": -0.07912689422391772,
+   "worst_net_return": 0.08978989999999998
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_8f361f64bdbc6bc4f880722b8dc55ba75770b2daa2c881aeed6b45bdab6aabfa",
+  "name": "g4s9",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 3971603718614802416
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.231840875,
+   "median_net_return": 0.19501915000000003,
+   "primary_score": -0.0051919519366860345,
+   "worst_drawdown": -0.07022953555280231,
+   "worst_net_return": 0.0458421
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+  "name": "g1s19",
+  "origin": {
+   "attempt": 0,
+   "generation": 1,
+   "kind": "mutation",
+   "parent_id": "gen_f54356c19b3aa69e59ba91e9dcf4f37a1b968258ef8b07e4fe84a6eb32aaaa93",
+   "seed": 8712456674372018909
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.341852641666667,
+   "median_net_return": 0.2217635,
+   "primary_score": -0.006763787589070591,
+   "worst_drawdown": -0.07238016427124772,
+   "worst_net_return": 0.07898559999999999
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_e046ddd0e0cce16ae36f01f5bb08d45e75a2951f2adb487a18d1decc6b02db88",
+  "name": "g4s13",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_428d1f2d711eefc0e44812acf09811ac21964ae4dcea196360531fd8a29331e9",
+   "seed": 1509332144604754985
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.244615033333333,
+   "median_net_return": 0.20849525000000002,
+   "primary_score": -0.006776452896448681,
+   "worst_drawdown": -0.0647535465337814,
+   "worst_net_return": 0.1010063000000001
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_e6abff9621cc385e3aa6297b229cf5e655c9ed677a46093a30fcc43b095e458c",
+  "name": "g4s12",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 1019371572239090175
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.3530016583333335,
+   "median_net_return": 0.22274295,
+   "primary_score": -0.006781531158933873,
+   "worst_drawdown": -0.07238016427124772,
+   "worst_net_return": 0.0909008
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_6c127e49d4cad019f5e5ec29e08ce155f31147ec12ece1a3c9cefb19fbedb9af",
+  "name": "g4s14",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_590d6f9576746ce81a57fe23debe73c6a6c9bf9683f01dcc5b9286863ea166da",
+   "seed": 5125328124814516559
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.011701958333333,
+   "median_net_return": 0.18809705,
+   "primary_score": -0.007093710515671647,
+   "worst_drawdown": -0.07534356523181929,
+   "worst_net_return": 0.0945902999999999
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_6649d54bb626d615c702367e5db63d6c9e95fcbc4c577f27e25ed445a886f34c",
+  "name": "g3s5",
+  "origin": {
+   "attempt": 0,
+   "generation": 3,
+   "kind": "mutation",
+   "parent_id": "gen_4edd703e485632e6d7ad5642d85b8fb879e3806c1e306bfb2c208e6bbb8a11fd",
+   "seed": 5105710504208617024
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.0710057583333334,
+   "median_net_return": 0.2095148,
+   "primary_score": -0.007388021077557649,
+   "worst_drawdown": -0.07193636434127604,
+   "worst_net_return": 0.0841327999999999
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_590d6f9576746ce81a57fe23debe73c6a6c9bf9683f01dcc5b9286863ea166da",
+  "name": "g2s12",
+  "origin": {
+   "attempt": 0,
+   "generation": 2,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 8697621990748832602
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.368638533333333,
+   "median_net_return": 0.21019875,
+   "primary_score": -0.007724360807139119,
+   "worst_drawdown": -0.07238016427124772,
+   "worst_net_return": 0.07875830000000006
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_4edd703e485632e6d7ad5642d85b8fb879e3806c1e306bfb2c208e6bbb8a11fd",
+  "name": "g2s14",
+  "origin": {
+   "attempt": 0,
+   "generation": 2,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 5264872081756858354
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.14651305,
+   "median_net_return": 0.21081735000000001,
+   "primary_score": -0.00871270970623006,
+   "worst_drawdown": -0.07223936198995984,
+   "worst_net_return": 0.08280759999999998
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_99239f5910edd646ff697e7397abfcb17be71f784d5c949636a746deb93940f8",
+  "name": "g4s17",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_81bb9383881c5f723068a1f4e398403eeb7b9e8d4615ea4667899aab3cac9cb4",
+   "seed": 2201677882615289682
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.386968275,
+   "median_net_return": 0.2031999,
+   "primary_score": -0.008783135513186269,
+   "worst_drawdown": -0.07903918878716654,
+   "worst_net_return": 0.08696079999999995
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_faf5b25ff516cd3de055ad070278164bccd93f15425f728aa731067587cb833c",
+  "name": "g4s5",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_4edd703e485632e6d7ad5642d85b8fb879e3806c1e306bfb2c208e6bbb8a11fd",
+   "seed": 9014523751343173206
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.1617328166666665,
+   "median_net_return": 0.21020304999999995,
+   "primary_score": -0.008883160255351075,
+   "worst_drawdown": -0.0712337472369694,
+   "worst_net_return": 0.08264080000000007
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_39c2d4021578bb9c77ee39f3a7504dd0a73dd8ee215de4c6d1b1c12b67360c60",
+  "name": "g4s1",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 3860403028177382728
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.442647758333333,
+   "median_net_return": 0.20491075000000003,
+   "primary_score": -0.00916005651404983,
+   "worst_drawdown": -0.07029229899417966,
+   "worst_net_return": 0.07849050000000002
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_f5bce91e01fabdb8382da9f0d5ce408422131fa473b15ee962daa85b3e0ea8bf",
+  "name": "g3s20",
+  "origin": {
+   "attempt": 0,
+   "generation": 3,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 1303572714936725222
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.42405415,
+   "median_net_return": 0.20371755000000003,
+   "primary_score": -0.00934001057319872,
+   "worst_drawdown": -0.07265102668590961,
+   "worst_net_return": 0.07640650000000004
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_39f019b7bc3cd1f0feb2748034822c42c6a6c956c295f25ada017210578bd8b9",
+  "name": "g4s0",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_428d1f2d711eefc0e44812acf09811ac21964ae4dcea196360531fd8a29331e9",
+   "seed": 6831954583153127326
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.533382558333334,
+   "median_net_return": 0.20466145000000002,
+   "primary_score": -0.009348408642863626,
+   "worst_drawdown": -0.0709814549096256,
+   "worst_net_return": 0.08972319999999989
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_428d1f2d711eefc0e44812acf09811ac21964ae4dcea196360531fd8a29331e9",
+  "name": "g3s2",
+  "origin": {
+   "attempt": 0,
+   "generation": 3,
+   "kind": "mutation",
+   "parent_id": "gen_5ae0c363952b9ab5d0703b5c2b98d963d38f1956055c3956374a2c4ea2ce4f38",
+   "seed": 8624094711154102472
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.524517183333333,
+   "median_net_return": 0.20467305000000002,
+   "primary_score": -0.009384463467309145,
+   "worst_drawdown": -0.07190393018616748,
+   "worst_net_return": 0.09011349999999996
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_6217a9f93b688eb716bf71b63c251df3e719461ca95719115ac1d9f39ce21d1a",
+  "name": "g2s6",
+  "origin": {
+   "attempt": 0,
+   "generation": 2,
+   "kind": "mutation",
+   "parent_id": "gen_769f0118ccac1eff0c80eddae2e498476f7d9642976ed3427582f42e04b945ca",
+   "seed": 3146720577592247923
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.281733841666667,
+   "median_net_return": 0.18571844999999998,
+   "primary_score": -0.009410170021476372,
+   "worst_drawdown": -0.06138579542892275,
+   "worst_net_return": 0.049635899999999955
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_f8b8139e856e6acf7be03bf9101660d16eff92b0bbbbc384a7ac129e39f9ef65",
+  "name": "g4s3",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_6217a9f93b688eb716bf71b63c251df3e719461ca95719115ac1d9f39ce21d1a",
+   "seed": 5103596932691468734
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.281733841666667,
+   "median_net_return": 0.18571844999999998,
+   "primary_score": -0.009410170021476372,
+   "worst_drawdown": -0.06138579542892275,
+   "worst_net_return": 0.049635899999999955
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_c68284d394f0025eabc40abf8b3cbe67a36df3e265d87763ad052c47cbdf15d1",
+  "name": "g4s20",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_5e42851a5791342ca0564a08c78d9386efd867fcf000c0fb2cdbfb4ea7db3632",
+   "seed": 6188457710470883510
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.278280358333333,
+   "median_net_return": 0.19694120000000004,
+   "primary_score": -0.009462661939850403,
+   "worst_drawdown": -0.07561785792371456,
+   "worst_net_return": 0.03602630000000007
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_7789164bfe49944739a7afde9a85c4f2f74929cc8ae5ed9775c08045d5e4d168",
+  "name": "g4s15",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_5e42851a5791342ca0564a08c78d9386efd867fcf000c0fb2cdbfb4ea7db3632",
+   "seed": 8490917841315036687
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.120083691666667,
+   "median_net_return": 0.19125764999999995,
+   "primary_score": -0.01031581036685264,
+   "worst_drawdown": -0.07558280705117282,
+   "worst_net_return": 0.03351180000000009
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_e3f767d7f09020312e68265bbe66826ee32615555b9e61975259f7cb0371603d",
+  "name": "g4s4",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_9558cdb6bd57184e19a92eee423537fe70a5c58fc9f4cb0604ddc0b01181dda7",
+   "seed": 1731268987193677801
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 4.18471205,
+   "median_net_return": 0.15348425,
+   "primary_score": -0.010884915429338338,
+   "worst_drawdown": -0.07447422564264372,
+   "worst_net_return": 0.10082379999999991
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_807e010eb03dc8734f2fb78d15c590be4a9398b94ddd58bff39f3cd72e3dcc64",
+  "name": "g4s8",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_76e982cd328b3b4c73d6d35f85901419525e7ae0e5d18a6093b46c21ab5a75bc",
+   "seed": 7595183914514119794
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.2317013999999995,
+   "median_net_return": 0.18379544999999997,
+   "primary_score": -0.011035286471821837,
+   "worst_drawdown": -0.07335366791494957,
+   "worst_net_return": 0.03510170000000001
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_351f7b9065d37b86e30c1a2930955afcff32754bd0a77756522d3453e3a6bb81",
+  "name": "g4s18",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_769f0118ccac1eff0c80eddae2e498476f7d9642976ed3427582f42e04b945ca",
+   "seed": 5352124777347840867
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.306943041666667,
+   "median_net_return": 0.19864024999999996,
+   "primary_score": -0.013064939567243805,
+   "worst_drawdown": -0.07984712126981641,
+   "worst_net_return": 0.06091829999999998
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_a7ab3bbb978804281a4d49f70b32d5babb46750cc443e87feaa7dc9cb9087138",
+  "name": "g4s10",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_440a990672b872a8c22b70efbfa17242b298aac36a4a8a0ca0fd74bffa869cd3",
+   "seed": 8224039788652033944
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.643308416666667,
+   "median_net_return": 0.20295865000000002,
+   "primary_score": -0.013788214857888503,
+   "worst_drawdown": -0.07901143821515211,
+   "worst_net_return": 0.06810990000000006
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_c6b4785731e3fff092fa25ff2640392a74ae960810a0b2ce09e6378b7ebd88e4",
+  "name": "g4s6",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_7c1cac46a49fa9d8ea55d68249d63f95607a727ae4f1bd0bd7eee791fc27250d",
+   "seed": 5049173846833058817
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.652895666666667,
+   "median_net_return": 0.1765008,
+   "primary_score": -0.01463535205500438,
+   "worst_drawdown": -0.06949157037917764,
+   "worst_net_return": 0.00601560000000001
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_7c1a12de1094165f82983c54efb5c42b24d29cce7d3ee4898563d1c8aa40dac9",
+  "name": "g4s16",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_4f65cef0261b81b372bf3e227f32148fc4929eb23ce748e0c02d0af279f1f7ea",
+   "seed": 4075075898489272289
+  },
+  "summary": {
+   "eligible": true,
+   "ineligibility": [],
+   "mean_turnover": 6.6261848500000005,
+   "median_net_return": 0.19323805000000005,
+   "primary_score": -0.014688793408717704,
+   "worst_drawdown": -0.07894784525981913,
+   "worst_net_return": 0.046754799999999985
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+  "name": "champion",
+  "origin": {
+   "kind": "reference"
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.1001 > 0.08",
+    "SYNGYM-20261004-V1:training:stagflation_rates:1: drawdown 0.1197 > 0.08",
+    "SYNGYM-20261004-V1:training:recession_credit_shock:0: drawdown 0.0865 > 0.08",
+    "SYNGYM-20261004-V1:training:recession_credit_shock:1: drawdown 0.0888 > 0.08",
+    "SYNGYM-20261004-V1:training:normalization_whipsaw:0: drawdown 0.1055 > 0.08"
+   ],
+   "mean_turnover": 5.562364483333333,
+   "median_net_return": 0.21592064999999994,
+   "primary_score": -0.005811399634475634,
+   "worst_drawdown": -0.11970312110738202,
+   "worst_net_return": 0.020077200000000017
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_c6bf07971b20c4b6c1b2b02a20eb0fa6b8bd494f72d38a0f346bbf615b4c184e",
+  "name": "g4s7",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_81bb9383881c5f723068a1f4e398403eeb7b9e8d4615ea4667899aab3cac9cb4",
+   "seed": 521422308411176543
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.0838 > 0.08"
+   ],
+   "mean_turnover": 4.481754991666667,
+   "median_net_return": 0.18789345000000002,
+   "primary_score": -0.008887334891045373,
+   "worst_drawdown": -0.08378473336676628,
+   "worst_net_return": 0.07508859999999995
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_01baeba0b0d8a2ec3563b54402511cb0644adeb9f720086d01c2b2bf8519dce9",
+  "name": "g4s19",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_81bb9383881c5f723068a1f4e398403eeb7b9e8d4615ea4667899aab3cac9cb4",
+   "seed": 4565146040856336101
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.0897 > 0.08"
+   ],
+   "mean_turnover": 4.09011995,
+   "median_net_return": 0.20454649999999996,
+   "primary_score": -0.010033114925115494,
+   "worst_drawdown": -0.08974129010617271,
+   "worst_net_return": 0.04917349999999998
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_bccfb3b3a5cd1aa1383072e00875f1498780ec09cc161bfb7e27341e522121dc",
+  "name": "g4s11",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_9b20a6dc4ed75c9d154f7faa4a1a0756800a8880303cf21d12d5baf4dbad6f50",
+   "seed": 1362025565835143793
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.0902 > 0.08",
+    "SYNGYM-20261004-V1:training:normalization_whipsaw:0: drawdown 0.0932 > 0.08"
+   ],
+   "mean_turnover": 6.101022658333334,
+   "median_net_return": 0.2021464500000001,
+   "primary_score": -0.012722671790639739,
+   "worst_drawdown": -0.09318414316741241,
+   "worst_net_return": -0.002884600000000015
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85",
+  "name": "d_primary_rank3",
+  "origin": {
+   "kind": "reference"
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.0867 > 0.08",
+    "SYNGYM-20261004-V1:training:normalization_whipsaw:0: drawdown 0.1013 > 0.08"
+   ],
+   "mean_turnover": 6.452357958333334,
+   "median_net_return": 0.19172235000000004,
+   "primary_score": -0.01456108453976418,
+   "worst_drawdown": -0.1013481962583428,
+   "worst_net_return": 0.0005452999999999708
+  }
+ },
+ {
+  "family": "TREND",
+  "genome_id": "gen_613e0849ef8f6aa6a0bd2402df9655838ce9c80ece599639b0185ac8db6e2bbf",
+  "name": "g4s2",
+  "origin": {
+   "attempt": 0,
+   "generation": 4,
+   "kind": "mutation",
+   "parent_id": "gen_9558cdb6bd57184e19a92eee423537fe70a5c58fc9f4cb0604ddc0b01181dda7",
+   "seed": 7244745678531730202
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:normalization_whipsaw:0: drawdown 0.1041 > 0.08"
+   ],
+   "mean_turnover": 3.8223751,
+   "median_net_return": 0.16903505000000008,
+   "primary_score": -0.014813572593586122,
+   "worst_drawdown": -0.10413338127618743,
+   "worst_net_return": 0.06802259999999993
+  }
+ },
+ {
+  "family": "D",
+  "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+  "name": "sam",
+  "origin": {
+   "kind": "reference"
+  },
+  "summary": {
+   "eligible": false,
+   "ineligibility": [
+    "SYNGYM-20261004-V1:training:fertilizer_harvest_stress:1: drawdown 0.1211 > 0.08"
+   ],
+   "mean_turnover": 6.471050883333334,
+   "median_net_return": 0.19194529999999999,
+   "primary_score": -0.01976563996574618,
+   "worst_drawdown": -0.12111411798176874,
+   "worst_net_return": -0.01800449999999998
+  }
+ }
+]

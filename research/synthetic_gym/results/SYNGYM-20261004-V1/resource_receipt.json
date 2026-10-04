@@ -1,0 +1,54 @@
+{
+ "benchmark": {
+  "expected_evolution_seconds_given_survivor_cache": 33.91736949351616,
+  "genome_world_evaluations": 36,
+  "seconds": 0.8771733489702456,
+  "seconds_per_genome_world": 0.0243659263602846,
+  "worst_case_evolution_seconds": 46.78257861174643
+ },
+ "experiment_id": "SYNGYM-20261004-V1",
+ "limits": {
+  "mem_cap_mib": 800.0,
+  "out_cap_mib": 1024.0,
+  "wall_seconds": 7200.0
+ },
+ "phases": {
+  "evolution": {
+   "evaluations": 115,
+   "generations_completed": 5,
+   "halt_reason": null,
+   "seconds": 33.0097406230052
+  },
+  "reference_reports": {
+   "seconds": 1.1242737779975869
+  },
+  "robustness": {
+   "seconds": 8.874811948044226
+  },
+  "validation": {
+   "seconds": 0.6312226459849626
+  },
+  "worlds": {
+   "n_training": 12,
+   "n_validation": 6,
+   "seconds": 4.469753769983072
+  }
+ },
+ "preflight": {
+  "broker_credential_readable_by_this_process": false,
+  "cpus": 2,
+  "env_has_alpaca_vars": false,
+  "free_disk_mib": 26471.5234375,
+  "mem_available_mib": 3268.34765625,
+  "pid": 171925,
+  "python": "3.13.5",
+  "uid": 993
+ },
+ "smoke": false,
+ "totals": {
+  "cpu_seconds": 48.936370367,
+  "output_mib": 1.8423995971679688,
+  "peak_rss_mib": 124.09375,
+  "wall_seconds": 49.500210608006455
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "expected_evolution_seconds_given_survivor_cache": 33.91736949351616,
+ "genome_world_evaluations": 36,
+ "seconds": 0.8771733489702456,
+ "seconds_per_genome_world": 0.0243659263602846,
+ "worst_case_evolution_seconds": 46.78257861174643
+}

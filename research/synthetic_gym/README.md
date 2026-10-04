@@ -9,5 +9,6 @@ replace Kim, change admission, or become a paper/live trader. Forward Alpaca sha
 * `gym/` generator, world model, engine, scoring, evolution, checkpoints, news interface (`events.py`), campaign driver.
 * `docs/GENERATOR_VALIDATION.md` what is calibrated vs assumed and every realism gap; `docs/pilot_semantics_receipts.json` mock-broker evidence for the
   repaired execution semantics; `results/` campaign outputs (small; bulky regenerated price data is NOT committed).
+* **First campaign result (SYNGYM-20261004-V1): no qualifying candidate** - see `results/SYNGYM-20261004-V1/RESULTS.md`.
 * Run (offline, one worker): `python -m gym.campaign --out DIR [--smoke] [--resume]`; tests: `python -m pytest tests`.
 * `run_isolated_ec2.sh` shows the sandbox used on the research instance (dedicated user, no network, 1 vCPU, memory cap, no credential access).
