@@ -1,0 +1,11 @@
+[Unit]
+Description=TBOTS research batch: 05:00 ET each US trading session Mon-Fri (the batch itself enforces the NYSE calendar, one-per-session and expiry; Friday runs the final step)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 05:00:00 America/New_York
+Persistent=false
+AccuracySec=1s
+Unit=tbots-foodfuel-research.service
+
+[Install]
+WantedBy=timers.target

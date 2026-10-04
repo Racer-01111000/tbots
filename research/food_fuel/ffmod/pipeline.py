@@ -113,9 +113,11 @@ class Pipeline:
         prep = any(a <= hm(self.et) <= b for a, b in QUOTE_PREP_WINDOWS)
         final = hm(self.et) >= FINAL_FLUSH
         syms = [(n, s, k) for rows in list(B.GLOBAL_INSTRUMENTS.values()) + [B.FOOD_FUEL_QUOTES] for n, s, k in rows]
+        focus = self.focus_symbols()
         for n, s, k in syms:
             src = "quote:" + s
-            if not (prep or final or self.due(src, QUOTE_EVERY_MIN)): continue
+            if not (prep or final or s in focus or self.due(src, QUOTE_EVERY_MIN)): continue
+            if s in focus and not self.due(src, 4.5): continue
             url = f"https://query1.finance.yahoo.com/v8/finance/chart/{s.replace('^', '%5E')}?range=5d&interval=1d"
             body = self.get(src, url)
             if not body: continue
@@ -127,6 +129,16 @@ class Pipeline:
             except Exception as e:
                 self._poll(src, "PARSE_ERROR", 200, repr(e)[:200])
             self.sleep(0.25)
+
+    def focus_symbols(self):
+        """release-window intraday granularity (forward data for pre/post-release separation): 5-minute quote polls of the instruments a release should move"""
+        h = hm(self.et); f = set()
+        nxt = self.db.execute("SELECT payload_json FROM captures WHERE source='eia_stocks' ORDER BY id DESC LIMIT 1").fetchone()
+        if nxt and json.loads(nxt[0]).get("next_release") == self.et.date().isoformat() and (10, 15) <= h <= (11, 30): f |= {"HO=F", "CL=F", "USO", "NG=F"}
+        if (11, 50) <= h <= (12, 30): f |= {"ZC=F", "ZS=F", "ZW=F", "CORN", "DBA"}
+        if self.et.weekday() == 0 and (15, 55) <= h <= (16, 20): f |= {"ZC=F", "ZS=F", "CORN"}
+        if self.et.weekday() == 3 and (8, 25) <= h <= (9, 0): f |= {"ZC=F", "ZS=F"}
+        return f
 
     def poll_eia(self):
         # release-day page carries its own Release Date / Next Release Date; poll 04:05 daily, and every 5 min 10:25-11:30 ET on the release date (or until the new release is captured)

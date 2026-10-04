@@ -13,7 +13,9 @@ REL=/opt/tbots-foodfuel/releases/$SHA
 if [ ! -d "$REL" ]; then
   mkdir -p "$REL.tmp" && tar -xf "$ARC" -C "$REL.tmp" && echo "$SHA" > "$REL.tmp/DEPLOYED_SHA" && mv "$REL.tmp" "$REL" && chown -R root:root "$REL"
 fi
-PREV=$(readlink -f /opt/tbots-foodfuel/current 2>/dev/null || true)
+# research dependencies come from the root-owned, hash-pinned v1 export (data, frozen schemas, reference genomes)
+for d in data evolution experiments scripts; do ln -sfn /opt/tbots-gym/src/$d "$REL/$d"; done
+PREV=""; [ -L /opt/tbots-foodfuel/current ] && PREV=$(readlink -f /opt/tbots-foodfuel/current)
 [ -n "$PREV" ] && [ "$PREV" != "$REL" ] && echo "$PREV" > /opt/tbots-foodfuel/ROLLBACK_TO
 ln -sfn "$REL" /opt/tbots-foodfuel/current.new && mv -Tf /opt/tbots-foodfuel/current.new /opt/tbots-foodfuel/current
 echo "current -> $(readlink -f /opt/tbots-foodfuel/current); rollback target: $(cat /opt/tbots-foodfuel/ROLLBACK_TO 2>/dev/null || echo none)"

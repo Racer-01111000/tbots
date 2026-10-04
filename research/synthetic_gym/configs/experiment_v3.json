@@ -1,0 +1,34 @@
+{
+  "experiment_id": "SYNGYM-20261005-V3R",
+  "version": 3,
+  "status": "FROZEN before any V3 score exists. Prior results (V1, EVT-V2) are preserved unchanged.",
+  "supersedes_none": "V1 remains authoritative for gen-v1 worlds; V3 uses the repaired gen-v2 generator and FRESH world seeds",
+  "generator": {
+    "module": "gym/generator_v2.py",
+    "config": "configs/generator_v2.json"
+  },
+  "features": "price-only genome families TREND (s5a frozen schema/mutation) and D (s6a frozen schema/mutation); no indicator inputs; EVT_AWARE_v1 is evaluated only in the separate EVT-V2 experiment",
+  "objective": "unchanged: 25th percentile of annualized excess return vs passive18 across training worlds; eligibility: max drawdown <= 8% in every world; tie-breaks as v1 (scoring.py hash frozen)",
+  "seeds": "world seed = derive_seed(experiment_id, split, family, index); mutation/tournament seeds derive_seed(experiment_id, 'mutate'|'tournament', generation, slot, attempt) (stateless)",
+  "worlds": {
+    "training": "12 (2 per family) designated training bank, reused every batch",
+    "validation": "6 fresh, opened EXACTLY ONCE after the final batch, never used for mutation or tuning",
+    "sealed_test": "6 fresh, opened only if validation passes"
+  },
+  "batches": {
+    "schedule": "at most one per US trading session, Mon-Fri 2026-10-05..09, start 05:00 ET",
+    "generations_per_batch": 5,
+    "population": 32,
+    "wall_seconds_cap": 7200,
+    "cpu": "1 vCPU (CPUQuota 100%)",
+    "memory_cap_mib": 800,
+    "output_cap_mib": 1024,
+    "overlap": "skipped, never concurrent (non-blocking flock on the single state store)",
+    "interrupt": "SIGTERM -> stop after the current candidate; last completed generation checkpoint stands",
+    "resume": "generation counter continues across batches (batch k = generations 5k..5k+4)"
+  },
+  "final_step": "after the last batch of the week: nominee (best eligible of the final generation) -> validation once -> sealed only if validation passes; otherwise qualification is reported unavailable/failed",
+  "feedback_rule": "only TRAINING worlds feed mutation/selection; validation and sealed results are never read by the evolver",
+  "execution": "as v1: 10 bps slippage, 5 bps commission, 18% gross ceiling, 12% halt, 5% volume participation cap",
+  "version_note": "V3R: V3 seeds were touched by a local smoke run (training + one validation pass, nothing tuned on it, results discarded); V3R uses fresh seeds, so its validation worlds have never been opened"
+}

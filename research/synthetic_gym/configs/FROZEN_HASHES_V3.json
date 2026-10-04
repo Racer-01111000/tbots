@@ -1,0 +1,22 @@
+{
+ "experiment_id": "SYNGYM-20261005-V3R",
+ "note": "recorded BEFORE any V3 score exists; batch_v3 refuses to run if any listed file differs",
+ "files": {
+  "gym/generator_v2.py": "b91d00166994cb40ec29a771d0b5cd226ae2cdb55e11c69c91a55796ed8d9b1f",
+  "configs/generator_v2.json": "b13c82c32490761ef763cba98e65b87e1f5b561618ff2879d4e7e315fdcb5af0",
+  "configs/experiment_v3.json": "11807db30d99045bdd3c562507aa0f8db23126891e2209dcf4b27a6ec5c80583",
+  "gym/scoring.py": "b7724e4a8cb2a52953bb93b388cd59021c4f1c0213d17cca9295ff420063f772",
+  "gym/engine.py": "9e155ece3e8a3f12bca897d87fe6539b80386aa9880835b047f0759a9f9e2ecf",
+  "gym/strategies.py": "da933eb99fbd051efbb4db455488d575dcb72c84290e194ca6b4aa006b187696",
+  "gym/evolve.py": "8d64d859ce9095d5922a5f03373c7c05e00aa9d2e30047a7fe2806b6071f52d9",
+  "gym/checkpoint.py": "464ff42350357880e5d565ee2ce9d50d9e181126be1ac9a645275b7375760741",
+  "gym/evaluation_v3.py": "7108134c70c31b4afceeaa7213a2b4519d038d462996dd308d2c89d64e899f15",
+  "gym/evaluation.py": "63125c9e2765cf0fc838fd9fb6308fb7bcc6d4b000e8062cc8f72964af1c2329",
+  "gym/factors.py": "cbefd3bdddb54d2841d6ffcc1dc25bbd1dad8133068bdcb6499f5ec6a50d4b07",
+  "gym/world.py": "61a169c38a02a44a80b5176af39402a58e96220f403254ae102ceaa5558debbe",
+  "gym/sessions.py": "10a06bfde7fa390c050d9d13c62b94de5ed01220fa5b20ff2afdca02afbdd724",
+  "gym/rng.py": "a50af1f29af5410aa9a59fd4de2eba64547670b344fc432d17ef3fb3234cff6a",
+  "gym/calibration.py": "3e93ab5f8c39dabd478b68c00e8bd0217eb568a2a6245f6e14412708b5955777",
+  "gym/batch_v3.py": "295a0a1b8d604ce1fd97d5b3dc31202347296653536f409746c4b42d03520281"
+ }
+}

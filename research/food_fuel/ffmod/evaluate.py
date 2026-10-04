@@ -40,7 +40,35 @@ def build_all():
     return wasde_events() + crop_events() + drought_events() + eia_events(set(px("HO").dates)) + transmission_events()
 
 
-def run(spec, split, n_perm=2000, events=None):
+_ROLL = {}
+
+
+def roll_indices(sym):
+    """session indices of the contract-expiry session and the two after it (the empirical roll-gap location: big moves cluster at expiry+1)"""
+    if sym not in _ROLL:
+        from .rolls import expiries
+        s = px(sym); out = set()
+        for e in expiries(sym, 2006, 2023):
+            i = s.first_on_or_after(e.isoformat())
+            if i is not None: out |= {i, i + 1, i + 2}
+        _ROLL[sym] = out
+    return _ROLL[sym]
+
+
+def contaminated(sym, i0, tgt):
+    if sym not in ("ZS", "ZC", "ZW", "KE", "HO", "CL"): return False
+    a, b = (i0 - 1, i0) if tgt == "react" else (i0 - 6, i0 - 1) if tgt == "pre" else (i0, i0 + int(tgt[5:]))
+    return any(a < i <= b for i in roll_indices(sym))
+
+
+def _mad_filter(xs, ys, st, k=4.0):
+    if len(ys) < 10: return xs, ys, st
+    med = sorted(ys)[len(ys) // 2]; mad = sorted(abs(y - med) for y in ys)[len(ys) // 2] * 1.4826 or 1e-12
+    keep = [i for i, y in enumerate(ys) if abs(y - med) <= k * mad]
+    return [xs[i] for i in keep], [ys[i] for i in keep], [st[i] for i in keep]
+
+
+def run(spec, split, n_perm=2000, events=None, roll=False, outlier=False):
     y0, y1 = spec["splits"][split]; base_y0, base_y1 = spec["splits"]["discovery"]
     events = events or build_all()
     fam = spec["tests"]; rows = []
@@ -54,7 +82,9 @@ def run(spec, split, n_perm=2000, events=None):
             for e in evs:
                 a = attach(e, spec["target_horizons"])
                 if not a or a.get(tgt) is None: continue
+                if roll and contaminated(e["instrument"], a["_i0"], tgt): continue
                 xs.append(e["value"]); ys.append(a[tgt] - seasonal.get(e["month"], 0.0)); st.append(e["month"])
+            if outlier: xs, ys, st = _mad_filter(xs, ys, st)
             if len(xs) < spec["min_events"]:
                 rows.append({**t, "target": tgt, "split": split, "n": len(xs), "rho": None, "p": None}); continue
             rho, p = perm_p(xs, ys, st, n_perm=n_perm, seed=spec["seed"])
