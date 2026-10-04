@@ -1,0 +1,278 @@
+{
+ "splits": {
+  "discovery": [
+   2007,
+   2012
+  ],
+  "validation": [
+   2013,
+   2018
+  ],
+  "holdout": [
+   2019,
+   2022
+  ]
+ },
+ "target_horizons": [
+  1,
+  5,
+  20,
+  60
+ ],
+ "min_events": 30,
+ "seed": 20261004,
+ "bh_q": 0.1,
+ "tests": [
+  {
+   "feature": "w_stu_chg_pp",
+   "commodity": "corn",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_yield_rev_pct",
+   "commodity": "corn",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_prod_rev_pct",
+   "commodity": "corn",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_stu_chg_pp",
+   "commodity": "soybeans",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_yield_rev_pct",
+   "commodity": "soybeans",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_prod_rev_pct",
+   "commodity": "soybeans",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_stu_chg_pp",
+   "commodity": "wheat",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_yield_rev_pct",
+   "commodity": "wheat",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "w_prod_rev_pct",
+   "commodity": "wheat",
+   "source": "WASDE",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "drift20",
+    "pre"
+   ]
+  },
+  {
+   "feature": "c_ge_chg_pp",
+   "commodity": "corn",
+   "source": "CROP_PROGRESS",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "d_belt_d1_chg_pp",
+   "commodity": "corn",
+   "source": "USDM",
+   "expected_sign": 1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "c_ge_chg_pp",
+   "commodity": "soybeans",
+   "source": "CROP_PROGRESS",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "d_belt_d1_chg_pp",
+   "commodity": "soybeans",
+   "source": "USDM",
+   "expected_sign": 1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "e_dist_stock_surprise_kbbl",
+   "commodity": "distillate",
+   "source": "EIA_WPSR",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "e_crude_stock_surprise_kbbl",
+   "commodity": "crude",
+   "source": "EIA_WPSR",
+   "expected_sign": -1,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "e_util_chg_pp",
+   "commodity": "distillate",
+   "source": "EIA_WPSR",
+   "expected_sign": 0,
+   "targets": [
+    "react",
+    "drift1",
+    "drift5",
+    "pre"
+   ]
+  },
+  {
+   "feature": "t_ho_ret20",
+   "commodity": "corn",
+   "source": "TRANSMISSION",
+   "expected_sign": 1,
+   "targets": [
+    "drift20",
+    "drift60"
+   ]
+  },
+  {
+   "feature": "t_cf_rel_spy_ret20",
+   "commodity": "corn",
+   "source": "TRANSMISSION",
+   "expected_sign": 1,
+   "targets": [
+    "drift20",
+    "drift60"
+   ]
+  }
+ ],
+ "spec_version": "FEATURE_SPEC_v1",
+ "frozen_at_utc": "2026-10-04T06:31:16Z",
+ "definitions": {
+  "w_stu_chg_pp": "(ending stocks / total use) of newest marketing year, current WASDE minus previous-month WASDE, percentage points; first-projection months excluded; original published vintage; obs 12:00 ET release day; t0 = same session",
+  "w_yield_rev_pct": "100*(yield_cur/yield_prev-1), same vintage rules",
+  "w_prod_rev_pct": "100*(production_cur/production_prev-1), same vintage rules",
+  "c_ge_chg_pp": "change in national (18-state) good+excellent % vs previous weekly Crop Progress release (5-10 days apart); obs Monday 16:00 ET; t0 = next session",
+  "d_belt_d1_chg_pp": "change in mean D1-or-worse area % across IA,IL,IN,NE,MN vs previous USDM map; obs Thursday 08:30 ET (map date + 2d); Apr-Sep only; latest-vintage data (not contemporaneous)",
+  "e_dist_stock_surprise_kbbl": "weekly change in US distillate stocks minus mean change in same week of prior 5 years (364-day steps); obs Wed 10:30 ET (Thu if Monday holiday); latest-vintage",
+  "e_crude_stock_surprise_kbbl": "same for commercial crude stocks excluding SPR",
+  "e_util_chg_pp": "weekly change in refinery utilization, percentage points",
+  "t_ho_ret20": "20-session return of front-month heating oil to last session of month; obs 16:00 ET; t0 = next session",
+  "t_cf_rel_spy_ret20": "20-session return of CF Industries minus SPY, same timing"
+ },
+ "target_definitions": {
+  "react": "close(t0)/close(t0-1)-1",
+  "driftH": "close(t0+H)/close(t0)-1 (post-reaction)",
+  "pre": "close(t0-1)/close(t0-6)-1 (anticipation; prices moving before the information)"
+ },
+ "baseline": "targets minus the unconditional same-horizon mean return of the same calendar month over discovery years 2007-2012 (pre target not demeaned)",
+ "statistic": "Spearman rank correlation (robust to futures roll gaps), two-sided p from 2000 permutations of feature values within calendar-month strata; seed fixed",
+ "multiplicity": "Benjamini-Hochberg q=0.10 across every (feature,commodity,target) test in the split; all tests are reported whether or not significant",
+ "support_rule": "SUPPORTED = FDR-significant in validation with the expected sign AND same sign in hold-out (one-sided p<0.10). SUGGESTIVE = validation nominal p<0.05 same sign as discovery, not FDR. Otherwise UNSUPPORTED. A pre-target (anticipation) result means the market moved first; it is reported, not counted as support for a leading indicator.",
+ "data_caveats": [
+  "Yahoo continuous front-month futures contain roll gaps; rank statistic limits their influence but does not remove them",
+  "USDM and EIA series are latest-vintage; WASDE and Crop Progress are original published vintages",
+  "World Bank Pink Sheet is latest-vintage, excluded from predictive tests",
+  "Qualification-lane years 2019-2022 are used here only as this module's hold-out for indicator tests; no bot evaluation is run on them"
+ ],
+ "tests_total": 77
+}
