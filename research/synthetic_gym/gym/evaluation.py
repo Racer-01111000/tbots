@@ -30,7 +30,7 @@ class Suite:
         self._controls = {}
 
     def controls(self, params: E.EngineParams):
-        key = (params.cost.label, params.ceiling, params.interest, params.overlay.name if params.overlay else None)
+        key = (params.cost.label, params.ceiling, params.interest, params.participation_cap, params.overlay.name if params.overlay else None)
         if key not in self._controls:
             self._controls[key] = [(E.run(w, S.passive18(), params), E.run(w, S.cash_control(), params)) for w in self.worlds]
         return self._controls[key]
@@ -72,6 +72,7 @@ def code_hashes(root: Path, data_digest: str) -> dict:
         "scoring": SC.scoring_hash(),
         "generator": _h([g / "generator.py", g / "factors.py", g / "world.py", g / "sessions.py", g / "rng.py", g / "calibration.py", root / "configs" / "generator_v1.json"]) ,
         "engine": _h([g / "engine.py"]), "strategies": _h([g / "strategies.py"]), "evolve": _h([g / "evolve.py", g / "checkpoint.py"]),
+        "evaluation": _h([g / "evaluation.py"]), "campaign": _h([g / "campaign.py"]), "events": _h([g / "events.py"]), "stats": _h([g / "stats.py"]),
         "calibration_data_digest": data_digest,
     }
 
@@ -84,7 +85,10 @@ def cost_sensitivity(entries: dict, suite: Suite, base: E.EngineParams) -> dict:
     out = {}
     for case in COST_CASES:
         p = replace(base, cost=case)
-        out[case.label] = {n: evaluate(e, suite, p)["summary"] | {"per_world_excess": [m["excess_vs_passive18"] for m in evaluate(e, suite, p)["per_world"]]} for n, e in entries.items()}
+        out[case.label] = {}
+        for n, e in entries.items():
+            ev = evaluate(e, suite, p)
+            out[case.label][n] = ev["summary"] | {"per_world_excess": [m["excess_vs_passive18"] for m in ev["per_world"]]}
     return out
 
 
