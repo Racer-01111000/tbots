@@ -83,7 +83,7 @@ BETAS = {
     "VNQ": {"inflation": (-.20, .40), "yield": (-8.0, .20), "credit": (-.45, .10), "liquidity": (-.15, .15), "growth": (.80, .12), "tech": (.10, .40), "usd": (-.05, .50)},
 }
 
-REGIME_VOL_MULT = [0.75, 1.00, 1.70, 2.80]
+REGIME_VOL_MULT = [0.80, 1.00, 1.40, 1.90]   # softened: crisis-pool residuals already carry crisis severity (the first draft double-counted it)
 # how strongly each asset's volatility responds to the market regime (ASSUMPTION; equities 1.0, bonds/gold/commodities muted)
 REGIME_EXPONENT = {"SPY": 1.0, "EFA": 1.0, "EEM": 1.0, "VNQ": 1.0, "GLD": .6, "DBC": .7, "IEF": .5, "TLT": .5}
 REGIME_BASE_P = [

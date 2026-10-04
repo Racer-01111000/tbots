@@ -55,14 +55,30 @@
   "volume_participation_cap": 0.05,
   "notes": "held-out variation: validation worlds use heavier event severity, noisier regime transitions and one extra event on average; sealed worlds use a wider severity range",
   "drift_bias_correction_annual": {
-    "SPY": -0.00829,
-    "EFA": 0.01198,
-    "EEM": 0.00108,
-    "IEF": 0.01157,
-    "TLT": 0.01131,
-    "GLD": 0.07098,
-    "DBC": 0.00964,
-    "VNQ": 0.03433
+    "SPY": -0.01193,
+    "EFA": 0.00594,
+    "EEM": -0.00233,
+    "IEF": 0.01167,
+    "TLT": 0.01771,
+    "GLD": 0.05519,
+    "DBC": 0.00595,
+    "VNQ": 0.04347
   },
-  "drift_bias_correction_basis": "mean over 120 ENGINEERING worlds (ENG-DRIFTCAL, indices 100-119 x 6 families) of [realized mean log return - drawn drift]; moment-matches the generator's ensemble mean to its priors; no strategy outcome and no sealed world was used"
+  "drift_bias_correction_basis": "re-estimated AFTER the variance moment-match: mean over 120 ENGINEERING worlds (ENG-DRIFTCAL2, indices 100-119 x 6 families) of [realized mean log return - drawn drift]",
+  "variance_scale": {
+    "SPY": 0.5586,
+    "EFA": 0.648,
+    "EEM": 0.6451,
+    "IEF": 0.9633,
+    "TLT": 0.931,
+    "GLD": 1.3347,
+    "DBC": 1.0308,
+    "VNQ": 0.7243
+  },
+  "variance_scale_basis": "two-pass moment match of per-asset median annualized volatility to the development lane on 120 ENGINEERING worlds (ENG-VOLCAL, indices 100-119); verified on 120 fresh worlds (ENG-VOLCHECK, 200-219)",
+  "price_anchor": {
+    "threshold_log": 0.9,
+    "k_per_day": 0.002,
+    "rationale": "diversified ETFs hold baskets with earnings/valuation support; a pure random walk lets a single ETF lose 95% or gain 9x in 6 years, which the development lane never showed. The anchor is zero within a factor of ~2.5 of the world's starting level and pulls back beyond it."
+  }
 }

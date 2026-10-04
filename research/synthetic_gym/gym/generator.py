@@ -16,6 +16,9 @@ from .world import CorporateAction, SYMBOLS, World, check_invariants
 
 CFG = json.loads((Path(__file__).resolve().parent.parent / "configs" / "generator_v1.json").read_text())
 GENERATOR_VERSION = CFG["version"]
+TAIL_CAP = 1.5
+PATH_GUARD = 1.15      # rolling-window return limits as a multiple of the development-lane extremes
+OVERLAY_CAP = 0.45     # |cumulative event overlay| per asset (log return)
 SPLIT_POOL = {"training": "training", "validation": "validation", "sealed_test": "sealed_test", "engineering": "training"}
 
 
@@ -141,8 +144,11 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
             u = U[f]
             for t in range(N):
                 u[t] += a * ev_env(e, t, off)
+        # the market-stress driver is TRANSIENT (envelope with no permanent residual): an event's factor effect may persist, but it
+        # must not keep nudging the regime chain toward crisis forever
         for t in range(N):
-            stress_driver[t] = max(stress_driver[t], ev["stress"] * ev_env(e, t, off) * min(1.0, abs(ev["mult"]) + .2))
+            tr = envelope(t, ev["t0"], ev["rise"], ev["hold"], ev["decay"], 0.0)
+            stress_driver[t] = max(stress_driver[t], ev["stress"] * tr * min(1.0, abs(ev["mult"]) + .2))
 
     # ---- rates
     pol, y10 = [0.0] * N, [0.0] * N
@@ -236,13 +242,13 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
     for s in SYMBOLS:
         run = 0.0
         for t in range(N):
-            nxt = max(-0.7, min(0.7, run + overlay[s][t]))
+            nxt = max(-OVERLAY_CAP, min(OVERLAY_CAP, run + overlay[s][t]))
             overlay[s][t] = nxt - run
             run = nxt
 
     # ---- main loop: block-bootstrapped residual vectors -> prices
     a_, b_ = cal["garch"]["a"], cal["garch"]["b"]
-    V = {s: cal["long_run_var"][s] * vol_scale ** 2 for s in SYMBOLS}
+    V = {s: cal["long_run_var"][s] * vol_scale ** 2 * CFG["variance_scale"][s] for s in SYMBOLS}   # variance_scale: frozen moment-matching constants
     s2 = dict(V)
     price0 = {s: cal["last_close_in_dev"][s] * math.exp(rng.uniform(math.log(.7), math.log(1.4))) for s in SYMBOLS}
     cont = {s: price0[s] for s in SYMBOLS}                 # continuous (split-free) closes
@@ -253,6 +259,9 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
     ex_plan = _plan_dividends(rng, cal, dates)
     jumps = []
     liq = []
+    cumlog = {s_: 0.0 for s_ in SYMBOLS}
+    hist63 = {s_: [] for s_ in SYMBOLS}
+    hist252 = {s_: [] for s_ in SYMBOLS}
     diag = {s_: {"noise": 0.0, "overlay": 0.0, "drift": 0.0, "jump": 0.0, "tot": 0.0} for s_ in SYMBOLS}
     block_i, block_left = 0, 0
     vshift = {s: rng.normal(0, .25) for s in SYMBOLS}
@@ -274,15 +283,32 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
         liq.append(liq_t)
         for s in SYMBOLS:
             mult_s = mult ** REGIME_EXPONENT[s]
-            sig = math.sqrt(s2[s]) * mult_s
+            sig = min(math.sqrt(s2[s]) * mult_s, math.sqrt(V[s] * cal["sigma2_ratio_range"][s][1]))   # state x regime cannot exceed the worst volatility ever filtered in history
             tg = cal["tag"][zi_]
-            zo = z[s]["o"][zi_] - zmean[s]["o"][tg]
-            zz = z[s]["i"][zi_] - zmean[s]["i"][tg]
+            zo = (z[s]["o"][zi_] - zmean[s]["o"][tg]) / zmean[s]["scale"][tg]
+            zz = (z[s]["i"][zi_] - zmean[s]["i"][tg]) / zmean[s]["scale"][tg]
             if s in ("IEF", "TLT") and flipped[t]:
                 zo, zz = -zo, -zz
+            anchor = _anchor(cumlog[s])
             diag[s]["noise"] += sig * (zo + zz); diag[s]["overlay"] += overlay[s][t]; diag[s]["drift"] += drift[s]; diag[s]["jump"] += JUMP_LOADING[s] * jm
-            o_ret = sig * zo + .30 * (overlay[s][t] + drift[s]) + JUMP_LOADING[s] * jm * .6
-            i_ret = sig * zz + .70 * (overlay[s][t] + drift[s]) + JUMP_LOADING[s] * jm * .4
+            o_ret = sig * zo + .30 * (overlay[s][t] + drift[s] + anchor) + JUMP_LOADING[s] * jm * .6
+            i_ret = sig * zz + .70 * (overlay[s][t] + drift[s] + anchor) + JUMP_LOADING[s] * jm * .4
+            noise = sig * (zo + zz)
+            cap = TAIL_CAP * cal["abs_worst_daily"][s]            # no single day's noise beyond 1.5x the worst day in the development lane
+            if abs(noise) > cap:
+                k_ = cap / abs(noise); zo, zz = zo * k_, zz * k_
+                o_ret = sig * zo + .30 * (overlay[s][t] + drift[s] + anchor) + JUMP_LOADING[s] * jm * .6
+                i_ret = sig * zz + .70 * (overlay[s][t] + drift[s] + anchor) + JUMP_LOADING[s] * jm * .4
+            # path-speed guard: rolling 63- and 252-session cumulative total return may not leave 1.15x the range the development lane showed
+            r63, r252 = cal["roll63_range"][s], cal["roll252_range"][s]
+            w63 = sum(hist63[s]); w252 = sum(hist252[s])
+            lo_a = max(PATH_GUARD * r63[0] - w63 if r63[0] < 0 else -1e9, PATH_GUARD * r252[0] - w252 if r252[0] < 0 else -1e9)
+            hi_a = min(PATH_GUARD * r63[1] - w63 if r63[1] > 0 else 1e9, PATH_GUARD * r252[1] - w252 if r252[1] > 0 else 1e9)
+            tot_try = o_ret + i_ret
+            if tot_try < lo_a:
+                i_ret += lo_a - tot_try
+            elif tot_try > hi_a:
+                i_ret -= tot_try - hi_a
             hi_x = sig * max(0.0, z[s]["hi"][zi_])
             lo_x = sig * max(0.0, z[s]["lo"][zi_])
             D = 0.0
@@ -301,9 +327,15 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
             O[s].append(op); C[s].append(cl); H[s].append(hi_p); Lw[s].append(lo_p)
             tot = math.log((cl + D) / cont[s])
             diag[s]["tot"] += tot
+            cumlog[s] += tot
+            hist63[s].append(tot); hist252[s].append(tot)
+            if len(hist63[s]) > 62: hist63[s].pop(0)
+            if len(hist252[s]) > 251: hist252[s].pop(0)
             # filter state lives on the BASE scale (regime multiplier removed from the feedback), so it is stable by
             # construction: persistence a+b < 1 regardless of regime; realized vol = sqrt(s2) * regime multiplier
             s2[s] = V[s] * (1 - a_ - b_) + a_ * (tot / mult_s) ** 2 + b_ * s2[s]
+            lo_r, hi_r = cal["sigma2_ratio_range"][s]
+            s2[s] = min(max(s2[s], V[s] * lo_r), V[s] * hi_r)        # variance state confined to the historical range of the filter
             cont[s] = cl
             lv = cal["log_volume_level"][s] + vshift[s] + z[s]["vdev"][zi_] + .5 * liq_t
             Vol[s].append(max(0.0, math.exp(lv)))
@@ -346,6 +378,9 @@ def generate_world(spec: WorldSpec, cal: dict) -> World:
 
 
 def _pool_zmean(cal, pool_name):
+    """per (symbol, regime tag) within the sampled pool: the mean of each residual component (removed, so the per-world drift draw alone
+    sets the long-run mean) and the RMS of their sum (divided out, so residuals have UNIT variance in every regime; the regime
+    multiplier alone supplies stress severity and the variance filter's persistence is a+b<1 on average => stable)."""
     cache = cal.setdefault("_zmean_cache", {})
     if pool_name in cache:
         return cache[pool_name]
@@ -353,14 +388,28 @@ def _pool_zmean(cal, pool_name):
     idxs = [i for k in cal["pools"][pool_name] for i in range(k * B, (k + 1) * B)]
     out = {}
     for s in SYMBOLS:
-        out[s] = {}
-        for k in ("o", "i"):
-            acc = [[0.0, 0] for _ in range(4)]
-            for i in idxs:
-                a = acc[cal["tag"][i]]; a[0] += cal["z"][s][k][i]; a[1] += 1
-            out[s][k] = [a[0] / a[1] if a[1] else 0.0 for a in acc]
+        out[s] = {"o": [], "i": [], "scale": []}
+        acc = [[0.0, 0.0, 0] for _ in range(4)]
+        for i in idxs:
+            a_ = acc[cal["tag"][i]]
+            a_[0] += cal["z"][s]["o"][i]; a_[1] += cal["z"][s]["i"][i]; a_[2] += 1
+        means = [(a_[0] / a_[2], a_[1] / a_[2]) if a_[2] else (0.0, 0.0) for a_ in acc]
+        ss = [0.0] * 4; cnt = [0] * 4
+        for i in idxs:
+            g = cal["tag"][i]
+            ss[g] += (cal["z"][s]["o"][i] - means[g][0] + cal["z"][s]["i"][i] - means[g][1]) ** 2; cnt[g] += 1
+        for g in range(4):
+            out[s]["o"].append(means[g][0]); out[s]["i"].append(means[g][1])
+            out[s]["scale"].append(math.sqrt(ss[g] / cnt[g]) if cnt[g] and ss[g] > 0 else 1.0)
     cache[pool_name] = out
     return out
+
+
+def _anchor(cum):
+    """weak symmetric pull back toward the world's starting level once |log change| exceeds the threshold"""
+    a = CFG["price_anchor"]
+    ex = abs(cum) - a["threshold_log"]
+    return 0.0 if ex <= 0 else -a["k_per_day"] * ex * (1.0 if cum > 0 else -1.0)
 
 
 def ev_env(e, t, off):

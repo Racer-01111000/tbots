@@ -138,10 +138,23 @@ def build(data_dir: Path) -> dict:
                     divt[s].setdefault(y, []).append((m, d, R[t]["div"] / R[t - 1]["c"]))
     level = {s: st.mean([x for x in feat[s]["lv"]]) for s in SYMBOLS}
     price0 = {s: rows[s][-1]["c"] for s in SYMBOLS}
+    # historical range of the variance filter's state (sigma^2 / long-run variance) and the worst absolute daily return per asset:
+    # the generator may not leave these ranges (stability guarantee; see generator._step)
+    s2_range = {s: [min(x * x for x in sigma[s]) / V[s], max(x * x for x in sigma[s]) / V[s]] for s in SYMBOLS}
+    abs_worst = {s: max(abs(x) for x in feat[s]["r"]) for s in SYMBOLS}
+    # historical extremes of rolling cumulative total log return (path-speed bounds used by the generator's guard)
+    def _roll(rs, w):
+        c = [0.0]
+        for x in rs:
+            c.append(c[-1] + x)
+        v = [c[i + w] - c[i] for i in range(len(rs) - w + 1)]
+        return [min(v), max(v)]
+    roll63 = {s: _roll(feat[s]["r"], 63) for s in SYMBOLS}
+    roll252 = {s: _roll(feat[s]["r"], 252) for s in SYMBOLS}
     cal = {"dataset_id": DATASET_ID, "dev_range": [DEV_START, DEV_END], "sessions": n + 1, "symbols": SYMBOLS,
            "garch": {"a": a, "b": b}, "long_run_var": V, "z": z, "tag": tag, "tag_cuts_annualized_spy_vol": [p35, p80, p96],
            "tag_counts": [tag.count(g) for g in range(4)], "block_len": BLOCK_LEN, "dominant_regime_per_block": dom, "pools": pools,
-           "dividend_templates": divt, "log_volume_level": level, "last_close_in_dev": price0,
+           "dividend_templates": divt, "sigma2_ratio_range": s2_range, "abs_worst_daily": abs_worst, "roll63_range": roll63, "roll252_range": roll252, "log_volume_level": level, "last_close_in_dev": price0,
            "dates": [r["t"] for r in rows["SPY"]][1:]}
     cal["summary"] = summarize_series({s: feat[s]["r"] for s in SYMBOLS}, {s: feat[s]["yield"] for s in SYMBOLS})
     return cal
