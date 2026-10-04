@@ -1,0 +1,15 @@
+{
+  "experiment_id": "SYNGYM-20261004-EVT-V2",
+  "status": "FROZEN before any v2 result exists. v1 generator (generator_v1.json), scoring, engine and v1 results are unchanged and remain authoritative for v1.",
+  "purpose": "Paired comparison of price-only vs event-aware strategies on IDENTICAL worlds with indicator-schema-v2 information of controlled quality.",
+  "worlds": {"families": "all six v1 families", "per_family": 12, "split_config": "training", "note": "fresh seeds via the new experiment id; no evolution, no selection, so the world bank is evaluation-only"},
+  "bases": ["sam (gen_8e7a622b)", "d_primary_rank3 (gen_d890eb9f)", "champion (gen_0307d23c)"],
+  "event_aware": "EVT_AWARE_v1 overlay in gym/event_aware_v2.py, PARAMS fixed (window 20, threshold 2.0, tilt 0.03); identity hashed from parent+params; NOT Kim/Sam/D-primary-rank3",
+  "conditions": ["clean", "delayed (+3 sessions)", "missing (40% dropped)", "revised (preliminary wrong-by-one-bucket, 25% wrong direction, later corrected)", "contradictory (50% of releases get an opposing report)", "placebo (a feed generated from a DIFFERENT world's events)"],
+  "engine": "v1 EngineParams defaults (18% ceiling, 12% halt, 10bps slippage, 5bps commission), unchanged",
+  "primary_metric": "paired per-world difference in annualized return, event-aware minus the same base price-only",
+  "decision_rule": "event-aware is said to help only if, in the clean condition, the paired-difference mean is >0 with 95% bootstrap CI lower bound >0 for at least one base AND the placebo condition shows no comparable gain; every condition and base is reported, including negatives",
+  "secondary": ["max drawdown difference", "turnover difference", "fraction of worlds improved", "by-family means"],
+  "bootstrap": {"resamples": 5000, "seed": 20261004, "unit": "world"},
+  "caveats": ["synthetic assumptions only; the indicator-to-price link is assumed from the generator, not estimated", "real-data module found indicators priced on release with no post-release drift, so large gains would indicate generator assumptions not market truth"]
+}
