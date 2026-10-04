@@ -1,0 +1,8 @@
+{
+ "experiment_id": "SYNGYM-20261005-V5",
+ "generator_admission_pass": true,
+ "report": "docs/generator_v5_validation_ENG-V5FROZEN.json",
+ "report_sha256": "38052d9f4075002a0344fb7ef901f0f36bfa5fbc4e204ce33114a26104a9f323",
+ "failed_gates": [],
+ "note": "written by scripts/validate_generator_v5.py from the report; do not edit by hand"
+}

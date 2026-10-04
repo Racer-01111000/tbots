@@ -1,0 +1,27 @@
+{
+ "experiment_id": "SYNGYM-20261005-V5",
+ "status": "FROZEN at the freeze commit (configs/FROZEN_HASHES_V5.json); generator admission PASSED on never-before-generated development worlds (configs/ADMISSION_V5.json)",
+ "predecessors": {
+  "SYNGYM-20261004-V1": "preserved, unchanged",
+  "SYNGYM-20261004-EVT-V2": "preserved, unchanged",
+  "SYNGYM-20261005-V3": "seeds touched by a local smoke run including one validation pass (never scored for production)",
+  "SYNGYM-20261005-V3R": "fresh-seed rename, no production scores",
+  "SYNGYM-20261005-V4": "generator admission FAILED (4 gates); no scored run; its blocked admission record is preserved"
+ },
+ "changes_vs_V4": [
+  "generator gen-v4: recession anchor minimum severity 0.9; SPY and VNQ direct event-transmission scales 0.70/0.75; VNQ variance scale 0.35; GLD asymmetric common-jump loading (0.80 down / 0.20 up)",
+  "batch_v5: frozen manifest is MANDATORY (absence refuses); batch generation target is frozen in the slot ledger so a resumed batch cannot be extended; reserved validation only on the Friday slot (no operator flag); validation exposure recorded with nominee+checkpoint identity and a no-reselection recovery rule; terminal publication/status reconstructable without re-evaluation; world construction persists the in-progress seed and honours SIGTERM"
+ ],
+ "disclosure": "The gen-v4 parameters were SELECTED by probe grids (ENG-V4B results; ENG-V5PROBE-*) against the very gate statistics they are then admitted on. The admission run (ENG-V5FROZEN) used never-generated worlds and unchanged bands/tolerances, so it is a held-out confirmation of a tuned generator, not independent evidence. Synthetic design compliance only.",
+ "freeze_list": {
+  "1_generator_evaluator_runtime": "gym/generator_v4.py, configs/generator_v4.json, gym/engine_v4.py, gym/evaluation_v5.py, gym/batch_v5.py, interpreter /opt/python-3.13.5-isolated/bin/python3.13 (3.13.5, stdlib only)",
+  "2_worlds_and_seeds": "6 families; seed = derive_seed(experiment_id, split, family, index [+1000*attempt]); max 3 deterministic attempts per slot, structural rejections only",
+  "3_development_vs_validation": "training 12 worlds (development, reused every batch); validation 6 and sealed 6 are separate identities, validation opened once (Friday slot)",
+  "4_genomes": "TREND (s5a) and D (s6a) frozen schemas/mutation; population 32; 5 generations per batch INCLUDING generation 0 (<=160 candidate evaluations/batch)",
+  "5_fitness": "scoring.py score-v1 unchanged: 25th percentile of annualized excess vs passive18 on training worlds; eligibility max DD <= 8% in every world; tie-breaks as v1",
+  "6_baselines": "passive18 and cash; champion, Sam (gen_8e7a622b) and D3 as fixed references inside the gym; Kim's runner-specific logic is not representable in this world interface and is NOT simulated",
+  "7_continuation": "generations continue across slots from the latest verified checkpoint; nominee = best eligible of the final generation",
+  "8_validation_and_expiry": "validation exactly once on the 2026-10-09 slot after the nominee and selection checkpoint are frozen (recorded in phase_state.json before exposure); expiry 2026-10-09T17:00 ET with code-level refusal"
+ },
+ "caveat": "A generator that passes its declared gates complies with its synthetic design only; held-out synthetic worlds do not establish real-market generalisation."
+}
