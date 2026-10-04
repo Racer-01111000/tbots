@@ -194,9 +194,11 @@ class PersistentIntentLedger:
         return [r for r in self.get_unresolved() if r["status"] in ("intent_recorded", "uncertain_unresolved")]
 
     def abandon(self, client_order_id: str, reason: str) -> None:
-        """Operator action, after verifying at the broker that the order does not exist (or is
-        otherwise dead): retire an unresolved row so it stops holding the account. Refuses anything
-        that is not currently unresolved, and records the reason."""
+        """Operator action ONLY. A broker lookup returning 'not found' is NOT sufficient evidence to
+        call this: an order can exist at the broker and still 404 on lookup for a while (delayed
+        visibility). Require independent evidence (order history/list for that symbol and window,
+        position/cash consistency, enough elapsed time) and put it in `reason`. Retires a row that is
+        currently unresolved so it stops holding the account; refuses anything else."""
         row = self.get(client_order_id)
         if row is None or row["status"] not in ("intent_recorded", "uncertain_unresolved"):
             raise ValueError(f"{client_order_id} is not an unresolved submission; refusing to abandon it")
