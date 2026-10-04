@@ -23,8 +23,8 @@
     "synthetic_calendar_start": "2100-01-04",
     "note": "far-future label so no world resembles a forecast of a real year",
     "eval_sessions": "as given by the synthetic NYSE-style calendar (approx 1,255-1,260)",
-    "warmup_sessions": 320,
-    "warmup_rule": ">= longest permitted lookback: champion trend family 296 bars; D family regime_window max+1; asserted in code"
+    "warmup_sessions": 400,
+    "warmup_rule": ">= longest permitted lookback across supported schemas: trend family MAX_LEGAL_PRICE_BARS=379 (momentum_slow max 378), D family regime_window max 250 -> 251 bars; 400 chosen; asserted in code"
   },
   "splits": {
     "training": {
@@ -93,12 +93,13 @@
   },
   "evolution": {
     "supported_mutation_schemas": [
-      "D (s6a_runtime.mutate, frozen domain)"
+      "D (s6a_runtime.mutate, frozen lineage-D domain)",
+      "TREND (s5a_config.mutate_genome, frozen S5A mutation protocol; the champion's family)"
     ],
-    "unsupported_in_v1": "champion trend family (no frozen schema/mutation machinery -- reference only); lineages B,C,E,F,G (state/parity not established in this gym)",
+    "unsupported_in_v1": "lineages B,C,E,F,G (state semantics / evaluator parity not established in this gym)",
     "population": 32,
     "generations": 5,
-    "population_composition": "3 immutable references + up to 29 distinct bounded D mutations",
+    "population_composition": "3 immutable references + 29 distinct bounded mutations (13 TREND from the champion lineage, 16 D from Sam / D-primary-rank3 lineage) in generation 0",
     "crossover": "none (no cross-family crossover; schema-compatible behaviour not demonstrated)",
     "parent_selection": "4-way tournament over (eligible first, then primary score) with seeded RNG",
     "survivors_per_generation": "all 3 references + top 8 eligible by primary ordering; remaining slots filled by new children",
@@ -168,5 +169,20 @@
     "on_exhaustion": "halt cleanly at a generation boundary; no extra seeds; report completed work"
   },
   "determinism": "all randomness from random.Random(seed).random() only, via a local RNG helper; outputs rounded to fixed decimals before hashing; regenerated worlds must hash identically on HOST and EC2",
-  "metric_change_policy": "any change creates a new immutable experiment version; every reference and candidate is re-evaluated on training data; the old leaderboard is kept; the sealed test set is never used to tune"
+  "metric_change_policy": "any change creates a new immutable experiment version; every reference and candidate is re-evaluated on training data; the old leaderboard is kept; the sealed test set is never used to tune",
+  "amendments": [
+    {
+      "id": "A1",
+      "at_utc": "2026-10-04T04:45:29+00:00",
+      "made_before_any_result": true,
+      "results_existing_at_amendment": "none (no genome has been evaluated on any world; only generator engineering worlds exist)",
+      "changes": [
+        "world.warmup_sessions 320 -> 400",
+        "evolution.supported_mutation_schemas gains TREND; unsupported list loses the champion family",
+        "evolution.population_composition made explicit"
+      ],
+      "reason": "Discovered while wiring genomes: the champion's trend family DOES have a frozen schema and mutation protocol (s5a_config.validate_genome / mutate_genome), contrary to my earlier statement, and its longest permitted lookback is 379 bars, which exceeds the originally frozen 320-session warm-up. The frozen rule 'warm-up >= longest permitted lookback' therefore required the larger number.",
+      "no_objective_or_eligibility_or_split_or_cost_change": true
+    }
+  ]
 }

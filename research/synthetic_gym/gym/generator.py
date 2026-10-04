@@ -26,7 +26,7 @@ class WorldSpec:
     family: str
     index: int
     start: date = date(2100, 1, 4)
-    n_warmup: int = 320
+    n_warmup: int = 400
     years: int = 5
 
     @property

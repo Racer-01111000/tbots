@@ -20,7 +20,7 @@ def test_every_family_yields_coherent_worlds(cal, family):
     for i in range(3):
         w = G.generate_world(G.WorldSpec("TEST-GYM", "engineering", family, i), cal)
         assert W.check_invariants(w) == []
-        assert 1250 <= w.n_eval <= 1262 and w.n_warmup == 320
+        assert 1250 <= w.n_eval <= 1262 and w.n_warmup == 400
         assert all(w.dates[i] < w.dates[i + 1] for i in range(w.n - 1))
         for s in SYMBOLS:
             assert all(w.low[s][k] <= min(w.open[s][k], w.close[s][k]) and w.high[s][k] >= max(w.open[s][k], w.close[s][k]) for k in range(w.n))
