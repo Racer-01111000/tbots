@@ -1,0 +1,459 @@
+{
+ "user_agent": "tbots-research/1.0 (read-only public-data evidence collection; no scraping of protected content)",
+ "results": [
+  {
+   "name": "USDA_WASDE_index",
+   "url": "https://www.usda.gov/oce/commodity/wasde",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:14+00:00",
+     "status": 403,
+     "content_type": "text/html",
+     "bytes": 393,
+     "challenge": true,
+     "head": "<HTML><HEAD> <TITLE>Access Denied</TITLE> </HEAD><BODY> <H1>Access Denied</H1>   You don't have permission to access \"ht",
+     "seconds": 0.38
+    }
+   ],
+   "verdict": "BLOCKED_BY_BOT_PROTECTION"
+  },
+  {
+   "name": "CORNELL_ESMIS_WASDE",
+   "url": "https://usda.library.cornell.edu/concern/publications/3t945q76s",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:15+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=utf-8",
+     "bytes": 88257,
+     "final_url": "https://esmis.nal.usda.gov/publication/world-agricultural-supply-and-demand-estimates",
+     "last_modified": "Fri, 02 Oct 2026 19:00:22 GMT",
+     "sha256_head": "7bd321b9ea170f568bd71d69136ddd4eca95322ef100ee69d778c363c295532e",
+     "head": "<!DOCTYPE html> <html lang=\"en\" dir=\"ltr\">   <head>     <meta charset=\"utf-8\" /> <meta name=\"Generator\" content=\"Drupal 11 (https://www.drupal.org)\" /> <meta na",
+     "challenge": false,
+     "seconds": 4.82
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "CORNELL_API_WASDE",
+   "url": "https://usda.library.cornell.edu/api/v1/publication/findPublication/wasde",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:21+00:00",
+     "status": 404,
+     "content_type": "text/html; charset=utf-8",
+     "bytes": 6000,
+     "challenge": false,
+     "head": "<!DOCTYPE html> <html lang=\"en\" dir=\"ltr\">   <head>     <meta charset=\"utf-8\" /> <meta name=\"Generator\" content=\"Drupal ",
+     "seconds": 2.15
+    }
+   ],
+   "verdict": "NOT_FOUND"
+  },
+  {
+   "name": "NASS_cropprogress_page",
+   "url": "https://www.nass.usda.gov/Publications/National_Crop_Progress/",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:24+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 53533,
+     "final_url": "https://www.nass.usda.gov/Publications/National_Crop_Progress/",
+     "last_modified": null,
+     "sha256_head": "51111e510bef9fb9d8ec66013c6ab8e5f8cb4dc19df7a5c79dec60d4ca6c576e",
+     "head": "<!DOCTYPE html>\r <html lang=\"en-US\"><!-- InstanceBegin template=\"/Templates/master.dwt.php\" codeOutsideHTMLIsLocked=\"false\" -->\r \r <head>\r \t<!-- InstanceBeginEd",
+     "challenge": true,
+     "seconds": 1.99
+    }
+   ],
+   "verdict": "BLOCKED_BY_BOT_PROTECTION"
+  },
+  {
+   "name": "FAS_export_sales",
+   "url": "https://apps.fas.usda.gov/export-sales/esrd1.html",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:27+00:00",
+     "status": 404,
+     "content_type": null,
+     "bytes": 0,
+     "challenge": false,
+     "head": "",
+     "seconds": 1.74
+    }
+   ],
+   "verdict": "NOT_FOUND"
+  },
+  {
+   "name": "FAS_PSD",
+   "url": "https://apps.fas.usda.gov/psdonline/app/index.html",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:30+00:00",
+     "status": 200,
+     "content_type": "text/html",
+     "bytes": 2303,
+     "final_url": "https://apps.fas.usda.gov/psdonline/app/index.html",
+     "last_modified": "Thu, 13 Nov 2025 13:41:33 GMT",
+     "sha256_head": "c510ec44ec26a1f1741114b46e07ccbc1a8bf86cdf0c4b049b452fa3eeea5015",
+     "head": "\ufeff<!DOCTYPE html>\r <html xmlns=\"http://www.w3.org/1999/xhtml\">\r <head>\r     <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\r     <title>PSD Online</tit",
+     "challenge": false,
+     "seconds": 3.13
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "ERS_fertilizer_use_prices",
+   "url": "https://www.ers.usda.gov/data-products/fertilizer-use-and-price/",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:34+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=utf-8",
+     "bytes": 38136,
+     "final_url": "https://www.ers.usda.gov/data-products/fertilizer-use-and-price",
+     "last_modified": null,
+     "sha256_head": "14e585168f4dc7b9cdcf9d79d1b8ebe1c04e654cd7980e05c62752fc9845ffe5",
+     "head": "<!DOCTYPE html> <html lang=\"en\" dir=\"ltr\"> <head>   <meta charset=\"utf-8\" /> <noscript><style>form.antibot > * { display: none !important; } form.antibot noscri",
+     "challenge": false,
+     "seconds": 3.18
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "NOAA_CPC_ONI",
+   "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:38+00:00",
+     "status": 200,
+     "content_type": "text/plain; charset=utf-8",
+     "bytes": 23025,
+     "final_url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt",
+     "last_modified": "Sat, 03 Oct 2026 18:32:01 GMT",
+     "sha256_head": "5d6fa3a2f857d916550d39c2c686e94cb942430195c82518e6a5d0f5ffbd0665",
+     "head": " SEAS  YR   TOTAL   ANOM   DJF 1950  25.01  -1.32   JFM 1950  25.36  -1.20   FMA 1950  25.88  -1.12   MAM 1950  26.24  -1.08   AMJ 1950  26.35  -1.10   MJJ 1950",
+     "challenge": false,
+     "seconds": 5.44
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "NOAA_NCEI_CAG_json",
+   "url": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/statewide/time-series/13/pdsi/1/0/2012-2012/data.json",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:44+00:00",
+     "status": 200,
+     "content_type": "application/json",
+     "bytes": 376,
+     "final_url": "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/statewide/time-series/13/pdsi/1/0/2012-2012/data.json",
+     "last_modified": null,
+     "sha256_head": "ac8858b3e46f55b0be2269671fe0d319d7ef79645fec73b90bb0da800810f38c",
+     "head": "{\"description\":{\"title\":\"Iowa Palmer Drought Severity Index (PDSI)\"},\"data\":{\"201201\":{\"value\":-1.71},\"201202\":{\"value\":-1.13},\"201203\":{\"value\":-1.78},\"201204\"",
+     "challenge": false,
+     "seconds": 1.14
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "USDM_state_stats",
+   "url": "https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=IA&startdate=1/1/2012&enddate=1/31/2012&statisticsType=1",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:46+00:00",
+     "status": 200,
+     "content_type": "text/csv; charset=utf-8",
+     "bytes": 0,
+     "final_url": "https://usdmdataservices.unl.edu/api/StateStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=IA&startdate=1/1/2012&enddate=1/31/2012&statisticsType=1",
+     "last_modified": null,
+     "sha256_head": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+     "head": "",
+     "challenge": false,
+     "seconds": 1.0
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_WPSR_page",
+   "url": "https://www.eia.gov/petroleum/supply/weekly/",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:48+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 83124,
+     "final_url": "https://www.eia.gov/petroleum/supply/weekly/",
+     "last_modified": null,
+     "sha256_head": "2279666612593f7d8a40f7a6fb57c26b2c4721ab7c3d02387b16e497a48d3c88",
+     "head": "<!doctype html>\r <html>\r \r <head>\r \t<title>\r \t\tU.S. Energy Information Administration (EIA)\t</title>\r \t<meta property=\"og:title\" content=\"Weekly Petroleum Statu",
+     "challenge": false,
+     "seconds": 2.11
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_crude_stocks_xls",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/WCRSTUS1w.xls",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:52+00:00",
+     "status": 200,
+     "content_type": "application/vnd.ms-excel",
+     "bytes": 130048,
+     "final_url": "https://www.eia.gov/dnav/pet/hist_xls/WCRSTUS1w.xls",
+     "last_modified": "Wed, 30 Sep 2026 14:43:53 GMT",
+     "sha256_head": "f832867d732eae61eaea8d1461fffdbf8404aac194bbd2b30e0c4d07b5393ac8",
+     "head": "\ufffd\ufffd\u0011\u0871\u001a\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;\u0000\u0003\u0000\ufffd\ufffd\t\u0000\u0006\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\ufffd\u0000\u0000\u0000\u0001\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\u0000\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+     "challenge": false,
+     "seconds": 0.81
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_distillate_stocks_xls",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/WDISTUS1w.xls",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:53+00:00",
+     "status": 200,
+     "content_type": "application/vnd.ms-excel",
+     "bytes": 130048,
+     "final_url": "https://www.eia.gov/dnav/pet/hist_xls/WDISTUS1w.xls",
+     "last_modified": "Wed, 30 Sep 2026 14:43:35 GMT",
+     "sha256_head": "4999bba269298654d9a626c1503f4b4d1ed537f234a566d1e63ef31d2ecacd55",
+     "head": "\ufffd\ufffd\u0011\u0871\u001a\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;\u0000\u0003\u0000\ufffd\ufffd\t\u0000\u0006\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\ufffd\u0000\u0000\u0000\u0001\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\u0000\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+     "challenge": false,
+     "seconds": 3.48
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_refinery_util_xls",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/WPULEUS3w.xls",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:35:58+00:00",
+     "status": 200,
+     "content_type": "application/vnd.ms-excel",
+     "bytes": 111104,
+     "final_url": "https://www.eia.gov/dnav/pet/hist_xls/WPULEUS3w.xls",
+     "last_modified": "Wed, 30 Sep 2026 14:42:50 GMT",
+     "sha256_head": "82b3aed203b84e86df795c00cef61c4ff7965e01a2cd8c3c3c0a6eca0f27d516",
+     "head": "\ufffd\ufffd\u0011\u0871\u001a\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;\u0000\u0003\u0000\ufffd\ufffd\t\u0000\u0006\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0002\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\ufffd\u0000\u0000\u0000\u0001\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\u0000\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+     "challenge": false,
+     "seconds": 1.56
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_wti_spot_xls",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/RWTCd.xls",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:00+00:00",
+     "status": 200,
+     "content_type": "application/vnd.ms-excel",
+     "bytes": 471040,
+     "final_url": "https://www.eia.gov/dnav/pet/hist_xls/RWTCd.xls",
+     "last_modified": "Wed, 30 Sep 2026 14:44:39 GMT",
+     "sha256_head": "ed08e6bd797d035ac4e7d16074fd372c06abb34dafc5376e0bbfff79828a3458",
+     "head": "\ufffd\ufffd\u0011\u0871\u001a\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000;\u0000\u0003\u0000\ufffd\ufffd\t\u0000\u0006\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\b\u0000\u0000\u0000\ufffd\u0003\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0010\u0000\u0000\ufffd\u0003\u0000\u0000\u0001\u0000\u0000\u0000\ufffd\ufffd\ufffd\ufffd\u0000\u0000\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\u0003\u0000\u0000\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+     "challenge": false,
+     "seconds": 1.09
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "EIA_ulsd_ny_spot_xls",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/EER_EPD2DXL0_PF4_Y35NYd.xls",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:03+00:00",
+     "status": 404,
+     "content_type": null,
+     "bytes": 0,
+     "challenge": false,
+     "head": "",
+     "seconds": 0.64
+    }
+   ],
+   "verdict": "NOT_FOUND"
+  },
+  {
+   "name": "EIA_release_schedule",
+   "url": "https://www.eia.gov/petroleum/supply/weekly/schedule.php",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:04+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 52531,
+     "final_url": "https://www.eia.gov/petroleum/supply/weekly/schedule.php",
+     "last_modified": null,
+     "sha256_head": "cbfca2aaf784d8259a7b25909a1ce4f54689ddff096073d575b339e3313d4d65",
+     "head": "<!doctype html>\r <html>\r \r <head>\r \t<title>Weekly Petroleum Status Report Schedule - U.S. Energy Information Administration (EIA)</title>\r \t<meta property=\"og:t",
+     "challenge": false,
+     "seconds": 1.27
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "FAO_FFPI_page",
+   "url": "https://www.fao.org/worldfoodsituation/foodpricesindex/en/",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:06+00:00",
+     "status": 403,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 5729,
+     "challenge": true,
+     "head": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/htm",
+     "seconds": 0.31
+    }
+   ],
+   "verdict": "BLOCKED_BY_BOT_PROTECTION"
+  },
+  {
+   "name": "FAO_AMIS_market_monitor",
+   "url": "https://www.amis-outlook.org/amis-monitoring",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:08+00:00",
+     "status": 200,
+     "content_type": "text/html; charset=utf-8",
+     "bytes": 12158,
+     "final_url": "https://www.amis-outlook.org/amis-monitoring",
+     "last_modified": "Wed, 10 Jun 2026 13:05:51 GMT",
+     "sha256_head": "766db8ae7368b4cc3820ae830edf7574ecb37e572c5d7aac5c836e0ca5d3c077",
+     "head": "<!doctype html> <html lang=\"en\" data-critters-container>  <head><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>   <meta charset=\"utf-8\">   ",
+     "challenge": false,
+     "seconds": 0.57
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "IEA_OMR_page",
+   "url": "https://www.iea.org/reports/oil-market-report-september-2026",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:09+00:00",
+     "status": 403,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 5757,
+     "challenge": true,
+     "head": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/htm",
+     "seconds": 0.9
+    }
+   ],
+   "verdict": "BLOCKED_BY_BOT_PROTECTION"
+  },
+  {
+   "name": "IEA_data",
+   "url": "https://www.iea.org/data-and-statistics",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:11+00:00",
+     "status": 403,
+     "content_type": "text/html; charset=UTF-8",
+     "bytes": 5651,
+     "challenge": true,
+     "head": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/htm",
+     "seconds": 0.31
+    }
+   ],
+   "verdict": "BLOCKED_BY_BOT_PROTECTION"
+  },
+  {
+   "name": "WORLDBANK_pinksheet_page",
+   "url": "https://www.worldbank.org/en/research/commodity-markets",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:13+00:00",
+     "status": 200,
+     "content_type": "text/html;charset=utf-8",
+     "bytes": 55897,
+     "final_url": "https://www.worldbank.org/en/research/commodity-markets",
+     "last_modified": "Fri, 02 Oct 2026 19:01:12 GMT",
+     "sha256_head": "6de1e8e897cb061a8cb494b6035186c1d932a50e2ed905289b5872e6d64f7dcd",
+     "head": "<!DOCTYPE html>  <html lang=\"en\">     <head>             <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />     <script defer=\"defer\" type=\"text/javascript",
+     "challenge": false,
+     "seconds": 0.56
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "YAHOO_corn_future",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/ZC=F?period1=1167609600&period2=1170288000&interval=1d",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:14+00:00",
+     "status": 200,
+     "content_type": "application/json;charset=utf-8",
+     "bytes": 2190,
+     "final_url": "https://query1.finance.yahoo.com/v8/finance/chart/ZC=F?period1=1167609600&period2=1170288000&interval=1d",
+     "last_modified": null,
+     "sha256_head": "28ef6766bddcea535362a1ddac7b2666f621a18258fc880a9b9c6269781c068e",
+     "head": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USX\",\"symbol\":\"ZC=F\",\"exchangeName\":\"CBT\",\"fullExchangeName\":\"CBOT\",\"instrumentType\":\"FUTURE\",\"firstTradeDate\":96380640",
+     "challenge": false,
+     "seconds": 0.28
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "YAHOO_dba_etf",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/DBA?period1=1167609600&period2=1170288000&interval=1d",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:15+00:00",
+     "status": 200,
+     "content_type": "application/json;charset=utf-8",
+     "bytes": 3110,
+     "final_url": "https://query1.finance.yahoo.com/v8/finance/chart/DBA?period1=1167609600&period2=1170288000&interval=1d",
+     "last_modified": null,
+     "sha256_head": "14eb1ab450add04d9780f46684f0ff4ccbab7c1cd523a2d5acb943eced19ea7d",
+     "head": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"USD\",\"symbol\":\"DBA\",\"exchangeName\":\"PCX\",\"fullExchangeName\":\"NYSEArca\",\"instrumentType\":\"ETF\",\"firstTradeDate\":11680074",
+     "challenge": false,
+     "seconds": 0.3
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  },
+  {
+   "name": "YAHOO_nikkei",
+   "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?period1=1167609600&period2=1170288000&interval=1d",
+   "attempts": [
+    {
+     "at_utc": "2026-10-04T05:36:17+00:00",
+     "status": 200,
+     "content_type": "application/json;charset=utf-8",
+     "bytes": 3070,
+     "final_url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EN225?period1=1167609600&period2=1170288000&interval=1d",
+     "last_modified": null,
+     "sha256_head": "a9c8ffafa2bf5ac944faab71f4558250ff296983436606046f8ab8e5b477e02c",
+     "head": "{\"chart\":{\"result\":[{\"meta\":{\"currency\":\"JPY\",\"symbol\":\"^N225\",\"exchangeName\":\"OSA\",\"fullExchangeName\":\"Osaka\",\"instrumentType\":\"INDEX\",\"firstTradeDate\":-157420",
+     "challenge": false,
+     "seconds": 0.44
+    }
+   ],
+   "verdict": "ACCESSIBLE"
+  }
+ ]
+}
