@@ -1,0 +1,841 @@
+{
+  "preregistration_commit": "fbf65ac",
+  "data_sha256": "89b328d19225ae294db7650db6478cb2d88b95e23b76db83826e2356d63d1381",
+  "week": [
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02"
+  ],
+  "stops": [],
+  "data_report": {
+    "gaps": [],
+    "per_symbol": {
+      "SPY": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "EFA": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "EEM": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "IEF": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "TLT": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "GLD": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "DBC": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      },
+      "VNQ": {
+        "adj_bars": 150,
+        "raw_bars": 150,
+        "joined": 150,
+        "adj_only": [],
+        "raw_only": [],
+        "first": "2026-03-02",
+        "last": "2026-10-02"
+      }
+    }
+  },
+  "data_params": {
+    "end": "2026-10-02",
+    "feed": "iex",
+    "limit": 10000,
+    "start": "2026-03-01",
+    "timeframe": "1Day"
+  },
+  "retrieval": {
+    "calendar_http_status": 200,
+    "transfer_sha256_by_group": {
+      "DBC+VNQ": "d9a2fde5e0aed134e770410ca44f9eb742fe86998ee94b146c0d554d268efb0e",
+      "IEF+TLT+GLD": "bed83d75162d89fa8ff7dc64e427ad73c508e7c6b5500c46b02c64b7489c74ab",
+      "SPY+EFA+EEM": "e1ba7a4564c6be71b711e87174f00610bdaca6e059c3cdd96c4f58fe6cd7b91f"
+    },
+    "via": "SSM RunShellScript on i-035547b52ca11d1c3 (read-only GET, existing runtime_credential_loader)"
+  },
+  "warmup_sessions": {
+    "SPY": 145,
+    "EFA": 145,
+    "EEM": 145,
+    "IEF": 145,
+    "TLT": 145,
+    "GLD": 145,
+    "DBC": 145,
+    "VNQ": 145
+  },
+  "expiry": {
+    "date": "2026-11-01",
+    "blocked_sessions": []
+  },
+  "cases": {
+    "primary_slippage_10bps": {
+      "sam": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 10012130,
+        "net_return": 0.0012129999999999086,
+        "max_drawdown_close_marks": -0.0004855000000000276,
+        "orders_placed": 3,
+        "fills": 3,
+        "commission_cents": 864,
+        "slippage_cents": 1714,
+        "total_cost_cents": 2578,
+        "traded_notional_cents": 1726938,
+        "ending_positions_shares": {
+          "SPY": 7,
+          "EEM": 89,
+          "DBC": 184
+        },
+        "ending_exposure_fraction": 0.17378240194643896,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [
+          "2026-09-28"
+        ],
+        "hold_sessions": [
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": true,
+            "new_target": {
+              "SPY": 0.06,
+              "EFA": 0.0,
+              "EEM": 0.06,
+              "IEF": 0.0,
+              "TLT": 0.0,
+              "GLD": 0.0,
+              "DBC": 0.06,
+              "VNQ": 0.0
+            },
+            "orders": [
+              {
+                "symbol": "DBC",
+                "side": "buy",
+                "shares": 184
+              },
+              {
+                "symbol": "EEM",
+                "side": "buy",
+                "shares": 89
+              },
+              {
+                "symbol": "SPY",
+                "side": "buy",
+                "shares": 7
+              }
+            ],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 9995924,
+            "drawdown": -0.00040759999999995244,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 9995145,
+            "drawdown": -0.0004855000000000276,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 10004188,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 10012130,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          }
+        ]
+      },
+      "passive": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 9995142,
+        "net_return": -0.0004857999999999807,
+        "max_drawdown_close_marks": -0.000863500000000017,
+        "orders_placed": 8,
+        "fills": 8,
+        "commission_cents": 834,
+        "slippage_cents": 1657,
+        "total_cost_cents": 2491,
+        "traded_notional_cents": 1668712,
+        "ending_positions_shares": {
+          "SPY": 2,
+          "EFA": 21,
+          "EEM": 33,
+          "IEF": 25,
+          "TLT": 28,
+          "GLD": 5,
+          "DBC": 69,
+          "VNQ": 24
+        },
+        "ending_exposure_fraction": 0.16654970984904466,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [
+          "2026-09-28"
+        ],
+        "hold_sessions": [
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": true,
+            "new_target": {
+              "SPY": 0.0225,
+              "EFA": 0.0225,
+              "EEM": 0.0225,
+              "IEF": 0.0225,
+              "TLT": 0.0225,
+              "GLD": 0.0225,
+              "DBC": 0.0225,
+              "VNQ": 0.0225
+            },
+            "orders": [
+              {
+                "symbol": "DBC",
+                "side": "buy",
+                "shares": 69
+              },
+              {
+                "symbol": "EEM",
+                "side": "buy",
+                "shares": 33
+              },
+              {
+                "symbol": "EFA",
+                "side": "buy",
+                "shares": 21
+              },
+              {
+                "symbol": "GLD",
+                "side": "buy",
+                "shares": 5
+              },
+              {
+                "symbol": "IEF",
+                "side": "buy",
+                "shares": 25
+              },
+              {
+                "symbol": "SPY",
+                "side": "buy",
+                "shares": 2
+              },
+              {
+                "symbol": "TLT",
+                "side": "buy",
+                "shares": 28
+              },
+              {
+                "symbol": "VNQ",
+                "side": "buy",
+                "shares": 24
+              }
+            ],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 9997600,
+            "drawdown": -0.00024000000000001798,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 9991365,
+            "drawdown": -0.000863500000000017,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 9991894,
+            "drawdown": -0.0008105999999999947,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 9995142,
+            "drawdown": -0.0004857999999999807,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          }
+        ]
+      },
+      "cash": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 10000000,
+        "net_return": 0.0,
+        "max_drawdown_close_marks": 0.0,
+        "orders_placed": 0,
+        "fills": 0,
+        "commission_cents": 0,
+        "slippage_cents": 0,
+        "total_cost_cents": 0,
+        "traded_notional_cents": 0,
+        "ending_positions_shares": {},
+        "ending_exposure_fraction": 0.0,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [],
+        "hold_sessions": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          }
+        ]
+      }
+    },
+    "sensitivity_slippage_5bps": {
+      "sam": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 10012944,
+        "net_return": 0.0012943999999999178,
+        "max_drawdown_close_marks": -0.00040410000000001833,
+        "orders_placed": 3,
+        "fills": 3,
+        "commission_cents": 863,
+        "slippage_cents": 901,
+        "total_cost_cents": 1764,
+        "traded_notional_cents": 1726125,
+        "ending_positions_shares": {
+          "SPY": 7,
+          "EEM": 89,
+          "DBC": 184
+        },
+        "ending_exposure_fraction": 0.17376827434568695,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [
+          "2026-09-28"
+        ],
+        "hold_sessions": [
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": true,
+            "new_target": {
+              "SPY": 0.06,
+              "EFA": 0.0,
+              "EEM": 0.06,
+              "IEF": 0.0,
+              "TLT": 0.0,
+              "GLD": 0.0,
+              "DBC": 0.06,
+              "VNQ": 0.0
+            },
+            "orders": [
+              {
+                "symbol": "DBC",
+                "side": "buy",
+                "shares": 184
+              },
+              {
+                "symbol": "EEM",
+                "side": "buy",
+                "shares": 89
+              },
+              {
+                "symbol": "SPY",
+                "side": "buy",
+                "shares": 7
+              }
+            ],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 9996738,
+            "drawdown": -0.0003262000000000542,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 9995959,
+            "drawdown": -0.00040410000000001833,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 10005002,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 10012944,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 7,
+              "EEM": 89,
+              "DBC": 184
+            }
+          }
+        ]
+      },
+      "passive": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 9995954,
+        "net_return": -0.0004045999999999772,
+        "max_drawdown_close_marks": -0.0007823000000000135,
+        "orders_placed": 8,
+        "fills": 8,
+        "commission_cents": 834,
+        "slippage_cents": 845,
+        "total_cost_cents": 1679,
+        "traded_notional_cents": 1667900,
+        "ending_positions_shares": {
+          "SPY": 2,
+          "EFA": 21,
+          "EEM": 33,
+          "IEF": 25,
+          "TLT": 28,
+          "GLD": 5,
+          "DBC": 69,
+          "VNQ": 24
+        },
+        "ending_exposure_fraction": 0.16653618053864594,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [
+          "2026-09-28"
+        ],
+        "hold_sessions": [
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": true,
+            "new_target": {
+              "SPY": 0.0225,
+              "EFA": 0.0225,
+              "EEM": 0.0225,
+              "IEF": 0.0225,
+              "TLT": 0.0225,
+              "GLD": 0.0225,
+              "DBC": 0.0225,
+              "VNQ": 0.0225
+            },
+            "orders": [
+              {
+                "symbol": "DBC",
+                "side": "buy",
+                "shares": 69
+              },
+              {
+                "symbol": "EEM",
+                "side": "buy",
+                "shares": 33
+              },
+              {
+                "symbol": "EFA",
+                "side": "buy",
+                "shares": 21
+              },
+              {
+                "symbol": "GLD",
+                "side": "buy",
+                "shares": 5
+              },
+              {
+                "symbol": "IEF",
+                "side": "buy",
+                "shares": 25
+              },
+              {
+                "symbol": "SPY",
+                "side": "buy",
+                "shares": 2
+              },
+              {
+                "symbol": "TLT",
+                "side": "buy",
+                "shares": 28
+              },
+              {
+                "symbol": "VNQ",
+                "side": "buy",
+                "shares": 24
+              }
+            ],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 9998412,
+            "drawdown": -0.00015880000000001449,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 9992177,
+            "drawdown": -0.0007823000000000135,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 9992706,
+            "drawdown": -0.0007293999999999912,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 9995954,
+            "drawdown": -0.0004045999999999772,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {
+              "SPY": 2,
+              "EFA": 21,
+              "EEM": 33,
+              "IEF": 25,
+              "TLT": 28,
+              "GLD": 5,
+              "DBC": 69,
+              "VNQ": 24
+            }
+          }
+        ]
+      },
+      "cash": {
+        "start_equity_cents": 10000000,
+        "end_equity_cents": 10000000,
+        "net_return": 0.0,
+        "max_drawdown_close_marks": 0.0,
+        "orders_placed": 0,
+        "fills": 0,
+        "commission_cents": 0,
+        "slippage_cents": 0,
+        "total_cost_cents": 0,
+        "traded_notional_cents": 0,
+        "ending_positions_shares": {},
+        "ending_exposure_fraction": 0.0,
+        "halted": false,
+        "pending_orders_unfilled_at_end": null,
+        "sessions": 5,
+        "rebalance_sessions": [],
+        "hold_sessions": [
+          "2026-09-28",
+          "2026-09-29",
+          "2026-09-30",
+          "2026-10-01",
+          "2026-10-02"
+        ],
+        "daily": [
+          {
+            "date": "2026-09-28",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-29",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-09-30",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-10-01",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          },
+          {
+            "date": "2026-10-02",
+            "equity_cents": 10000000,
+            "drawdown": 0.0,
+            "rebalanced": false,
+            "new_target": null,
+            "orders": [],
+            "held_shares": {}
+          }
+        ]
+      }
+    }
+  }
+}
