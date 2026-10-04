@@ -39,7 +39,8 @@ def _get(url, timeout=10):
 
 
 def quote(sym, now, offline_cache):
-    if offline_cache is not None and sym in offline_cache: return offline_cache[sym]
+    if offline_cache is not None:                      # pipeline mode: ONLY stored captures, never a live fetch from inside the brief
+        return offline_cache.get(sym, {"available": False, "error": "no capture in pipeline store"})
     st, body = _get(f"https://query1.finance.yahoo.com/v8/finance/chart/{sym.replace('^', '%5E')}?range=5d&interval=1d")
     time.sleep(0.3)
     if st != 200: return {"available": False, "http_status": st}
@@ -52,6 +53,10 @@ def quote(sym, now, offline_cache):
                 "delay_note": "Yahoo public chart API: real-time/delay status not disclosed; indicative only, not an official or opening-auction price"}
     except Exception as e:
         return {"available": False, "error": f"parse_error: {e}"}
+
+
+def _src_path(cache_dir, d):
+    return d.get("abs_path") or os.path.join(cache_dir, "raw", d["cache"])
 
 
 def _wasde_block(path):
@@ -67,11 +72,11 @@ def _wasde_block(path):
     return out
 
 
-def build_payload(asof: date, edition: str, cache_dir, offline=False, quote_cache=None):
+def build_payload(asof: date, edition: str, cache_dir, offline=False, quote_cache=None, mode="sample", pipeline_meta=None):
     """cache_dir/raw must hold the latest WASDE + Crop Progress texts (fetched by fetch_latest) and the EIA extract / USDM json."""
     now = datetime.combine(asof, datetime.min.time(), NY).replace(hour=EDITIONS[edition][0], minute=EDITIONS[edition][1]).astimezone(timezone.utc)
     ok, why = is_us_trading_day(asof)
-    p = {"edition_key": f"{asof.isoformat()}_{edition}", "edition_target_time_utc": now.isoformat(), "actual_run_time_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"), "asof_session_date": asof.isoformat(), "trading_day_check": {"is_trading_day": ok, "basis": why},
+    p = {"mode": mode, "pipeline": pipeline_meta, "degraded": [], "edition_key": f"{asof.isoformat()}_{edition}", "edition_target_time_utc": now.isoformat(), "actual_run_time_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"), "asof_session_date": asof.isoformat(), "trading_day_check": {"is_trading_day": ok, "basis": why},
          "scope_notes": ["Research brief only; it cannot issue orders and does not alter any bot.", "ETF/equity/futures quotes are proxies, NOT spot commodity prices and NOT opening-auction data.",
                          "Evidence labels come from FEATURE_SPEC_v1 tests: indicators are priced on release; no post-release drift was supported."]}
     if ok is not True:
@@ -79,49 +84,71 @@ def build_payload(asof: date, edition: str, cache_dir, offline=False, quote_cach
     ev = {e["feature"] + "|" + e["commodity"]: e for e in json.load(open(os.path.join(ROOT, "features/EVIDENCE_MAP.json")))}
     sources, items = [], []
     lat = json.load(open(os.path.join(cache_dir, "latest_sources.json")))
-    # --- WASDE
-    w = lat.get("wasde")
-    if w:
-        blk = _wasde_block(os.path.join(cache_dir, "raw", w["cache"]))
-        sources.append({"source": "USDA WASDE", "publication_time": w["released_listing"], "retrieval_time_utc": w["retrieved_at_utc"], "reference_period": "marketing year " + (blk.get("corn", {}).get("marketing_year") or "?"), "url": w["url"], "units": "mil bu, bu/acre; stocks-to-use ratio", "kind": "forecast (USDA projection); previous-month projection from the same document"})
-        for com, b in blk.items():
-            for feat, val in (("w_stu_chg_pp", b["stu_chg_pp"]), ("w_yield_rev_pct", b["yield_rev_pct"])):
-                if val is None: continue
+    def _guard(name, fn):
+        try: fn()
+        except Exception as e: p["degraded"].append(f"{name}: section failed ({e!r})"[:240])
+
+    def _sec_wasde():
+        # --- WASDE
+        w = lat.get("wasde")
+        if w:
+            blk = _wasde_block(_src_path(cache_dir, w))
+            sources.append({"source": "USDA WASDE", "publication_time": w["released_listing"], "retrieval_time_utc": w["retrieved_at_utc"], "reference_period": "marketing year " + (blk.get("corn", {}).get("marketing_year") or "?"), "url": w["url"], "units": "mil bu, bu/acre; stocks-to-use ratio", "kind": "forecast (USDA projection); previous-month projection from the same document"})
+            for com, b in blk.items():
+                for feat, val in (("w_stu_chg_pp", b["stu_chg_pp"]), ("w_yield_rev_pct", b["yield_rev_pct"])):
+                    if val is None: continue
+                    e = ev.get(f"{feat}|{com}", {})
+                    items.append({"area": "food", "commodity": com, "feature": feat, "value": round(val, 3), "observed_level": {"stocks_to_use": round(b["stocks_to_use"], 4), "yield": b["yield"]}, "source": "WASDE " + w["released_listing"][:10],
+                                  "class": "forecast revision (interpretation of NASS/FAS inputs)", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
+                                  "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
+    _guard('wasde', _sec_wasde)
+
+    def _sec_crop_progress():
+        # --- crop progress
+        cp = lat.get("crop_progress") or []
+        if len(cp) >= 2:
+            a, b = cp[-2], cp[-1]
+            ra = {r["crop"]: r for r in parse_text(open(_src_path(cache_dir, a), encoding="latin-1").read(), a["released_listing"][:10])}
+            rb = {r["crop"]: r for r in parse_text(open(_src_path(cache_dir, b), encoding="latin-1").read(), b["released_listing"][:10])}
+            sources.append({"source": "USDA NASS Crop Progress", "publication_time": b["released_listing"], "retrieval_time_utc": b["retrieved_at_utc"], "reference_period": "week ending " + (date.fromisoformat(b["released_listing"][:10]) - timedelta(days=1)).isoformat(), "url": b["url"], "units": "percent of crop", "kind": "observation (NASS survey)"})
+            for crop in ("corn", "soybeans"):
+                if crop in ra and crop in rb:
+                    e = ev.get(f"c_ge_chg_pp|{crop}", {})
+                    items.append({"area": "food", "commodity": crop, "feature": "c_ge_chg_pp", "value": rb[crop]["good_excellent"] - ra[crop]["good_excellent"], "observed_level": {"good_excellent_pct": rb[crop]["good_excellent"]},
+                                  "source": "Crop Progress " + b["released_listing"][:10], "class": "observation", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
+                                  "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
+    _guard('crop_progress', _sec_crop_progress)
+
+    def _sec_usdm():
+        # --- drought
+        d = lat.get("usdm")
+        if d and len(d["weeks"]) >= 2:
+            sources.append({"source": "US Drought Monitor", "publication_time": d["weeks"][-1]["map_date"] + " (Tuesday map; published Thursday 08:30 ET)", "retrieval_time_utc": d["retrieved_at_utc"], "reference_period": "map " + d["weeks"][-1]["map_date"], "url": d["url"], "units": "percent area D1+, mean of IA/IL/IN/NE/MN", "kind": "observation (expert-assessed map)"})
+            e = ev.get("d_belt_d1_chg_pp|corn", {})
+            items.append({"area": "food", "commodity": "corn/soybeans", "feature": "d_belt_d1_chg_pp", "value": round(d["weeks"][-1]["belt_d1"] - d["weeks"][-2]["belt_d1"], 2), "observed_level": {"belt_d1_pct": round(d["weeks"][-1]["belt_d1"], 2)},
+                          "source": "USDM " + d["weeks"][-1]["map_date"], "class": "observation", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
+                          "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid"), "season_note": "feature defined for Apr-Sep only; outside the window it is context, not a tested signal" if not 4 <= asof.month <= 9 else None})
+    _guard('usdm', _sec_usdm)
+
+    def _sec_eia():
+        # --- EIA
+        eia = lat.get("eia")
+        if eia:
+            sources.append({"source": "EIA Weekly Petroleum Status (bulk PET)", "publication_time": eia["release_assumed"] + "T10:30 ET (" + eia.get("release_basis", "assumed Wednesday schedule") + ")", "retrieval_time_utc": eia["retrieved_at_utc"], "reference_period": "week ending " + eia["week_ending"], "url": eia["url"], "units": "thousand bbl; percent", "kind": "observation (weekly survey)"})
+            for feat, com, key in (("e_dist_stock_surprise_kbbl", "distillate", "dist_surprise"), ("e_crude_stock_surprise_kbbl", "crude", "crude_surprise"), ("e_util_chg_pp", "distillate", "util_chg")):
+                if eia.get(key) is None: continue
                 e = ev.get(f"{feat}|{com}", {})
-                items.append({"area": "food", "commodity": com, "feature": feat, "value": round(val, 3), "observed_level": {"stocks_to_use": round(b["stocks_to_use"], 4), "yield": b["yield"]}, "source": "WASDE " + w["released_listing"][:10],
-                              "class": "forecast revision (interpretation of NASS/FAS inputs)", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
-                              "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
-    # --- crop progress
-    cp = lat.get("crop_progress") or []
-    if len(cp) >= 2:
-        a, b = cp[-2], cp[-1]
-        ra = {r["crop"]: r for r in parse_text(open(os.path.join(cache_dir, "raw", a["cache"]), encoding="latin-1").read(), a["released_listing"][:10])}
-        rb = {r["crop"]: r for r in parse_text(open(os.path.join(cache_dir, "raw", b["cache"]), encoding="latin-1").read(), b["released_listing"][:10])}
-        sources.append({"source": "USDA NASS Crop Progress", "publication_time": b["released_listing"], "retrieval_time_utc": b["retrieved_at_utc"], "reference_period": "week ending " + (date.fromisoformat(b["released_listing"][:10]) - timedelta(days=1)).isoformat(), "url": b["url"], "units": "percent of crop", "kind": "observation (NASS survey)"})
-        for crop in ("corn", "soybeans"):
-            if crop in ra and crop in rb:
-                e = ev.get(f"c_ge_chg_pp|{crop}", {})
-                items.append({"area": "food", "commodity": crop, "feature": "c_ge_chg_pp", "value": rb[crop]["good_excellent"] - ra[crop]["good_excellent"], "observed_level": {"good_excellent_pct": rb[crop]["good_excellent"]},
-                              "source": "Crop Progress " + b["released_listing"][:10], "class": "observation", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
-                              "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
-    # --- drought
-    d = lat.get("usdm")
-    if d and len(d["weeks"]) >= 2:
-        sources.append({"source": "US Drought Monitor", "publication_time": d["weeks"][-1]["map_date"] + " (Tuesday map; published Thursday 08:30 ET)", "retrieval_time_utc": d["retrieved_at_utc"], "reference_period": "map " + d["weeks"][-1]["map_date"], "url": d["url"], "units": "percent area D1+, mean of IA/IL/IN/NE/MN", "kind": "observation (expert-assessed map)"})
-        e = ev.get("d_belt_d1_chg_pp|corn", {})
-        items.append({"area": "food", "commodity": "corn/soybeans", "feature": "d_belt_d1_chg_pp", "value": round(d["weeks"][-1]["belt_d1"] - d["weeks"][-2]["belt_d1"], 2), "observed_level": {"belt_d1_pct": round(d["weeks"][-1]["belt_d1"], 2)},
-                      "source": "USDM " + d["weeks"][-1]["map_date"], "class": "observation", "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"),
-                      "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid"), "season_note": "feature defined for Apr-Sep only; outside the window it is context, not a tested signal" if not 4 <= asof.month <= 9 else None})
-    # --- EIA
-    eia = lat.get("eia")
-    if eia:
-        sources.append({"source": "EIA Weekly Petroleum Status (bulk PET)", "publication_time": eia["release_assumed"] + "T10:30 ET (assumed Wednesday schedule)", "retrieval_time_utc": eia["retrieved_at_utc"], "reference_period": "week ending " + eia["week_ending"], "url": eia["url"], "units": "thousand bbl; percent", "kind": "observation (weekly survey)"})
-        for feat, com, key in (("e_dist_stock_surprise_kbbl", "distillate", "dist_surprise"), ("e_crude_stock_surprise_kbbl", "crude", "crude_surprise"), ("e_util_chg_pp", "distillate", "util_chg")):
-            if eia.get(key) is None: continue
-            e = ev.get(f"{feat}|{com}", {})
-            items.append({"area": "fuel", "commodity": com, "feature": feat, "value": round(eia[key], 2), "observed_level": eia.get("levels"), "source": "EIA week ending " + eia["week_ending"], "class": "observation",
-                          "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"), "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
+                items.append({"area": "fuel", "commodity": com, "feature": feat, "value": round(eia[key], 2), "observed_level": eia.get("levels"), "source": "EIA week ending " + eia["week_ending"], "class": "observation",
+                              "evidence_support": e.get("support_by_target"), "mechanism": e.get("mechanism"), "competing_explanations": e.get("competing"), "transmission_horizon": e.get("horizon"), "invalidation": e.get("invalid")})
+    _guard('eia', _sec_eia)
+
+    for n, key in (("wasde", "wasde"), ("crop_progress", "crop_progress"), ("usdm", "usdm"), ("eia", "eia")):
+        if not lat.get(key): p["degraded"].append(f"{n}: no capture available - section omitted, nothing fabricated")
+    ss = lat.get("source_status") or {}
+    for k, v in ss.items():
+        if v.get("consecutive_failures"): p["degraded"].append(f"{k}: {v['consecutive_failures']} consecutive failed polls, last error {v.get('last_error')}")
     p["sources"], p["items"] = sources, items
+    p["source_status"] = ss
     # --- markets
     qs = {}
     for sec, rows in GLOBAL_INSTRUMENTS.items():
@@ -137,8 +164,10 @@ def build_payload(asof: date, edition: str, cache_dir, offline=False, quote_cach
 
 def render_md(p):
     if p.get("status") != "OK": return f"# Food/fuel brief {p['edition_key']}\n\n{p['status']}: {p['trading_day_check']}\n"
-    L = [f"# Food & fuel pre-market evidence brief - {p['edition_key']}", f"Edition target {p['edition_target_time_utc']}; actually run {p['actual_run_time_utc']} (if the run time precedes the target, quotes are from the last completed sessions and are labelled stale). Trading-day check: {p['trading_day_check']['basis']}.", ""]
+    L = [f"# Food & fuel pre-market evidence brief - {p['edition_key']} [{p['mode'].upper()}]", f"Edition target {p['edition_target_time_utc']}; actually run {p['actual_run_time_utc']} (if the run time precedes the target, quotes are from the last completed sessions and are labelled stale). Trading-day check: {p['trading_day_check']['basis']}.", ""]
     L += ["> " + n for n in p["scope_notes"]] + [""]
+    if p.get("degraded"): L += ["## DEGRADED / MISSING COVERAGE", ""] + ["- " + d for d in p["degraded"]] + [""]
+    if p.get("pipeline"): L += [f"Pipeline: tick {p['pipeline']['tick_id']}, edition generated {p['pipeline']['late_seconds']}s after its target time.", ""]
     for area in ("food", "fuel"):
         L += [f"## {area.title()} - what changed (latest releases)", ""]
         for it in p["items"]:
@@ -155,7 +184,7 @@ def render_md(p):
     for sec, rows in p["markets"].items():
         L.append(f"**{sec}**")
         for q in rows:
-            L.append(f"- {q['name']}: " + (f"{q['price']:.2f} ({q['pct']:+.2f}%) [{q['session_label']}, {q['event_local_date']}]" if q.get("available") and q.get("pct") is not None else "UNAVAILABLE"))
+            L.append(f"- {q['name']}: " + (f"{q['price']:.2f} ({q['pct']:+.2f}%) [{q['session_label']}, {q['event_local_date']}; retrieved {q.get('retrieved_at_utc', 'n/a')}{' STALE-CAPTURE' if q.get('capture_stale') else ''}]" if q.get("available") and q.get("pct") is not None else "UNAVAILABLE"))
         L.append("")
     c = p["coverage"]
     L += ["## Coverage and data quality", "", f"- quotes available {c['quotes_total']-len(c['unavailable'])}/{c['quotes_total']}; unavailable: {c['unavailable'] or 'none'}; stale: {c['stale'] or 'none'}"]
@@ -164,13 +193,13 @@ def render_md(p):
     return "\n".join(L) + "\n"
 
 
-def write_edition(asof: date, edition: str, out_dir, cache_dir, offline=False, quote_cache=None):
+def write_edition(asof: date, edition: str, out_dir, cache_dir, offline=False, quote_cache=None, mode="sample", pipeline_meta=None):
     """idempotent: returns ('EXISTS'|'WRITTEN', path). The edition file is created with O_EXCL so concurrent runs cannot both write."""
-    os.makedirs(out_dir, exist_ok=True); key = f"{asof.isoformat()}_{edition}"; jp = os.path.join(out_dir, f"food_fuel_brief_{key}.json")
+    os.makedirs(out_dir, exist_ok=True); key = f"{asof.isoformat()}_{edition}"; jp = os.path.join(out_dir, f"{mode}_food_fuel_brief_{key}.json")
     if os.path.exists(jp): return "EXISTS", jp
-    p = build_payload(asof, edition, cache_dir, offline, quote_cache)
+    p = build_payload(asof, edition, cache_dir, offline, quote_cache, mode, pipeline_meta)
     if edition == "0929":
-        prev = os.path.join(out_dir, f"food_fuel_brief_{asof.isoformat()}_0915.json")
+        prev = os.path.join(out_dir, f"{mode}_food_fuel_brief_{asof.isoformat()}_0915.json")
         if os.path.exists(prev) and p.get("status") == "OK":
             old = json.load(open(prev)); oi = {(i["feature"], i["commodity"]): i["value"] for i in old.get("items", [])}
             p["new_since_0915"] = [{"feature": i["feature"], "commodity": i["commodity"], "was": oi.get((i["feature"], i["commodity"])), "now": i["value"]} for i in p["items"] if oi.get((i["feature"], i["commodity"])) != i["value"]]
@@ -179,5 +208,5 @@ def write_edition(asof: date, edition: str, out_dir, cache_dir, offline=False, q
         elif p.get("status") == "OK": p["new_since_0915"] = None; p["note_0915"] = "09:15 edition not found - cannot diff"
     fd = os.open(jp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
     with os.fdopen(fd, "w") as f: json.dump(p, f, indent=1, default=str)
-    open(os.path.join(out_dir, f"food_fuel_brief_{key}.md"), "w").write(render_md(p))
+    open(os.path.join(out_dir, f"{mode}_food_fuel_brief_{key}.md"), "w").write(render_md(p))
     return "WRITTEN", jp

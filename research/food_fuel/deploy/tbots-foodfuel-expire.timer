@@ -1,0 +1,11 @@
+[Unit]
+Description=TBOTS food/fuel activation expiry timer (one-time)
+
+[Timer]
+OnCalendar=2026-10-09 17:00:00 America/New_York
+Persistent=false
+AccuracySec=1s
+Unit=tbots-foodfuel-expire.service
+
+[Install]
+WantedBy=timers.target

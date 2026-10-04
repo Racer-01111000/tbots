@@ -1,0 +1,13 @@
+[Unit]
+Description=TBOTS food/fuel pipeline ticks: every 5 min 04:00-16:15 ET Mon-Fri (+09:29:10); the tick itself applies the NYSE-calendar and expiry gates
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 04..15:00/5:10 America/New_York
+OnCalendar=Mon..Fri *-*-* 16:00,05,10,15:10 America/New_York
+OnCalendar=Mon..Fri *-*-* 09:29:10 America/New_York
+Persistent=false
+AccuracySec=1s
+Unit=tbots-foodfuel-tick.service
+
+[Install]
+WantedBy=timers.target

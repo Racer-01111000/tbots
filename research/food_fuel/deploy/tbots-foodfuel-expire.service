@@ -1,0 +1,7 @@
+# One-shot: ends this activation window. Disables every food/fuel schedule and stops any running unit. Preserves all state/outputs.
+[Unit]
+Description=TBOTS food/fuel activation expiry (2026-10-09 17:00 ET)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'systemctl disable --now tbots-foodfuel-tick.timer tbots-foodfuel-research.timer tbots-foodfuel-expire.timer; systemctl stop tbots-foodfuel-tick.service tbots-foodfuel-research.service; (systemctl list-timers --all --no-pager | grep -i foodfuel || echo "no foodfuel timers remain") > /var/lib/tbots-foodfuel/EXPIRED.txt; date -u >> /var/lib/tbots-foodfuel/EXPIRED.txt'

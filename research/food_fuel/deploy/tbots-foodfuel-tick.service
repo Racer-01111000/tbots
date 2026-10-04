@@ -1,0 +1,22 @@
+# Read-only information pipeline tick (capture -> timestamp -> feature -> brief). No orders, no broker credential, no NODE/KESTREL access.
+[Unit]
+Description=TBOTS food/fuel information pipeline tick (bounded, single-writer, expires 2026-10-09 17:00 ET)
+
+[Service]
+Type=oneshot
+User=tbotsff
+Group=tbotsff
+Environment=TZ=America/New_York
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/python-3.13.5-isolated/bin/python3.13 /opt/tbots-foodfuel/current/research/food_fuel/scripts/pipeline_tick.py --root /var/lib/tbots-foodfuel --mode production --expires 2026-10-09T17:00:00
+TimeoutStartSec=240
+CPUQuota=50%
+MemoryMax=300M
+MemorySwapMax=0
+TasksMax=32
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+PrivateTmp=yes
+PrivateDevices=yes
+ReadWritePaths=/var/lib/tbots-foodfuel
