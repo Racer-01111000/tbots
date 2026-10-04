@@ -354,17 +354,18 @@ def test_shadow_session_then_live_session_next_day_sends_the_entry_with_no_state
 
 
 def test_drawdown_and_halt_latch_recorded_even_when_bars_are_not_ready(tmp_path):
-    fake, deps, _ = make(tmp_path)
+    fake, deps, _ = make(tmp_path, gate=True)
     k.run_session(deps)
+    fake.fill_all()
     advance(fake, deps)
     fake.set_equity(88_000.0)
     fake.missing_bars = set(["SPY", "EFA", "EEM", "IEF", "TLT", "GLD", "DBC", "VNQ"])
+    n = len(fake.post_log)
     rec = k.run_session(deps)
-    assert rec["status"] == "abstained_data_not_ready"
     ps = state(tmp_path, "peak_equity_state.json")
     assert ps["history"]["2026-10-06"] == 88_000.0
     assert state(tmp_path, "halt_state.json")["halted"] is True      # monitoring never depends on bar availability
-
+    assert rec["status"] == "halted" and all(b["side"] == "sell" for b in fake.post_log[n:]) and len(fake.post_log) > n
 
 def test_first_live_session_catches_up_a_rebalance_that_shadow_never_consumed(tmp_path):
     """cadence_state.json from the shadow period has session_zero in the past and
@@ -418,38 +419,3 @@ def test_order_invisible_in_the_open_orders_list_is_not_sized_twice_next_run(tmp
 
 
 # ------------------------------------------- halt: frequency and no prices ---
-
-def test_halt_with_no_prices_cannot_liquidate_but_latches_and_escalates(tmp_path):
-    fake, deps, _ = make(tmp_path, gate=True)
-    k.run_session(deps)
-    fake.fill_all()
-    advance(fake, deps)
-    fake.set_equity(88_000.0)
-    fake.missing_bars = set(["SPY", "EFA", "EEM", "IEF", "TLT", "GLD", "DBC", "VNQ"])
-    n = len(fake.post_log)
-    rec = k.run_session(deps)
-    assert rec["status"] == "abstained_data_not_ready"
-    assert state(tmp_path, "halt_state.json")["halted"] is True
-    assert len(fake.post_log) == n, "must not sell blind with no prices"
-    assert rec["halt_latched_but_unliquidated"] is True and rec["escalate"] is True
-    fake.missing_bars = set()                                   # prices back: liquidation happens at the next valid session
-    advance(fake, deps)
-    fake.set_equity(88_000.0)
-    rec2 = k.run_session(deps)
-    assert rec2["status"] == "halted" and all(b["side"] == "sell" for b in fake.post_log[n:]) and len(fake.post_log) > n
-
-
-def test_halt_with_one_unpriced_held_symbol_sells_the_rest_and_flags_that_one(tmp_path):
-    fake, deps, _ = make(tmp_path, gate=True)
-    fake.positions = [{"symbol": "TLT", "qty": "40"}, {"symbol": "GLD", "qty": "10"}]
-    (tmp_path / "halt_state.json").write_text(json.dumps({"halted": True}))
-    (tmp_path / "peak_equity_state.json").write_text(json.dumps(
-        {"peak_equity": 100000.0, "peak_session_date": "2026-10-01", "history": {"2026-10-01": 100000.0}}))
-    (tmp_path / "cadence_state.json").write_text(json.dumps(
-        {"session_zero_date": "2026-10-05", "last_evaluated_session_date": "2026-10-01"}))
-    fake.missing_bars = {"GLD"}
-    rec = k.run_session(deps)
-    # a missing price for ANY symbol means that symbol is never traded, even under a halt; the rest is liquidated
-    assert rec["status"] == "halted"
-    assert {(b["symbol"], b["side"]) for b in fake.post_log} == {("TLT", "sell")}
-    assert rec["halt_unliquidated_symbols"] == ["GLD"] and rec["escalate"] is True

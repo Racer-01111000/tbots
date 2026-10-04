@@ -68,3 +68,77 @@ def build_specs(orders: list[dict], session_date: str, time_in_force: str) -> li
     return [IntendedOrderSpec(build_client_order_id(session_date, o["symbol"]), o["symbol"],
                               int(o["shares"]), o["side"], time_in_force=time_in_force)
             for o in ordered if o["shares"] > 0]
+
+
+# ---------------------------------------------------------------------------
+# Halt liquidation (quantity-based; needs NO price)
+# ---------------------------------------------------------------------------
+TERMINAL_STATUSES = {"filled", "canceled", "expired", "rejected", "done_for_day", "replaced"}
+
+
+def plan_halt_liquidation(positions: list, open_orders: list, ledger_nonterminal_sells: list,
+                          universe: list[str]) -> tuple[list[dict], dict]:
+    """Sell only the remaining UNCOMMITTED long quantity of each universe symbol.
+
+      sellable = floor(position_qty) - ceil(quantity already committed to live SELL orders)
+
+    committed = remaining (qty - filled_qty) of every non-terminal sell known to the
+    broker, plus remaining of every non-terminal sell known only to our ledger (an
+    accepted order not yet visible in the broker's list), de-duplicated by
+    client_order_id. Never produces a buy, never goes below zero, never touches a
+    short or a non-universe holding. Pending BUYs are reported, not cancelled
+    (cancelling is a different broker action this path does not take)."""
+    notes = {"short_positions": [], "non_universe_positions": [], "fractional_residual": {},
+             "pending_buys": [], "committed_sell_qty": {}}
+    committed: dict[str, float] = {}
+    seen: set = set()
+    for o in open_orders or []:
+        if o.get("status") in TERMINAL_STATUSES:
+            continue
+        sym = o.get("symbol")
+        if o.get("side") == "buy":
+            notes["pending_buys"].append(sym)
+            continue
+        remaining = max(0.0, float(o.get("qty") or 0) - float(o.get("filled_qty") or 0))
+        committed[sym] = committed.get(sym, 0.0) + remaining
+        seen.add(o.get("client_order_id"))
+    for row in ledger_nonterminal_sells or []:
+        if row["client_order_id"] in seen or row.get("side") != "sell":
+            continue
+        remaining = max(0.0, float(row.get("qty") or 0) - float(row.get("filled_qty") or 0))
+        committed[row["symbol"]] = committed.get(row["symbol"], 0.0) + remaining
+    notes["committed_sell_qty"] = {k: v for k, v in committed.items() if v}
+
+    orders = []
+    for pos in positions or []:
+        sym = pos.get("symbol")
+        qty = float(pos.get("qty") or 0)
+        if sym not in universe:
+            if qty:
+                notes["non_universe_positions"].append(sym)
+            continue
+        if qty < 0:
+            notes["short_positions"].append(sym)        # never buy to cover; a human decides
+            continue
+        whole = math.floor(qty + 1e-9)
+        if abs(qty - whole) > 1e-9:
+            notes["fractional_residual"][sym] = qty - whole
+        sellable = max(0, whole - math.ceil(committed.get(sym, 0.0) - 1e-9))
+        if sellable > 0:
+            orders.append({"symbol": sym, "side": "sell", "shares": int(sellable)})
+    return sorted(orders, key=lambda o: o["symbol"]), notes
+
+
+def build_liquidation_specs(orders: list[dict], session_date: str) -> list[IntendedOrderSpec]:
+    """Deterministic id kim-{session}-{symbol}-liq (distinct from a same-day rebalance id so
+    one can never shadow the other). Hard-asserts sell-only: a buy here is a bug, not an input."""
+    if any(o["side"] != "sell" or o["shares"] <= 0 for o in orders):
+        raise OrderGuardError("halt liquidation may only contain positive-quantity sells")
+    return [IntendedOrderSpec(build_client_order_id(session_date, o["symbol"]) + "-liq", o["symbol"],
+                              int(o["shares"]), "sell", time_in_force="day") for o in orders]
+
+
+def is_flat(positions: list, open_orders: list, universe: list[str]) -> bool:
+    held = any(p.get("symbol") in universe and float(p.get("qty") or 0) != 0 for p in positions or [])
+    live = any(o.get("symbol") in universe and o.get("status") not in TERMINAL_STATUSES for o in open_orders or [])
+    return not held and not live

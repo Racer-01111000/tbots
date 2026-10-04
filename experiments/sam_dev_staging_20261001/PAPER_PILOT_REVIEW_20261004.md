@@ -2,7 +2,7 @@
 
 Branch `repair/paper-pilot-integration-review-20261004` (local only; not pushed, not relayed to EC2).
 Submission remains OFF: `alpaca_adapter._SUBMISSION_ENABLED_CONST = False` is untouched, no timer is installed.
-Tests: 91 at fe72d72 → 173 now (155 at the first review commit), all pass (`pytest` from the integration venv; see "Running the tests").
+Tests: 91 at fe72d72 → 205 now (155 at the first review commit, 173 after the lineage-D shadow), all pass (`pytest` from the integration venv; see "Running the tests").
 
 ## Defects found in fe72d72 (all reproduced red before the fix)
 
@@ -129,5 +129,34 @@ The POST times out **after** the broker accepted it; the order is invisible to `
 ## 6. Halt: monitoring frequency and behaviour with no prices
 * **Frequency.** Once per valid trading session, at the ~16:45 ET timer run after the 16:15 data cutoff. Drawdown = broker **account equity** vs the persisted maximum of **end-of-session snapshots**. It is **not intraday**: an intraday breach that recovers by 16:45 is never seen, and the peak is the highest daily snapshot, not the intraday high. Pre-cutoff catch-up runs and holidays record nothing. Sessions the job never ran are not backfilled into the peak history.
 * **Breach response.** Latched at the snapshot; liquidation orders are `day` market orders submitted that evening and queued for the next open, so worst-case exposure after a breach is one more overnight plus the open gap.
-* **Prices unavailable.** Monitoring does not depend on bars (broker equity is enough), so drawdown is recorded and the halt **latches even if every price is missing**. But liquidation is sized from bars, so with no usable bars the session **abstains: no orders**, and the result now carries `halt_latched_but_unliquidated: true` and `escalate: true` (previously silent unless ≥3 abstentions). It retries every session until prices return. If only *some* symbols lack a price, the others are liquidated and each held-but-unpriced symbol is **never sold blind, even under a halt**; it is reported in `halt_unliquidated_symbols` with `escalate`.
-* **Decision for Rick:** whether a latched halt should be allowed to sell *by share quantity* without a price (a market sell needs none). Current behaviour is the conservative reading and keeps the no-sell-on-missing-price invariant absolute.
+* **Prices unavailable.** *Superseded by the next section (Rick's GO of the same day):* a latched halt now liquidates by share quantity and needs no price.
+
+
+---
+
+# Addendum 2: quantity-based liquidation under a latched halt (Rick's GO, same day)
+
+Authorizes the paper-account repair only. It does **not** authorize deployment, timer activation or enabling submission; `_SUBMISSION_ENABLED_CONST` is still `False`, and the 8 % halt and Nov-1 expiry remain proposed.
+
+## Behaviour
+Once the halt is latched (persisted `halt_state.json`, never cleared by code), each valid session runs `_halt_liquidation` **before and independent of the bar fetch**, so missing or stale prices cannot strand the account:
+
+1. **Hold conditions (nothing is submitted, `escalate: true`, the session is *not* marked evaluated so it retries):**
+   * ledger reconciliation could not reach the broker (a lookup returned 5xx/timeout);
+   * an earlier **BUY** submission is unresolved: it is **never** resubmitted under a halt;
+   * an earlier **SELL** submission is unresolved and cannot be safely recovered: recovery is lookup, then (only on a definitive 404) a resubmit of the **same** `client_order_id`; it is refused if its quantity exceeds what is now held (`oversell_risk`) or if broker state cannot be read;
+   * fresh positions or open orders cannot be read.
+2. **Sizing (`session_guards.plan_halt_liquidation`, pure):** per universe symbol, `sell = floor(position_qty) − ceil(committed)`, where `committed` is the remaining quantity (`qty − filled_qty`) of every non-terminal sell known to the broker plus every non-terminal sell known only to our ledger (accepted but not yet visible), de-duplicated by `client_order_id`. Never negative, never a buy, never a short; a short, a non-universe holding, a fractional residual, or a pending buy is **reported and escalated, not acted on** (cancelling a pending buy is a different broker action this path does not take).
+3. **Submission:** through the unchanged `submit_orders_with_limits`, so the persistent ledger, deterministic duplicate protection (`kim-{session}-{symbol}-liq`), the per-session order cap and the kill switch all apply. The kill switch blocks liquidation too. Sell-only is asserted in code (`build_liquidation_specs` raises on anything else).
+4. **After submission:** positions and open orders are re-read and **flat status is confirmed from the broker** (`halt_flat_confirmed`): no universe position and no live order. `unflat_sessions` is tracked in `halt_state.json`; two consecutive unflat sessions escalate. The latch is preserved through partial fills, expired orders and flat; recovery of equity never un-halts and never causes a buy.
+5. **Not live:** gate closed or validate-only plans and logs the sells but sends nothing and writes no ledger (validate-only writes no state file at all).
+
+## Tests (`test_halt_liquidation_20261004.py`, 34 tests; the 9 runner-level behaviour tests fail on the previous commit)
+Planner: full quantity, never a buy/short, non-universe, pending sells, partial-fill remainder, oversell prevention (pending ≥ position), ledger-only sells, de-duplication, pending buys, terminal orders, fractional residual, sell-only assertion. Runner: **missing prices** (all eight symbols unavailable → still sells by quantity), **partial fills** (remaining 25 already committed → no new order), **pending sells** from before the halt, expired order replaced next session, **timeouts** (never reached the broker → same-id retry yields exactly one order; accepted-then-invisible for several checks → still exactly one order, no double sell), **restart recovery** (crash after the send, before state is persisted → no second order), unreadable/failed fresh reconciliation, ledger lookup failure, unresolved earlier buy, stale oversize sell, kill switch, order cap with remainder next session, latch + flat confirmation, shadow and validate-only.
+
+## Limits that code cannot remove — read before relying on the halt
+* **Queued market orders have no guaranteed execution price and no maximum loss.** A halt breach is detected at the ~16:45 ET snapshot; the liquidation is a `day` market order submitted that evening and queued for the next regular open. It fills at whatever prints (overnight and open gaps, wide spreads in a stressed ETF, partial fills across the session), so realised loss can exceed the trigger threshold by an amount that is **unbounded in principle**. The 8 % figure is a trigger, not a stop-loss and not a loss cap.
+* **A queued order can fail to execute** (trading halt in the symbol, rejection, expiry): the position then remains, the unflat state is flagged, and the next session retries with a new order id.
+* **Monitoring is once per session on end-of-day snapshots**, not intraday.
+* **The per-session cap still applies**: more held symbols than the cap means the remainder waits for the next session (flagged).
+* The sell is sized from `/v2/positions` + open orders at ~16:45 ET; fills between that read and the order's execution are the broker's responsibility (an oversize sell is rejected by the broker, not partially honoured by us).

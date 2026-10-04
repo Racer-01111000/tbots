@@ -19,8 +19,8 @@ injected so the whole runner is testable against a fake broker and fake data:
   * peak equity / drawdown are recorded on EVERY valid post-cutoff trading
     session, rebalance or not, with the sign risk.validate() expects;
   * the drawdown halt is a persisted latch (halt_state.json): on trigger the
-    runner liquidates to cash (matching the backtest's halted behaviour) and
-    stays flat until a human removes the latch;
+    runner liquidates by share QUANTITY (no price needed; see _halt_liquidation)
+    and stays flat until a human removes the latch;
   * broker state (account, positions, orders) that cannot be read abstains;
     it is never treated as "no positions";
   * orders: cash-constrained (no borrow), checked against post-trade limits,
@@ -50,7 +50,7 @@ sys.path.insert(0, str(DEV_STAGING))
 sys.path.insert(0, str(REPO / "scripts"))
 
 from alpaca_adapter import PAPER_TRADING_HOST, assert_trading_host_allowed  # noqa: E402
-from kim_order_logic import PersistentIntentLedger, submit_orders_with_limits  # noqa: E402
+from kim_order_logic import PersistentIntentLedger, IntendedOrderSpec, submit_orders_with_limits  # noqa: E402
 import control_agent  # noqa: E402
 import execution  # noqa: E402
 import risk  # noqa: E402
@@ -244,6 +244,109 @@ def load_cadence_state(d: Deps) -> dict:
     return st
 
 
+def _get_fresh(d: Deps):
+    """Fresh broker truth: (positions, open_orders) or None if either read fails."""
+    host = d.trading_host
+    ps, pos = d.get_json(f"{host}/v2/positions", d.headers)
+    os_, oo = d.get_json(f"{host}/v2/orders?status=open&limit=500", d.headers)
+    if ps != 200 or not isinstance(pos, list) or os_ != 200 or not isinstance(oo, list):
+        return None
+    return pos, oo
+
+
+def _halt_liquidation(d: Deps, rec: dict, finish, ledger, lookup_errors: list, cadence: dict, step: int,
+                      today_et: str, halt: dict, halt_path: Path, persist: bool, gate_open: bool) -> dict:
+    """Under a LATCHED halt: sell the remaining uncommitted long quantity of every universe
+    symbol. Quantity-based, so unavailable prices do not matter.
+
+    Rules (each pinned by tests):
+      * freshly reconciled positions + open orders are read immediately before sizing;
+      * sells only: never a buy, never a short, never more than held minus what live sells already cover;
+      * unreadable positions/orders, an unresolved ledger lookup, or an unresolved earlier submission
+        => HOLD every further submission and flag it (an uncertain *sell* may only be recovered by
+        looking it up / resubmitting the SAME client_order_id; an uncertain *buy* is never resubmitted);
+      * the ledger, duplicate protection, per-session order cap and kill switch apply unchanged;
+      * the halt stays latched no matter what; flat status is confirmed from the broker, not assumed.
+    """
+    live = gate_open and persist
+    kill_path = d.state_dir / d.config["kill_switch_file"]
+    cap = d.config["max_orders_per_session"]
+
+    def hold(reason: str, **extra) -> dict:
+        return finish("halt_liquidation_held", halt_hold_reason=reason, escalate=True, halt_flat_confirmed=None, **extra)
+
+    if lookup_errors:
+        return hold("ledger reconciliation could not reach the broker; position/order state unknown")
+
+    unresolved = []
+    if ledger is not None:
+        unresolved = [r for r in ledger.get_unresolved() if r["status"] in ("intent_recorded", "uncertain_unresolved")]
+    if unresolved:
+        ids = [r["client_order_id"] for r in unresolved]
+        if any(r["side"] == "buy" for r in unresolved):
+            return hold("an earlier BUY submission is unresolved; a buy is never resubmitted under a halt",
+                        unresolved_submissions=ids)
+        if not live:
+            return hold("an earlier SELL submission is unresolved and submission is not live", unresolved_submissions=ids)
+        pre = _get_fresh(d)
+        if pre is None:
+            return hold("positions/open orders could not be read; refusing to recover an unresolved sell blind",
+                        unresolved_submissions=ids)
+        held = {p_["symbol"]: math.floor(float(p_.get("qty") or 0) + 1e-9) for p_ in pre[0]}
+        too_big = [r["client_order_id"] for r in unresolved if int(r["qty"]) > held.get(r["symbol"], 0)]
+        if too_big:   # a stale intent could now oversell (or open a short): a human decides, nothing is sent
+            return hold("an unresolved earlier SELL is larger than the position now held; not recovering it",
+                        unresolved_submissions=ids, oversell_risk=too_big)
+        recover = [IntendedOrderSpec(r["client_order_id"], r["symbol"], int(r["qty"]), "sell", time_in_force="day")
+                   for r in unresolved]
+        rec["halt_recovery"] = submit_orders_with_limits(d.broker, ledger, recover, kill_path, today_et, cap)
+        still = [r["client_order_id"] for r in ledger.get_unresolved()
+                 if r["status"] in ("intent_recorded", "uncertain_unresolved")]
+        if still or rec["halt_recovery"]["blocked"]:
+            return hold("an earlier SELL submission is still unresolved after recovery", unresolved_submissions=still)
+
+    fresh = _get_fresh(d)
+    if fresh is None:
+        return hold("positions/open orders could not be read; refusing to size a liquidation blind")
+    positions, open_orders = fresh
+
+    ledger_sells = []
+    if ledger is not None:
+        ledger_sells = [r for r in ledger.get_unresolved() if r["side"] == "sell"]
+    orders, notes = session_guards.plan_halt_liquidation(positions, open_orders, ledger_sells, UNIVERSE)
+    specs = session_guards.build_liquidation_specs(orders, today_et)     # raises on anything but sells
+    rec.update(intended_orders_not_submitted=orders, halt_liquidation=notes,
+               decision={"halted": True, "reason": "drawdown halt latched; liquidating remaining uncommitted long quantity"})
+
+    blocked = False
+    if specs and live:
+        result = submit_orders_with_limits(d.broker, ledger, specs, kill_path, today_et, cap)
+        rec["submission"] = result
+        blocked = result["blocked"] > 0 or any(r["outcome"] == "uncertain_unresolved" for r in result["results"])
+    elif specs:
+        rec["submission"] = {"skipped": True, "reason": "submission gate closed or validate-only; ledger untouched"}
+
+    after = _get_fresh(d)
+    flat = session_guards.is_flat(after[0], after[1], UNIVERSE) if after else None
+    rec["halt_flat_confirmed"] = flat
+    same_day = halt.get("last_flat_check_session") == today_et
+    prev = halt.get("unflat_sessions", 0)
+    unflat = 0 if flat else (prev if same_day else prev + 1)
+    progress = {**halt, "halted": True, "flat_confirmed": flat, "last_flat_check_session": today_et, "unflat_sessions": unflat}
+    if persist:
+        write_json_atomic(halt_path, progress)       # latch preserved; only progress fields change
+    rec["escalate"] = bool(blocked or flat is None or notes["short_positions"] or notes["pending_buys"]
+                           or notes["fractional_residual"] or unflat >= 2 or rec.get("escalate"))
+
+    if persist and not blocked:
+        cadence["last_evaluated_session_date"] = today_et
+        cadence["sessions_elapsed"] = step + 1
+        cadence["abstained_sessions"] = []
+        write_json_atomic(d.state_dir / "cadence_state.json", cadence)
+    rec["cadence_state"] = cadence
+    return finish("halted")
+
+
 def run_session(d: Deps) -> dict:
     cfg = d.config
     now_utc = d.now_utc()
@@ -344,11 +447,8 @@ def run_session(d: Deps) -> dict:
             cadence["abstained_sessions"] = (cadence["abstained_sessions"] + [today_et])[-30:]
             write_json_atomic(d.state_dir / "cadence_state.json", cadence)
         n = len(cadence["abstained_sessions"] if persist else cadence["abstained_sessions"] + [today_et])
-        # A latched halt that cannot liquidate because prices are unavailable is never silent.
-        stuck_halt = bool(rec.get("halt_latched")) and bool(positions)
         return finish(status, consecutive_abstained_sessions=n,
-                      halt_latched_but_unliquidated=stuck_halt,
-                      escalate=n >= ESCALATE_AFTER_ABSTAINED_SESSIONS or stuck_halt,
+                      escalate=n >= ESCALATE_AFTER_ABSTAINED_SESSIONS,
                       decision={"abstained": True, "reason": reason})
 
     # --- drawdown: recorded on EVERY valid session, rebalance or not ---
@@ -376,6 +476,12 @@ def run_session(d: Deps) -> dict:
     rec.update(peak_equity=peak_value, current_drawdown=dd, drawdown_halt_pct=halt_pct,
                halt_latched=bool(halt.get("halted")), risk_drawdown_enforced=True)
 
+    if halt.get("halted"):
+        # Quantity-based liquidation: needs no price, so it runs BEFORE (and independent of) the
+        # bar fetch. See _halt_liquidation for the exact rules.
+        return _halt_liquidation(d, rec, finish, ledger, lookup_errors, cadence, step, today_et, halt,
+                                 halt_path, persist, gate_open)
+
     fetch = d.fetch_bars_fn or (lambda: fetch_bars(d.get_json, d.headers, now_utc))
     bars_by_symbol, availability = fetch()
     unavailable = [s for s in UNIVERSE if not availability.get(s)]
@@ -399,17 +505,7 @@ def run_session(d: Deps) -> dict:
 
     weights = None
     rebalance_consumed = False
-    if halt.get("halted"):
-        weights = {}
-        rec["decision"] = {"halted": True, "reason": "drawdown halt latched; target is cash"}
-        status = "halted"
-        # Positions in symbols with no usable price are NEVER sold blind (the no-sell-on-missing-price
-        # invariant holds even under a halt); they are reported and escalated for a human instead.
-        stuck = sorted(s for s in unavailable if current_shares.get(s, 0) > 0)
-        if stuck:
-            rec["halt_unliquidated_symbols"] = stuck
-            rec["escalate"] = True
-    elif not rebalance_due:
+    if not rebalance_due:
         rec["decision"] = {"hold": True, "reason": f"no rebalance due (step {step}, last rebalanced step {last_reb})"}
         status = "hold"
     elif unavailable:
