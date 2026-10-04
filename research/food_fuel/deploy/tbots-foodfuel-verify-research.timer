@@ -1,0 +1,12 @@
+[Unit]
+Description=TBOTS research verification receipts (weekday checks; expire with the Friday expiry)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:46:00 America/New_York
+OnCalendar=Mon..Fri *-*-* 16:32:00 America/New_York
+Persistent=false
+AccuracySec=1s
+Unit=tbots-foodfuel-verify-research.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,28 @@
+{
+ "experiment_id": "SYNGYM-20261005-V4",
+ "status": "DRAFT_NOT_FROZEN - generator admission FAILED (see ADMISSION_V4.json); no scored run permitted",
+ "predecessors": {
+  "SYNGYM-20260004-V1": "preserved",
+  "SYNGYM-20261004-EVT-V2": "preserved",
+  "SYNGYM-20261005-V3": "seeds touched by a smoke run incl. one validation pass (disclosed); never scored for production",
+  "SYNGYM-20261005-V3R": "fresh-seed rename; no production scores exist; rehearsal-only state preserved"
+ },
+ "changes_vs_V3R": [
+  "generator gen-v3: family anchor event (guarantees the declared headline shock in a normal variant)",
+  "engine_v4: a missing/non-finite price abstains instead of selling",
+  "validation: length-matched statistic targets frozen from the development lane (sha256 219e2c08...)",
+  "bounded resumable world admission with persisted rejections",
+  "slot ledger, status/publication records, code-level admission gate"
+ ],
+ "freeze_list": {
+  "1_generator_evaluator_runtime": "gym/generator_v3.py, configs/generator_v3.json, gym/engine_v4.py, gym/evaluation_v4.py, interpreter /opt/python-3.13.5-isolated/bin/python3.13 (3.13.5, stdlib only)",
+  "2_worlds_and_seeds": "6 families; seed = derive_seed(experiment_id, split, family, index [+1000*attempt]); max 3 deterministic attempts per slot, structural rejections only",
+  "3_development_vs_validation": "training 12 worlds (development, reused every batch); validation 6 and sealed 6 are separate identities, validation opened once (Friday slot)",
+  "4_genomes": "TREND (s5a) and D (s6a) frozen schemas/mutation; population 32; 5 generations per batch INCLUDING generation 0 (<=160 candidate evaluations/batch)",
+  "5_fitness": "scoring.py score-v1 unchanged: 25th percentile of annualized excess vs passive18 on training worlds; eligibility max DD <= 8% in every world; tie-breaks as v1",
+  "6_baselines": "passive18 (equal-weight 18% gross, monthly), cash; Kim/Sam: Sam (gen_8e7a622b) and D3 and the champion run as fixed references; Kim's runner-specific logic is not representable in this world interface and is NOT simulated",
+  "7_continuation": "generations continue across slots from the latest verified checkpoint; nominee = best eligible of the final generation",
+  "8_validation_and_expiry": "validation exactly once on the Friday slot after the nominee is frozen; expiry 2026-10-09T17:00 ET with code-level refusal"
+ },
+ "caveat": "A generator that passes its declared gates complies with its synthetic design only; held-out synthetic worlds do not establish real-market generalisation."
+}

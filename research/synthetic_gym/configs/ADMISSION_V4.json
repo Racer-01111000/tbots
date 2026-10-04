@@ -1,0 +1,44 @@
+{
+ "experiment_id": "SYNGYM-20261005-V4",
+ "generator_admission_pass": false,
+ "report": "docs/generator_v4_validation_ENG-V4B.json",
+ "report_sha256": "0ef4995d7227d6a090ce79b95055521f5d027da36664be94482e415300eb9219",
+ "failed_gates": [
+  {
+   "gate": "original tail band",
+   "failures": [
+    "spy_5y_maxdd_median"
+   ],
+   "spy_5y_maxdd_median": {
+    "value": -0.34684023425064076,
+    "bootstrap95": [
+     -0.38464389104279917,
+     -0.3091135312232828
+    ],
+    "original_band": [
+     -0.33,
+     -0.15
+    ]
+   }
+  },
+  {
+   "gate": "declared family condition exercised in >=90% of worlds",
+   "shares": {
+    "energy_shipping_squeeze": 0.95,
+    "fertilizer_harvest_stress": 1.0,
+    "stagflation_rates": 0.95,
+    "recession_credit_shock": 0.85,
+    "technology_boom_reversal": 1.0,
+    "normalization_whipsaw": 1.0
+   }
+  },
+  {
+   "gate": "length-matched statistics (tolerances unchanged)",
+   "failures": [
+    "GLD.skew",
+    "VNQ.ann_vol"
+   ]
+  }
+ ],
+ "note": "batch_v4 refuses scored evolution unless this file says pass=true. Changing it requires a new, reviewed admission report; it must not be edited to start training."
+}

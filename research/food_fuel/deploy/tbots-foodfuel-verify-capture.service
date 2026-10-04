@@ -1,0 +1,23 @@
+# Read-only verification receipt for the capture store; writes only /var/lib/tbots-foodfuel/receipts. No network, no state mutation.
+[Unit]
+Description=TBOTS food/fuel capture verification receipt (read-only, durable, session-independent)
+
+[Service]
+Type=oneshot
+User=tbotsff
+Group=tbotsff
+Environment=TZ=America/New_York
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/python-3.13.5-isolated/bin/python3.13 /opt/tbots-foodfuel/current/research/food_fuel/scripts/verify_receipt.py --store capture --root /var/lib/tbots-foodfuel
+TimeoutStartSec=60
+CPUQuota=25%
+MemoryMax=150M
+MemorySwapMax=0
+TasksMax=16
+PrivateNetwork=yes
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+PrivateTmp=yes
+PrivateDevices=yes
+ReadWritePaths=/var/lib/tbots-foodfuel

@@ -1,0 +1,93 @@
+{
+  "version": "gen-v3",
+  "hybrid": "filtered historical simulation: joint block resampling of volatility-standardized multi-asset residual vectors from regime-matched, split-disjoint development-lane block pools + Markov regime chain + GARCH-style volatility filter + bounded event overlays + jumps",
+  "block_mean_len": 10,
+  "block_cap": 40,
+  "severity_range": {
+    "training": [
+      0.6,
+      1.4
+    ],
+    "validation": [
+      1.2,
+      1.9
+    ],
+    "sealed_test": [
+      0.4,
+      2.2
+    ],
+    "engineering": [
+      0.6,
+      1.6
+    ]
+  },
+  "transition_noise_sd": {
+    "training": 0.25,
+    "validation": 0.45,
+    "sealed_test": 0.35,
+    "engineering": 0.25
+  },
+  "event_count_shift": {
+    "training": 0,
+    "validation": 1,
+    "sealed_test": 0,
+    "engineering": 0
+  },
+  "variant_probs": {
+    "normal": 0.62,
+    "priced_in": 0.14,
+    "muted": 0.14,
+    "reversed": 0.1
+  },
+  "policy_rate_level_range": [
+    0.0025,
+    0.055
+  ],
+  "world_vol_scale_range": [
+    0.85,
+    1.25
+  ],
+  "split_probability_per_world": 0.25,
+  "bond_flip_interval_sessions": [
+    60,
+    250
+  ],
+  "volume_participation_cap": 0.05,
+  "notes": "held-out variation: validation worlds use heavier event severity, noisier regime transitions and one extra event on average; sealed worlds use a wider severity range",
+  "drift_bias_correction_annual": {
+    "SPY": -0.01193,
+    "EFA": 0.00594,
+    "EEM": -0.00233,
+    "IEF": 0.01167,
+    "TLT": 0.01771,
+    "GLD": 0.05519,
+    "DBC": 0.00595,
+    "VNQ": 0.04347
+  },
+  "drift_bias_correction_basis": "re-estimated AFTER the variance moment-match: mean over 120 ENGINEERING worlds (ENG-DRIFTCAL2, indices 100-119 x 6 families) of [realized mean log return - drawn drift]",
+  "variance_scale": {
+    "SPY": 0.5586,
+    "EFA": 0.648,
+    "EEM": 0.6451,
+    "IEF": 0.9633,
+    "TLT": 0.931,
+    "GLD": 1.3347,
+    "DBC": 1.0308,
+    "VNQ": 0.7243
+  },
+  "variance_scale_basis": "two-pass moment match of per-asset median annualized volatility to the development lane on 120 ENGINEERING worlds (ENG-VOLCAL, indices 100-119); verified on 120 fresh worlds (ENG-VOLCHECK, 200-219)",
+  "price_anchor": {
+    "threshold_log": 0.9,
+    "k_per_day": 0.002,
+    "rationale": "diversified ETFs hold baskets with earnings/valuation support; a pure random walk lets a single ETF lose 95% or gain 9x in 6 years, which the development lane never showed. The anchor is zero within a factor of ~2.5 of the world's starting level and pulls back beyond it."
+  },
+  "tail_cap": 1.5,
+  "jump_neg_prob": 0.55,
+  "jump_clamp": 0.1,
+  "ratio_hi_mult": 1.0,
+  "repairs": {
+    "V4-1": "family anchor event: evidence = declared-condition exercise share 40% (recession), 75% (whipsaw), 80% (energy), 85% (stagflation) on fresh worlds ENG-V4FROZEN",
+    "note": "jump_neg_prob 0.55 inherited from gen-v2 (a post-hoc choice, disclosed)"
+  },
+  "anchor_event": true
+}

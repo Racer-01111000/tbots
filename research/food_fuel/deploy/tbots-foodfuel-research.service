@@ -1,4 +1,4 @@
-# Bounded research batch (continuing evolution, experiment SYNGYM-20261005-V3R). Offline, one worker, one writer, research/shadow-only: no orders, no network, no broker credential.
+# Bounded research batch (continuing evolution, experiment SYNGYM-20261005-V4 (gate-controlled: batch_v4 refuses to run unless configs/ADMISSION_V4.json says the generator passed admission)). Offline, one worker, one writer, research/shadow-only: no orders, no network, no broker credential.
 # Runs as the unprivileged no-login user tbotsgym with the BASE interpreter that venv313 is built on (venv313 itself lives under the 0700 /home/ec2-user and is not
 # made reachable); the gym needs only the standard library. Home directories are hidden entirely.
 [Unit]
@@ -11,9 +11,10 @@ Group=tbotsgym
 Environment=TZ=America/New_York
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONHASHSEED=0
+Environment=FF_RELEASE=/opt/tbots-foodfuel/current
 Environment=PYTHONPATH=/opt/tbots-foodfuel/current/research/synthetic_gym:/opt/tbots-gym/src/scripts:/opt/tbots-gym/src/scripts/lib:/opt/tbots-gym/src/experiments/sam_dev_staging_20261001
 WorkingDirectory=/opt/tbots-foodfuel/current/research/synthetic_gym
-ExecStart=/bin/sh -c 'F=; [ "$(date +%%u)" = 5 ] && F=--final; exec /opt/python-3.13.5-isolated/bin/python3.13 -m gym.batch_v3 --state /var/lib/tbots-foodfuel-research --expires 2026-10-09T17:00:00 $F'
+ExecStart=/opt/python-3.13.5-isolated/bin/python3.13 -m gym.batch_v4 --state /var/lib/tbots-foodfuel-research-v4 --expires 2026-10-09T17:00:00
 TimeoutStartSec=7200
 TimeoutStopSec=60
 KillSignal=SIGTERM
@@ -27,4 +28,4 @@ ProtectHome=yes
 ProtectSystem=strict
 PrivateTmp=yes
 PrivateDevices=yes
-ReadWritePaths=/var/lib/tbots-foodfuel-research
+ReadWritePaths=/var/lib/tbots-foodfuel-research-v4
