@@ -1,0 +1,154 @@
+{
+  "title": "Sam single-week replay on Alpaca bars -- PRE-REGISTRATION (written and committed BEFORE any test-week bar was retrieved)",
+  "frozen_on_utc": "2026-10-04",
+  "published_pilot_candidate": "e81ceab43bb481cf0ae5e1ce362f8b94bf44bd6a",
+  "label": "NOT BLIND -- see limitation",
+  "limitation": "No historical week can be established as unseen for Sam. Every date from 2007-02-07 through 2026-09-30 has been used for his training (development lane 2007-02-07..2018-12-31), evaluation (qualification 2019-01-01..2022-12-31 incl. d1_qualification_generalization; championship holdout 2023-2025; final-reserve-period replays 2026-01-01..2026-08-25) or selection (the 2025-01-01..2026-09-30 ranking replays that picked him). Alpaca daily history begins around 2016, so older never-evaluated data (pre-2007) is unavailable from Alpaca. The only post-selection dates are 2026-10-01 and 2026-10-02.",
+  "candidate": {
+    "name": "Sam",
+    "genome_id": "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+    "identity_evidence": [
+      "SAM_MANIFEST_20261001.json (label: 'Sam ... D-primary lineage rank 1', genome_id_match true)",
+      "evolution/s6b_runs/{primary,reproduction}/D_*/development_top_eight.json, development_rank 1, generation 12, file sha256 373879a9842f05385d41c67fab5a6208c7d0d7c5cbab323363173a04bd2c60e4 (equals the manifest's recorded hash)",
+      "canonical-JSON sha256 recomputed independently and via lib.ids.genome_id: both equal the id",
+      "s6a_runtime.validate_genome('D', genome) passes"
+    ],
+    "not_substituted": [
+      "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155 (old champion 'Kim')",
+      "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85 (the D candidate wired for shadow earlier)"
+    ],
+    "genome_note": "'Sam' is Rick's name for the D-primary lineage rank-1 genome; it is NOT the genome wired for shadow earlier today."
+  },
+  "week_selection": {
+    "rule": "Among complete Mon-Fri calendar weeks whose five dates are all regular exchange sessions and that end on or before the last completed session (2026-10-02), choose the week with the MOST sessions strictly after 2026-09-30 (last date used by any recorded selection/evaluation of Sam); ties -> most recent. Fixed before any bar for the candidate week was retrieved.",
+    "result": [
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30",
+      "2026-10-01",
+      "2026-10-02"
+    ],
+    "post_cutoff_sessions": [
+      "2026-10-01",
+      "2026-10-02"
+    ],
+    "overlap_with_seen_data": [
+      "2026-09-28",
+      "2026-09-29",
+      "2026-09-30"
+    ],
+    "performance_inspected_before_freeze": "none (no prices or returns for these dates were read by the operator before this commit; the EC2 replay files that include 09-28..09-30 inside 15/21-month aggregates were not opened for those days)",
+    "stop_rule": "If the Alpaca calendar does not show exactly these five regular sessions, stop and report; do not pick another week."
+  },
+  "capital_and_universe": {
+    "starting_capital_usd": 100000,
+    "universe": [
+      "SPY",
+      "EFA",
+      "EEM",
+      "IEF",
+      "TLT",
+      "GLD",
+      "DBC",
+      "VNQ"
+    ],
+    "long_only": true,
+    "leverage": "none"
+  },
+  "strategy": {
+    "decision": "s6a_runtime.decide_D unmodified (via lineage_d.decide)",
+    "rebalance_sessions": 31,
+    "step_anchor": "step 0 = first session of the test week (same convention as every earlier replay); so exactly one decision (Mon 2026-09-28 close), filled at Tue open",
+    "history": "adjusted closes up to and including the decision session; warm-up (>=123 sessions, fetched from 2026-03-01) strictly precedes the week",
+    "pilot_overlay": {
+      "gross_exposure_ceiling": 0.18,
+      "max_asset_weight": 0.18,
+      "how": "weights scaled so gross <= ceiling (same scaling as the accepted replay harness 18% overlay arm); Sam's native 23% cap is otherwise untouched"
+    }
+  },
+  "pilot_assumptions_used_for_testing_only": {
+    "halt": {
+      "drawdown_halt_pct": 0.08,
+      "mechanism": "s6a_final.DRAWDOWN_HALT set to 0.08 inside the harness process only (restored after); latch + liquidate-to-cash on the account's close-mark drawdown",
+      "liquidation": "orders sized by held share quantity (execution.compute_orders with an empty target) -- needs no price"
+    },
+    "order_caps": {
+      "normal": 4,
+      "liquidation": 8,
+      "enforcement": "asserted/reported by the harness; the simulated engine has no ledger"
+    },
+    "cash_reserve_pct": 0.1,
+    "cash_reserve_note": "non-binding at an 18% gross ceiling; not separately simulated",
+    "expiry": {
+      "date": "2026-11-01",
+      "replay_clock_rule": "any simulated session on/after the expiry is BLOCKED and reported, never bypassed",
+      "blocks_selected_dates": false
+    },
+    "not_modelled": [
+      "unresolved-order hold",
+      "kill switch",
+      "duplicate protection",
+      "broker timeouts / delayed visibility (no broker in a replay)"
+    ]
+  },
+  "execution_assumptions": {
+    "decision_time": "session close; may use only bars dated <= the decision session",
+    "fill": "next session's RAW OPEN (IEX feed), never the decision bar",
+    "slippage_primary_bps": 10,
+    "slippage_sensitivity_bps": 5,
+    "commission_bps": 5,
+    "costs_note": "explicit simulated assumptions (accepted evaluator model); bars do not prove actual execution, queue priority, partial fills or opening-auction prices",
+    "marks": "raw close each session; cash dividends not credited (live bars carry none)",
+    "one_run": "a single deterministic pass; the two cost cases are computed together and both reported; no parameter, genome, week or code change after seeing results"
+  },
+  "benchmarks": {
+    "passive_same_week": "equal-weight 8 ETFs totalling 18% gross, decided at step 0, filled at Tue open, same costs and marks",
+    "cash": "no-trade control"
+  },
+  "data_spec": {
+    "vendor": "Alpaca Market Data v2 /stocks/{symbol}/bars",
+    "feed": "iex",
+    "timeframe": "1Day",
+    "adjustments": {
+      "decisions": "adjustment=all (split+dividend adjusted close)",
+      "fills_and_marks": "adjustment=raw (open, close)"
+    },
+    "timezone": "bar timestamps are UTC at ET midnight (04:00Z EDT); the bar date is the ET calendar date",
+    "range_requested": [
+      "2026-03-01",
+      "2026-10-02"
+    ],
+    "retrieval": "read-only GETs via the existing runtime_credential_loader on the research instance over SSM; nothing written to the instance, no orders",
+    "adjustment_caveat": "adjusted values are as of retrieval (2026-10-04); a corporate action between 2026-10-02 and retrieval would back-adjust the history (none expected; disclosed)",
+    "gap_rule": "any missing symbol/session bar inside the week, or <123 warm-up sessions, stops the replay at that point and is reported as a data failure (no interpolation)"
+  },
+  "metrics": [
+    "starting and ending equity",
+    "net return",
+    "max drawdown on session-close marks",
+    "orders/fills",
+    "commission+slippage cost",
+    "ending positions and exposure",
+    "hold sessions",
+    "passive and cash benchmarks",
+    "strategy result separated from execution/data limitations"
+  ],
+  "power_disclosure": "One rebalance decision and four holding days: a single week cannot support any claim of edge; it is a plumbing/behaviour check.",
+  "frozen_file_sha256": {
+    "blind_week_20261004/run_blind_week.py": "932e3b65f65eace783b5acfd016ae435041dc1ddc139f3d73dc25e9fa68ad092",
+    "blind_week_20261004/fetch_bars_remote.py": "ad3bd8c622ea87019a357d147ff99060bbb9a514dbcd6ceda9b5d43b614a7557",
+    "blind_week_20261004/test_blind_week_harness.py": "73f631792855bd523b79250147359e01acf240a44d4ee4fccb288ba01f35daab",
+    "shadow_compare.py": "1ee15fbc87caed8e19073cde97d8f988196f698e2a1b401d6b0946d6cc0043dc",
+    "lineage_d.py": "3f491e4f73b160c6049d6bf66125234a01eec62f70a5d3ae9f9f6a5577fd66b0",
+    "session_calendar.py": "c896d26da58725ce54fe1af0617d9388594c061461367f48eb07596b95fc4a0a",
+    "pilot_config.json": "50516105de4c02685e90f46c5cc437b312c4271fb64b7532eca2f117a5e647c0",
+    "scripts/s6a_runtime.py": "8e76e14138152037e429886f8a5997f38f8a64ccc7527f1eb6a23f1dbb1ab1b8",
+    "scripts/s6a_final.py": "1db538092853d232ca8bd4ec4a70e291de7ddf147a37683023bc5b8cc19d98e4",
+    "scripts/execution.py": "c99ec955ce41570f57f883e53c723cf746c8a51688fcbeb6430ee4919786f810",
+    "scripts/risk.py": "526d2f7923b55fa7b6a27cc09548b575c4cbe88cec2c64c72d6004f24d72cf9c",
+    "SAM_MANIFEST_20261001.json": "e3de27f77418f9892e69162a332f1f6e09d906da82d06b31b76ace3a0cc99a58",
+    "evolution/.../D_.../development_top_eight.json": "373879a9842f05385d41c67fab5a6208c7d0d7c5cbab323363173a04bd2c60e4"
+  },
+  "engine_identical_to_candidate_commit": "git diff e81ceab -- shadow_compare.py lineage_d.py session_calendar.py scripts/{s6a_runtime,s6a_final,execution,risk}.py is empty",
+  "harness_validation_done_before_freeze": "7 offline tests on OLD data only: Sam overlay arm equals replay_harness.simulate exactly at 5 and 10 bps (end equity, orders, fills, turnover, cost); passive and cash controls equal the accepted arms; 8% halt liquidates by quantity on a synthetic crash; ceiling and order caps respected; globals restored."
+}
