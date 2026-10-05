@@ -1,0 +1,27 @@
+{
+ "experiment_id": "SYNGYM-20261005-V5",
+ "note": "recorded BEFORE any V5 score exists; batch_v5 refuses to run if any listed file differs or is missing",
+ "files": {
+  "gym/generator_v4.py": "7577f0accb3e5becd653b630fd13f07e78a1e56055c30afe2dd84df676339a2c",
+  "configs/generator_v4.json": "dde022c59d202488d65c7d48f91e11aac3d7afbf8e78ef9e00697b74e9c56f9b",
+  "configs/experiment_v5.json": "66325acadacc9eea4f39e32fc3d0beeef319e1536d3ba0501e5c0e9947e3c7dd",
+  "configs/calibration_targets_v4.json": "219e2c0865727fac9e15e83f3e50adc5cea274940c9f7ad9fc75fe90b56762f6",
+  "configs/ADMISSION_V5.json": "b7f3679b6ecb060566ee6430acde87c7855e5d6986570b6def9439bbd1790022",
+  "docs/generator_v5_validation_ENG-V5FROZEN.json": "38052d9f4075002a0344fb7ef901f0f36bfa5fbc4e204ce33114a26104a9f323",
+  "gym/engine_v4.py": "df1bc2d1fa9c6707480a884ea53cfa0a923512a74ecfb93b56757c89d330f300",
+  "gym/evaluation_v5.py": "b9a1994279178453626a25b060eb4e666ab4fb05c1da34ff72c827f78ba6f038",
+  "gym/validation_v4.py": "896949093fda72128ca44bd6d052d9302d04152544744527e2ec222748306c62",
+  "gym/scoring.py": "b7724e4a8cb2a52953bb93b388cd59021c4f1c0213d17cca9295ff420063f772",
+  "gym/engine.py": "9e155ece3e8a3f12bca897d87fe6539b80386aa9880835b047f0759a9f9e2ecf",
+  "gym/strategies.py": "da933eb99fbd051efbb4db455488d575dcb72c84290e194ca6b4aa006b187696",
+  "gym/evolve.py": "8d64d859ce9095d5922a5f03373c7c05e00aa9d2e30047a7fe2806b6071f52d9",
+  "gym/checkpoint.py": "464ff42350357880e5d565ee2ce9d50d9e181126be1ac9a645275b7375760741",
+  "gym/evaluation.py": "63125c9e2765cf0fc838fd9fb6308fb7bcc6d4b000e8062cc8f72964af1c2329",
+  "gym/factors.py": "cbefd3bdddb54d2841d6ffcc1dc25bbd1dad8133068bdcb6499f5ec6a50d4b07",
+  "gym/world.py": "61a169c38a02a44a80b5176af39402a58e96220f403254ae102ceaa5558debbe",
+  "gym/sessions.py": "10a06bfde7fa390c050d9d13c62b94de5ed01220fa5b20ff2afdca02afbdd724",
+  "gym/rng.py": "a50af1f29af5410aa9a59fd4de2eba64547670b344fc432d17ef3fb3234cff6a",
+  "gym/calibration.py": "3e93ab5f8c39dabd478b68c00e8bd0217eb568a2a6245f6e14412708b5955777",
+  "gym/batch_v5.py": "7bb5c86190faf19c42434e0dcf3b0e4e2ad96572cd547e792f701b4911fffb82"
+ }
+}
