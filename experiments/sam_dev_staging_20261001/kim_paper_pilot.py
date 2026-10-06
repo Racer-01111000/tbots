@@ -443,6 +443,35 @@ def prepare_decision(env: Env, today: str) -> dict:
             "computed_at_utc": _iso(env.now_utc()), "retrieved_at_utc": _iso(t0), "sessions": sessions}
 
 
+def fit_buys_to_caps(orders: list[dict], current: dict, marks: dict, equity_c: int, max_asset: float, gross_cap: float):
+    """Scale BUY quantities down (floor) so post-trade per-asset and gross exposure, counting every holding in the account
+    including the protected baseline share, stays within the caps. Sells are never touched; buys are never increased."""
+    notes, out = [], [dict(o) for o in orders]
+    post = {s: q for s, q in current.items()}
+    for o in out:
+        post[o["symbol"]] = post.get(o["symbol"], 0) + (o["shares"] if o["side"] == "buy" else -o["shares"])
+    for o in out:                                              # per-asset cap
+        if o["side"] != "buy":
+            continue
+        room = int((max_asset * equity_c) // marks[o["symbol"]]) - (post[o["symbol"]] - o["shares"])
+        if o["shares"] > max(0, room):
+            notes.append(f"buy {o['symbol']} {o['shares']} reduced to {max(0, room)} to respect the per-asset cap incl. holdings")
+            post[o["symbol"]] -= o["shares"] - max(0, room)
+            o["shares"] = max(0, room)
+    gross = sum(max(0, q) * marks[s] for s, q in post.items() if s in marks)
+    limit = gross_cap * equity_c
+    buy_val = sum(o["shares"] * marks[o["symbol"]] for o in out if o["side"] == "buy")
+    if gross > limit + 1e-6 and buy_val > 0:
+        factor = max(0.0, (buy_val - (gross - limit)) / buy_val)
+        for o in out:
+            if o["side"] == "buy":
+                new = int(o["shares"] * factor)
+                if new != o["shares"]:
+                    notes.append(f"buy {o['symbol']} {o['shares']} scaled to {new} so account gross incl. baseline <= {gross_cap:.0%}")
+                o["shares"] = new
+    return [o for o in out if o["shares"] > 0], notes
+
+
 def plan_orders(env: Env, prep: dict, b: dict, dd: float, ledger, baseline: dict) -> tuple[list[dict], list[str]]:
     cfg, notes = env.cfg, []
     equity_c = round(b["equity"] * 100)
@@ -469,9 +498,11 @@ def plan_orders(env: Env, prep: dict, b: dict, dd: float, ledger, baseline: dict
         orders.append(o)
     orders, cash_notes = session_guards.constrain_buys_to_cash(orders, marks, round(b["cash"] * 100), equity_c, cfg["min_cash_reserve_pct"])
     notes += cash_notes
-    # the 1-share baseline holding is not pilot exposure: the 18% caps measure pilot-owned shares plus these orders only
-    pilot_current = {s: max(0, q - baseline["positions"].get(s, 0)) for s, q in current.items()}
-    session_guards.check_post_trade_limits(orders, pilot_current, marks, equity_c,
+    # the protected baseline share COUNTS toward account exposure: buys are scaled down (never refused) until every holding,
+    # baseline included, fits the per-asset and gross caps
+    orders, fit_notes = fit_buys_to_caps(orders, current, marks, equity_c, cfg["max_asset_weight"], cfg["gross_exposure_ceiling"])
+    notes += fit_notes
+    session_guards.check_post_trade_limits(orders, dict(current), marks, equity_c,
                                            cfg["max_asset_weight"], cfg["gross_exposure_ceiling"])
     if len(orders) > cfg["max_orders_per_session"]:
         raise session_guards.OrderGuardError(f"{len(orders)} orders exceed the normal cap {cfg['max_orders_per_session']}")

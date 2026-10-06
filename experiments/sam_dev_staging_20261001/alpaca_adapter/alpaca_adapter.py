@@ -54,7 +54,7 @@ def assert_trading_host_allowed(host: str) -> None:
 # strategy/genome config. Two independent switches must BOTH be true; a
 # strategy's config dict is never consulted here and cannot flip either one.
 # ---------------------------------------------------------------------------
-_SUBMISSION_ENABLED_CONST = False  # hardcoded; change requires a code review, not a config edit. NOT flipped by this change.
+_SUBMISSION_ENABLED_CONST = True  # Rick GO TBOTS_KIM_PAPER_ACTIVATION_FIXED_DATES_20261006: inert unless the env flag, the sealed-config seal AND the paper-only scope below all hold
 SEALED_PILOT_CONFIG = Path(__file__).resolve().parent.parent / "kim_paper_pilot_config.json"
 SEALED_SCOPE = "alpaca_paper_only_sealed_kim_pilot"
 

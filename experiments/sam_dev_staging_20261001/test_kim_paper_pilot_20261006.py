@@ -419,11 +419,27 @@ def test_risk_limits_refuse_oversized_targets_without_orders(tmp_path, stub_deci
     assert rec["status"] == "order_refused" and env2.fake.post_log == []
 
 
-def test_baseline_share_does_not_count_toward_the_pilot_caps(tmp_path, stub_decide):
+def test_baseline_share_counts_toward_account_exposure_and_buys_are_scaled_to_fit(tmp_path, stub_decide):
     env = armed(tmp_path)
     stub_decide["weights"] = {"SPY": 0.18}                                # a target that does not include the baseline symbol (DBC)
     rec, _ = run(env, "open")
     assert rec["status"] == "submitted" and [o["symbol"] for o in env.fake.post_log] == ["SPY"]
+    eq_c = round(env.fake.equity() * 100)
+    raw_spy = round(env.fake.bars("SPY", "raw", "2025-02-09", "2026-10-05")[-1]["c"] * 100)
+    raw_dbc = round(env.fake.bars("DBC", "raw", "2025-02-09", "2026-10-05")[-1]["c"] * 100)
+    qty = int(env.fake.post_log[0]["qty"])
+    assert qty * raw_spy + raw_dbc <= 0.18 * eq_c                         # SPY order + the 1 baseline DBC share fit inside 18% gross
+    assert (qty + 1) * raw_spy + raw_dbc > 0.18 * eq_c - raw_spy          # ...and it is the largest whole-share order that does
+    assert any("incl. baseline" in n for n in rec["order_guard_notes"])
+
+
+def test_baseline_is_in_exposure_for_the_pilots_own_symbol_too(tmp_path, stub_decide):
+    env = armed(tmp_path)
+    stub_decide["weights"] = {"DBC": 0.18}
+    rec, _ = run(env, "open")
+    raw_dbc = round(env.fake.bars("DBC", "raw", "2025-02-09", "2026-10-05")[-1]["c"] * 100)
+    eq_c = round(env.fake.equity() * 100)
+    assert (int(env.fake.post_log[0]["qty"]) + 1) * raw_dbc <= 0.18 * eq_c   # baseline + order together stay within the per-asset cap
 
 
 def test_four_orders_are_allowed_and_ids_are_stable(tmp_path, stub_decide):
