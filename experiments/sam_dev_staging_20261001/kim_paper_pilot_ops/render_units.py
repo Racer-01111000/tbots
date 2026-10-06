@@ -41,7 +41,7 @@ SuccessExitStatus=75""" % {"state": STATE}
 
 
 def service(name, desc, mode, timeout, env_submit, on_failure=None, on_success=None):
-    env = [f"Environment=TBOTS_KIM_PAPER_STATE_DIR={STATE}"]
+    env = [f"Environment=TBOTS_KIM_PAPER_STATE_DIR={STATE}", "Environment=PYTHONDONTWRITEBYTECODE=1"]
     if env_submit:
         env += ["Environment=TBOTS_ALPACA_SUBMISSION_ENABLED=true-i-understand-the-risk", f"Environment=TBOTS_KIM_PAPER_SEAL={seal}"]
     extra = []
@@ -88,7 +88,7 @@ files["tbots-kim-paper-expiry.service"] = service("expiry", "Kim paper pilot exp
 files["tbots-kim-paper-preflight.timer"] = timer("preflight", "Kim paper pilot preflight 09:15 ET on the four frozen sessions", [cal(d, "09:15") for d in dates])
 files["tbots-kim-paper-open.timer"] = timer("open", "Kim paper pilot opening 09:30 ET on the four frozen sessions", [cal(d, "09:30") for d in dates])
 files["tbots-kim-paper-monitor.timer"] = timer("monitor", "Kim paper pilot monitor every 5 min, 09:35-16:05 ET on the four frozen sessions",
-                                               [f"OnCalendar={d} 09..16:00/5:00 America/New_York" for d in dates])
+                                               [f"OnCalendar={d} {t} America/New_York" for d in dates for t in ("09:35,40,45,50,55:00", "10..15:00/5:00", "16:00,05:00")])
 files["tbots-kim-paper-expiry.timer"] = timer("expiry", "Kim paper pilot expiry after the fourth close", [cal(expiry_at.date().isoformat(), expiry_at.strftime("%H:%M"))])
 files["tbots-kim-paper-hold.timer"] = timer("hold", "Kim paper pilot HOLD deadline (close + 55 min, bound is 60)", [cal(hold_at.date().isoformat(), hold_at.strftime("%H:%M"))])
 files["tbots-kim-paper-hold.service"] = f"""[Unit]
