@@ -63,7 +63,8 @@ class AlpacaPaperBroker:
     @staticmethod
     def _normalize(body: dict) -> dict:
         return {"id": body.get("id"), "status": body.get("status"),
-                "filled_qty": float(body.get("filled_qty") or 0)}
+                "filled_qty": float(body.get("filled_qty") or 0),
+                "symbol": body.get("symbol"), "side": body.get("side"), "qty": body.get("qty")}
 
     def submit(self, spec: IntendedOrderSpec) -> dict:
         aa.assert_trading_host_allowed(self._host)
@@ -74,7 +75,7 @@ class AlpacaPaperBroker:
         payload = json.dumps({
             "symbol": spec.symbol, "qty": str(spec.qty), "side": spec.side,
             "type": spec.order_type, "time_in_force": spec.time_in_force,
-            "client_order_id": spec.client_order_id,
+            "client_order_id": spec.client_order_id, "extended_hours": False,
         }).encode()
         try:
             status, body = self._http("POST", f"{self._host}/v2/orders",
@@ -91,6 +92,25 @@ class AlpacaPaperBroker:
             return {"id": None, "status": "rejected", "filled_qty": 0.0,
                     "detail": f"HTTP {status}: {json.dumps(body)[:300]}"}
         raise UncertainSubmissionError(f"unclassified HTTP {status}")
+
+    def cancel(self, order_id: str) -> str:
+        """Cancel one working order by broker id. Returns 'cancel_requested' (200/204), 'not_found' (404) or 'not_cancelable'
+        (422: already filled/canceled/expired -- the caller must re-read the order, a cancel is never proof of no fill).
+        Anything else (5xx/timeout) raises BrokerLookupError: state unknown, caller re-reads before acting."""
+        aa.assert_trading_host_allowed(self._host)
+        if not self._gate():
+            raise aa.SubmissionDisabledError("AlpacaPaperBroker.cancel() refused: submission is disabled")
+        try:
+            status, _ = self._http("DELETE", f"{self._host}/v2/orders/{quote(str(order_id))}", self._headers, None)
+        except OSError as e:
+            raise BrokerLookupError(f"transport failure during cancel: {e!r}") from e
+        if status in (200, 204):
+            return "cancel_requested"
+        if status == 404:
+            return "not_found"
+        if status == 422:
+            return "not_cancelable"
+        raise BrokerLookupError(f"cancel returned HTTP {status}")
 
     def find_by_client_order_id(self, client_order_id: str) -> dict | None:
         aa.assert_trading_host_allowed(self._host)

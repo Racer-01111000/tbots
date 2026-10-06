@@ -1,0 +1,54 @@
+{
+ "_status": "SEALED PAPER-ONLY PILOT CONFIG (GO TBOTS_KIM_REPAIR_AND_FOUR_SESSION_PAPER_PILOT_20261006). Paper account only; its sha256 is the seal checked by alpaca_adapter.submission_enabled().",
+ "account_pin_file": "/etc/tbots-kim-paper/account_pin.json",
+ "campaign_sessions": 4,
+ "decision_function_provenance": "control_agent/indicators/risk unchanged since commit e00af4a (2026-09-01, before the champion freeze); execution.py last changed f38da91 (2026-09-25, dividend repair)",
+ "decision_function_sha256": {
+  "scripts/control_agent.py": "898e5403c445133feb44c0c9aad88ad631c8b8e2c3ef2d3552f651f86ec65b1b",
+  "scripts/execution.py": "c99ec955ce41570f57f883e53c723cf746c8a51688fcbeb6430ee4919786f810",
+  "scripts/indicators.py": "f95c59d19baaba3751639bcbed0c405703d3e370ff713325f085fa4025484680",
+  "scripts/risk.py": "526d2f7923b55fa7b6a27cc09548b575c4cbe88cec2c64c72d6004f24d72cf9c"
+ },
+ "drawdown_halt_pct": 0.08,
+ "extended_hours": false,
+ "feed": "sip",
+ "feed_note": "Alpaca consolidated SIP historical daily bars, available on the existing account without a subscription purchase (HTTP 200 verified 2026-10-06). One feed, frozen: no automatic switching. Differs from the Yahoo training/ranking data (consolidated adjclose via Yahoo): different vendor, Alpaca-computed daily close convention, Alpaca adjustment=all; exact equivalence is NOT claimed. Yahoo is not authorized as a forward feed.",
+ "forbidden_genome_ids": [
+  "gen_8e7a622b48276bc68b7b70773bb9e2a5250dbb82584c53f6c67416bd6ffdf0cf",
+  "gen_d890eb9faa7bf0309773c85620eb6652ad589ab82d6fbff4423ddcfbbb460f85"
+ ],
+ "frozen_champion_file": "evolution/protocol/frozen_champion_s5d_champion_00ac1019646747ad88b7eac1955dc1067f598f53e77cce01c07de7603dab2672.json",
+ "frozen_champion_file_sha256": "82a0e1b1ad860d5fbfc75740cd6d84e4b56188e952e17a30f6c8d330ccdaad21",
+ "genome_id": "gen_0307d23c13fd796db749e78c86947c04ac7de020b3e4c6f02ea1f95dc10e0155",
+ "gross_exposure_ceiling": 0.18,
+ "hold_deadline_minutes_after_close": 60,
+ "kill_switch_file": "KILL_SWITCH",
+ "lookback_calendar_days": 600,
+ "max_asset_weight": 0.18,
+ "max_liquidation_orders_per_session": 8,
+ "max_orders_per_session": 4,
+ "min_cash_reserve_pct": 0.1,
+ "open_window_et": [
+  "09:30",
+  "09:35"
+ ],
+ "paper_host": "https://paper-api.alpaca.markets",
+ "preflight_et": "09:15",
+ "rebalance_every_n_sessions": 50,
+ "schema": "kim-paper-pilot-v1",
+ "state_dir": "/var/lib/tbots-kim-paper",
+ "strategy": "kim",
+ "submission_scope": "alpaca_paper_only_sealed_kim_pilot",
+ "time_in_force": "day",
+ "universe": [
+  "SPY",
+  "EFA",
+  "EEM",
+  "IEF",
+  "TLT",
+  "GLD",
+  "DBC",
+  "VNQ"
+ ],
+ "warmup_bars": 296
+}

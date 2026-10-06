@@ -11,6 +11,8 @@ testable with fixtures without touching the network.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import os
 import urllib.error
@@ -18,6 +20,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 
 
 # ---------------------------------------------------------------------------
@@ -51,12 +54,28 @@ def assert_trading_host_allowed(host: str) -> None:
 # strategy/genome config. Two independent switches must BOTH be true; a
 # strategy's config dict is never consulted here and cannot flip either one.
 # ---------------------------------------------------------------------------
-_SUBMISSION_ENABLED_CONST = False  # hardcoded; change requires a code review, not a config edit
+_SUBMISSION_ENABLED_CONST = False  # hardcoded; change requires a code review, not a config edit. NOT flipped by this change.
+SEALED_PILOT_CONFIG = Path(__file__).resolve().parent.parent / "kim_paper_pilot_config.json"
+SEALED_SCOPE = "alpaca_paper_only_sealed_kim_pilot"
+
+
+def _sealed_pilot_config_ok() -> bool:
+    """Third, independent switch: the environment must carry the sha256 of THIS release's sealed pilot config, the file must
+    still hash to it, and it must declare the paper-only scope on the paper host. Any other runner, shell or script that merely
+    sets the env flag cannot send anything."""
+    seal = os.environ.get("TBOTS_KIM_PAPER_SEAL", "")
+    try:
+        raw = SEALED_PILOT_CONFIG.read_bytes()
+        cfg = json.loads(raw)
+    except (OSError, ValueError):
+        return False
+    return bool(seal) and hmac.compare_digest(seal, hashlib.sha256(raw).hexdigest()) \
+        and cfg.get("submission_scope") == SEALED_SCOPE and cfg.get("paper_host") == PAPER_TRADING_HOST
 
 
 def submission_enabled() -> bool:
     env_flag = os.environ.get("TBOTS_ALPACA_SUBMISSION_ENABLED", "") == "true-i-understand-the-risk"
-    return _SUBMISSION_ENABLED_CONST and env_flag
+    return _SUBMISSION_ENABLED_CONST and env_flag and _sealed_pilot_config_ok()
 
 
 class SubmissionDisabledError(RuntimeError):

@@ -55,10 +55,11 @@ def test_payload_and_success_mapping():
         seen.update(method=method, url=url, body=json.loads(body))
         return 200, {"id": "abc", "status": "accepted", "filled_qty": "0"}
     r = broker(http).submit(SPEC)
-    assert r == {"id": "abc", "status": "accepted", "filled_qty": 0.0}
+    assert r == {"id": "abc", "status": "accepted", "filled_qty": 0.0, "symbol": None, "side": None, "qty": None}
     assert seen["url"] == "https://paper-api.alpaca.markets/v2/orders"
     assert seen["body"] == {"symbol": "SPY", "qty": "5", "side": "buy", "type": "market",
-                            "time_in_force": "day", "client_order_id": "kim-2026-10-05-SPY"}
+                            "time_in_force": "day", "client_order_id": "kim-2026-10-05-SPY",
+                            "extended_hours": False}
 
 
 @pytest.mark.parametrize("resp", [(500, None), (503, None), (429, None), (408, None),
@@ -92,7 +93,7 @@ def test_lookup_404_is_none_but_5xx_and_timeouts_are_errors_not_none():
 
 def test_lookup_success_maps_fields():
     r = broker(lambda *a, **k: (200, {"id": "i", "status": "pending_new", "filled_qty": "2"})).find_by_client_order_id("x")
-    assert r == {"id": "i", "status": "pending_new", "filled_qty": 2.0}
+    assert r == {"id": "i", "status": "pending_new", "filled_qty": 2.0, "symbol": None, "side": None, "qty": None}
 
 
 # ---- guards ---------------------------------------------------------------
