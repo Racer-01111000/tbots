@@ -1,0 +1,65 @@
+{
+ "_status": "UNSEALED EXAMPLE - NOT installed production configuration. Frozen-release fields verified against 0988a26b30ae5f2005e31fa1173f8fc49cb0cc07; guard_sha256, interpreter.sha256 and unit_sha are filled on the target by `guard.py seal-local`. Never copy a sealed file from a host into git or vice versa.",
+ "admission_report_sha256": "38052d9f4075002a0344fb7ef901f0f36bfa5fbc4e204ce33114a26104a9f323",
+ "dataset_hashes": {
+  "data/normalized/DBC.csv": "9f888fae492102de2b6ba435bc8bc95b73a971e39a7d48f67b5e6d2680ed0156",
+  "data/normalized/EEM.csv": "2c1ed69ed4c0d5d9c41ef81b8be1fbac9860a3c319cfac1472ffb55053d546c9",
+  "data/normalized/EFA.csv": "14e38a42bb472e85ac835a20b52490a3df35aea0786a6ce5218afce1583281e2",
+  "data/normalized/GLD.csv": "57ced701c7dfab6c8b7e2f896c1e5a76b2fee0c915627fe0da0ac1d7cb8b894d",
+  "data/normalized/IEF.csv": "ae73e6aa8268d48a8a7ef3281a792940ff78f569b5a672b7d7904f091d7b46db",
+  "data/normalized/SPY.csv": "3dfcd780fe0f73b0ca58cff8be07d1923e9e3cb2b2cdc50bd79695d16fa96d48",
+  "data/normalized/TLT.csv": "4670bcca1486138a053647319b163e5423b9693617b76886dcff9605db751c25",
+  "data/normalized/VNQ.csv": "40f85eb3ab3e0860b9204ae8d0f9d93b13dcbf8994db272850bce153e55b9978"
+ },
+ "expire_calendar": "OnCalendar=2026-10-09 17:00:00 America/New_York",
+ "expiry_et": "2026-10-09T17:00:00",
+ "freeze_file_sha": "78220e83f5913e7152666c6b891e2abc3a6c7f2a064eb5a3081e6126eb6ad414",
+ "frozen_file_count": 21,
+ "guard_sha256": "FILLED_BY_SEAL_LOCAL",
+ "interpreter": {
+  "path": "/opt/python-3.13.5-isolated/bin/python3.13",
+  "sha256": "FILLED_BY_SEAL_LOCAL"
+ },
+ "key_hashes": {
+  "configs/ADMISSION_V5.json": "b7f3679b6ecb060566ee6430acde87c7855e5d6986570b6def9439bbd1790022",
+  "configs/experiment_v5.json": "66325acadacc9eea4f39e32fc3d0beeef319e1536d3ba0501e5c0e9947e3c7dd",
+  "configs/generator_v4.json": "dde022c59d202488d65c7d48f91e11aac3d7afbf8e78ef9e00697b74e9c56f9b",
+  "docs/generator_v5_validation_ENG-V5FROZEN.json": "38052d9f4075002a0344fb7ef901f0f36bfa5fbc4e204ce33114a26104a9f323"
+ },
+ "release_sha": "0988a26b30ae5f2005e31fa1173f8fc49cb0cc07",
+ "research_calendar": "OnCalendar=Tue..Fri *-*-* 05:00:00 America/New_York",
+ "rollback_sha": "d6a13e51943754c61ed9f346432183eea1419d8c",
+ "timeout_start": "13min",
+ "timeout_stop": "1min",
+ "training_world_hashes": {
+  "SYNGYM-20261005-V5:training:energy_shipping_squeeze:0": "a165ed423dbb4f6a27687c861b66d4f75f6bcbd97f6014a27b456dba6f00e15a",
+  "SYNGYM-20261005-V5:training:energy_shipping_squeeze:1": "ddbde48480334939a43f863670d5867708adfea18f329917dca8fbce4c0b5c8b",
+  "SYNGYM-20261005-V5:training:fertilizer_harvest_stress:0": "7129615b5e1841963a023bc44b2493e7a42fdfe6fc9ee152ce61631cd7664d32",
+  "SYNGYM-20261005-V5:training:fertilizer_harvest_stress:1": "b24cdc6d93593934ac77b6a2c9e0b3cb4ab47e0470424d4c3f0a45269cdd7720",
+  "SYNGYM-20261005-V5:training:normalization_whipsaw:0": "2fcb430d19b01c77a132ae254495422f6b98ddd722439a4bff3ddbbec6f10288",
+  "SYNGYM-20261005-V5:training:normalization_whipsaw:1": "b714a3b2f2966c7242431570c1f17ed81eab59aff587a50dd9a4a39c01f60735",
+  "SYNGYM-20261005-V5:training:recession_credit_shock:0": "295c072afe6541e8aa4cc7bc2f4f1705d60e9ad06e6df414846023c7d0bfa463",
+  "SYNGYM-20261005-V5:training:recession_credit_shock:1": "200353923cc616dd653fb6c41a2250c81b34321cb3c42064df31035843e958dc",
+  "SYNGYM-20261005-V5:training:stagflation_rates:0": "d85a0fc75242013b25f3e8988f8f7a3eea9edb5f4fe4e70ce126ee30f3a9c49b",
+  "SYNGYM-20261005-V5:training:stagflation_rates:1": "94b1bd63956335499d37e4a89d49f6e1a27957fcaee58ff58d48773e7e98fce9",
+  "SYNGYM-20261005-V5:training:technology_boom_reversal:0": "2b4d6317d23db5ffde85ec2111de0fb2fb4785405ed3c8ddba91c1a7a3e55750",
+  "SYNGYM-20261005-V5:training:technology_boom_reversal:1": "d0df031bbe8ba0cf709b3558a842854f76a12f4d7f83ae57dcc38ec47d13bbf5"
+ },
+ "tree_file_count": 205,
+ "tree_manifest_sha": "348a01f60110c39b46fc491a305820290b9c05b0d4867c907f075d09bb01fd6d",
+ "unit_files": [
+  "tbots-foodfuel-research.service",
+  "tbots-foodfuel-research.timer",
+  "tbots-foodfuel-research.service.d/10-v5-guard.conf",
+  "tbots-foodfuel-research.service.d/20-v5-time-cap.conf",
+  "tbots-foodfuel-verify-research.service",
+  "tbots-foodfuel-expire.service",
+  "tbots-foodfuel-expire.timer",
+  "tbots-v5-guard-preflight@.service",
+  "tbots-v5-guard-check@.service",
+  "tbots-v5-guard-watch.timer",
+  "tbots-v5-guard-postslot.timer",
+  "tbots-v5-guard-final.timer"
+ ],
+ "unit_sha": {}
+}

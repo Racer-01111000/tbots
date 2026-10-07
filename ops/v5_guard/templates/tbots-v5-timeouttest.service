@@ -1,0 +1,9 @@
+[Unit]
+Description=TBOTS V5 time-cap SELFTEST (temporary): proves systemd enforces TimeoutStartSec/TimeoutStopSec on a Type=oneshot unit that ignores SIGTERM
+[Service]
+Type=oneshot
+TimeoutStartSec=6s
+TimeoutStopSec=4s
+ExecStartPre=+/bin/true
+ExecStart=/bin/sh -c 'trap "" TERM; sleep 120'
+ExecStopPost=+/bin/sh -c 'echo "SERVICE_RESULT=$SERVICE_RESULT EXIT_STATUS=$EXIT_STATUS" > /run/tbots-v5-timeouttest.marker'

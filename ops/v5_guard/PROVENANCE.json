@@ -1,0 +1,29 @@
+{
+ "snapshot": "V5 guard invocation-scope repair",
+ "base_commit": "0988a26b30ae5f2005e31fa1173f8fc49cb0cc07",
+ "base_branch": "release/v5-freeze-20261005",
+ "source": {
+  "repository": "standalone local guard repository (not published; history intentionally not imported)",
+  "commit": "740cd182eaeb39302218e6aab8b5f8bd82354dc5",
+  "parent_commit": "9283163e92d90f2478ce3d7721512ae3dd324917",
+  "parent_guard_sha256": "2ee5c16f913e71550fb71b5284d5dcab0bcbb6e4480e7f879dd290d0dbdebf16",
+  "commit_date": "2026-10-07",
+  "source_tests_sha256": "dd2d029566a1b51ffba3fe9119b145e4a41788fc377bf754d87f87b6d228f02d"
+ },
+ "guard_sha256": "c04f1b233c3bf3ba022492c21e6b2bc2fbaf4cab96a2d66ba04f7d17d3d07caf",
+ "exported_files": {
+  "src/guard.py": "c04f1b233c3bf3ba022492c21e6b2bc2fbaf4cab96a2d66ba04f7d17d3d07caf",
+  "tests/test_guard.py": "4f465d2f4dc1202f3e933c75cb4d3c769b3213db696819b08dfb2c05152c27b2"
+ },
+ "export_adjustments": [
+  "tests/test_guard.py: fixture path defaults to the repo root (was a required GUARD_TEST_FIXTURE env var); comment updated; real journal/invocation/order identifiers and a unit name in the synthetic fixtures replaced by synthetic values; no test logic changed",
+  "src/guard.py: byte-identical to source commit; no behavior change"
+ ],
+ "excluded": [
+  "relay_guard.py (host/instance-specific relay helper)",
+  "bundle/guard.py (stale pre-repair copy)",
+  "sealed or host-local expected.json",
+  "receipts, journals, state, market data"
+ ],
+ "installed_hash_note": "c04f1b23... was installed and sealed on the research host on 2026-10-07 (see private repair receipt, not published); this export is compared to it by hash only."
+}

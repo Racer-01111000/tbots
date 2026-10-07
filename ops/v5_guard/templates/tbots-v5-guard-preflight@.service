@@ -1,0 +1,12 @@
+[Unit]
+Description=TBOTS V5 guard preflight (%i): must PASS before the research batch may start (fail-closed)
+[Service]
+Type=oneshot
+User=root
+Environment=TZ=America/New_York
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/python-3.13.5-isolated/bin/python3.13 /usr/local/lib/tbots-v5-guard/guard.py preflight --target %i
+TimeoutStartSec=180
+PrivateNetwork=yes
+NoNewPrivileges=yes
+PrivateTmp=yes

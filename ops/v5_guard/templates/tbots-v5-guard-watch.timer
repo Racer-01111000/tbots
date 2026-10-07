@@ -1,0 +1,12 @@
+[Unit]
+Description=TBOTS V5 guard: 05:25 ET slot watch (Tue-Fri slots 06-09 only, non-recurring)
+[Timer]
+OnCalendar=2026-10-06 05:25:00 America/New_York
+OnCalendar=2026-10-07 05:25:00 America/New_York
+OnCalendar=2026-10-08 05:25:00 America/New_York
+OnCalendar=2026-10-09 05:25:00 America/New_York
+Persistent=false
+AccuracySec=1s
+Unit=tbots-v5-guard-check@watch.service
+[Install]
+WantedBy=timers.target

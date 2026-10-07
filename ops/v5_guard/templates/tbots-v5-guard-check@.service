@@ -1,0 +1,12 @@
+[Unit]
+Description=TBOTS V5 guard durable check (%i): result receipt, hard-stop (research timer only) or HOLD
+[Service]
+Type=oneshot
+User=root
+Environment=TZ=America/New_York
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/python-3.13.5-isolated/bin/python3.13 /usr/local/lib/tbots-v5-guard/guard.py check %i
+TimeoutStartSec=300
+PrivateNetwork=yes
+NoNewPrivileges=yes
+PrivateTmp=yes

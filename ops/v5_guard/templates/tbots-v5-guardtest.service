@@ -1,0 +1,9 @@
+[Unit]
+Description=TBOTS V5 guard SELFTEST unit (temporary; ExecStart is a harmless marker write)
+[Unit]
+Requires=tbots-v5-guard-preflight@selftest.service
+After=tbots-v5-guard-preflight@selftest.service
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'date -u > /run/tbots-v5-guardtest.marker'
+ExecStartPre=+/opt/python-3.13.5-isolated/bin/python3.13 /usr/local/lib/tbots-v5-guard/guard.py require-token --target selftest
