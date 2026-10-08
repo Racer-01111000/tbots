@@ -78,8 +78,13 @@ class Sys:
         return out
     def journal_by_invocation(self, inv): return self.journal_json(["_SYSTEMD_INVOCATION_ID=" + inv])
     def journal_unit_window(self, unit, since_utc, until_utc):
-        f = "%Y-%m-%d %H:%M:%S"
-        return self.journal_json(["_SYSTEMD_UNIT=" + unit, "--since", since_utc.strftime(f), "--until", until_utc.strftime(f)])
+        """Bounds must be timezone-aware and are sent to journalctl as explicit UTC. A bare timestamp is read in the PROCESS timezone, and the research/guard
+        units run with TZ=America/New_York, which shifted the window ~4h into the future and made it empty (2026-10-07 slot 07 false stop)."""
+        if since_utc.tzinfo is None or until_utc.tzinfo is None: raise ValueError("journal window bounds must be timezone-aware")
+        a, b = since_utc.astimezone(timezone.utc), until_utc.astimezone(timezone.utc)
+        if a > b: raise ValueError("journal window bounds reversed")
+        f = "%Y-%m-%d %H:%M:%S UTC"
+        return self.journal_json(["_SYSTEMD_UNIT=" + unit, "--since", a.strftime(f), "--until", b.strftime(f)])
     def disk_free_gib(self, path): u = shutil.disk_usage(path); return u.free / 2**30
     def ntp_synced(self): return self._run(["timedatectl", "show", "-p", "NTPSynchronized", "--value"]).stdout.strip()
     def import_probe(self, env_path):

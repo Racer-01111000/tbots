@@ -25,5 +25,16 @@
   "sealed or host-local expected.json",
   "receipts, journals, state, market data"
  ],
- "installed_hash_note": "c04f1b23... was installed and sealed on the research host on 2026-10-07 (see private repair receipt, not published); this export is compared to it by hash only."
+ "installed_hash_note": "c04f1b23... was installed and sealed on the research host on 2026-10-07 (see private repair receipt, not published); this export is compared to it by hash only.",
+ "utc_journal_window_repair_20261008": {
+  "base_commit": "a608b3af10977b3c0ec7d383fd41038d6f2f2e7e",
+  "incident": "slot 2026-10-07 post-slot check false stop: journal_unit_window sent bare timestamps; units run with TZ=America/New_York so journalctl read them as New York local time (window ~4h in the future, empty)",
+  "change": "Sys.journal_unit_window only: require tz-aware bounds, convert with astimezone(timezone.utc), reject reversed bounds, format '%Y-%m-%d %H:%M:%S UTC'. No other function changed.",
+  "guard_sha256_before": "c04f1b233c3bf3ba022492c21e6b2bc2fbaf4cab96a2d66ba04f7d17d3d07caf",
+  "guard_sha256_after": "14e5d46f626f4e96cd702d9d5ef0f5d9b2ecb26f5670e4083429c1143b935466",
+  "tests_sha256_after": "09380d667f2a79aa35f6a058fcd3b5b8d350e9701a22579ffb69ea6a8cbcf668",
+  "tests": "89 existing + 31 new regressions = 120 PASS, 0 FAIL on HOST python3.13.5 and on the research instance's isolated python3.13.5; new tests: 10 fail against the pre-repair guard (mutation check)",
+  "private_evidence_bundle_sha256": "9288b5afbe79e25c04bd690985d1f24a7da62ff2e5f56f783cf79c5437ff3ed3 (not published)",
+  "note": "Fixture TZs are tzinfo objects, not names. Legacy-stop tests assert the empty-window mismatch specifically, so an unknown-zone exception cannot masquerade as the failure."
+ }
 }

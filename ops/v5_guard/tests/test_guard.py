@@ -247,8 +247,8 @@ class JournalSim(FakeSys):
                 if a.startswith("_SYSTEMD_UNIT="): ok &= e["unit"] == a.split("=", 1)[1]
             if ok: out.append(json.dumps({"MESSAGE": e["msg"], "_SYSTEMD_UNIT": e["unit"], "_SYSTEMD_INVOCATION_ID": e["inv"]}))
         return _sp.CompletedProcess(cmd, s.rc, "\n".join(out), "boom" if s.rc else "")
-def inv_post(label, store=None, rec=None, mut=None, env=None, rc=0, want_ok=True, n=2, when="2026-10-06T05:02:00", want=G.INVOCATION_CHECK, mode="postslot"):
-    c = build(n); s = JournalSim((research_lines() + KIM) if store is None else store, rc); slot = at(when).astimezone(ET).date().isoformat()
+def inv_post(label, store=None, rec=None, mut=None, env=None, rc=0, want_ok=True, n=2, when="2026-10-06T05:02:00", want=G.INVOCATION_CHECK, mode="postslot", sim=None):
+    c = build(n); s = (sim or JournalSim)((research_lines() + KIM) if store is None else store, rc); slot = at(when).astimezone(ET).date().isoformat()
     if rec != "missing": rec_inv(c, slot, **(rec or {}))
     if mut: mut(c, s)
     saved = {k: os.environ.get(k) for k in ("SERVICE_RESULT", "INVOCATION_ID")}
@@ -336,4 +336,83 @@ c, s, (ok, res) = final(); expect("final: expiry verified -> HOLD recorded", ok 
 def f_en(c, s): s.timers[G.RESEARCH_TIMER] = ("enabled", "active")
 c, s, (ok, res) = final(f_en); expect("final: research timer still enabled -> STOP + force disable", (not ok) and s.disabled == 1 and (c.gdir / "STOP").exists() and not (c.gdir / "HOLD").exists(), res_names(res))
 c, s, (ok, res) = final(None, n=2, stop=True); expect("final after earlier stop: HOLD recorded with stopped_earlier", ok and (c.gdir / "HOLD").exists() and any("stopped_earlier" in open(p).read() and '"stopped_earlier": true' in open(p).read() for p in (c.gdir / "receipts").glob("HOLD_*")), res_names(res))
+# ---- 3c UTC JOURNAL WINDOW (slot-07 false-stop repair): the research and guard-check units run with TZ=America/New_York; bare --since/--until are read in the process timezone
+from datetime import timedelta
+from zoneinfo import ZoneInfo
+T0 = datetime(2026, 10, 6, 9, 0, 0, tzinfo=timezone.utc)   # the slot-06-shaped run recorded at 09:00:00Z by rec_inv; ExecStopPost/timer checks run 09:02Z+
+def stamp(lines, secs=10): return [dict(e, ts=T0 + timedelta(seconds=secs)) for e in lines]
+class TimedJournalSim(JournalSim):
+    """journalctl that HONORS --since/--until. A bare timestamp is read in self.tz (the simulated process TZ); a trailing ' UTC' is explicit UTC. Unparseable bound -> rc 1."""
+    tz = timezone.utc   # tzinfo object (not a key): fixed-offset zones need no tzdata and an unknown key can never masquerade as a guard failure
+    def _run(s, cmd, timeout=20):
+        s.calls.append(cmd); lo = hi = None
+        def bound(v):
+            if v.endswith(" UTC"): return datetime.strptime(v[:-4], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+            return datetime.strptime(v, "%Y-%m-%d %H:%M:%S").replace(tzinfo=s.tz).astimezone(timezone.utc)
+        try:
+            for i, a in enumerate(cmd):
+                if a == "--since": lo = bound(cmd[i + 1])
+                if a == "--until": hi = bound(cmd[i + 1])
+        except ValueError: return _sp.CompletedProcess(cmd, 1, "", "Failed to parse timestamp")
+        out = []
+        for e in s.store:
+            ok = True
+            for a in cmd[1:]:
+                if a.startswith("_SYSTEMD_INVOCATION_ID="): ok &= e["inv"] == a.split("=", 1)[1]
+                if a.startswith("_SYSTEMD_UNIT="): ok &= e["unit"] == a.split("=", 1)[1]
+            if lo is not None: ok &= e["ts"] >= lo
+            if hi is not None: ok &= e["ts"] <= hi
+            if ok: out.append(json.dumps({"MESSAGE": e["msg"], "_SYSTEMD_UNIT": e["unit"], "_SYSTEMD_INVOCATION_ID": e["inv"]}))
+        return _sp.CompletedProcess(cmd, s.rc, "\n".join(out), "boom" if s.rc else "")
+def legacy_journal_unit_window(s, unit, since_utc, until_utc):
+    """the pre-repair a608b3af/c04f1b23 implementation, kept verbatim ONLY to prove it fails"""
+    f = "%Y-%m-%d %H:%M:%S"
+    return s.journal_json(["_SYSTEMD_UNIT=" + unit, "--since", since_utc.strftime(f), "--until", until_utc.strftime(f)])
+def tsim(tz, legacy=False):
+    class _S(TimedJournalSim): pass
+    _S.tz = tz
+    if legacy:
+        orig = _S.__init__
+        def init(s, store, rc=0): orig(s, store, rc); s.journal_unit_window = lambda unit, a, b: legacy_journal_unit_window(s, unit, a, b)
+        _S.__init__ = init
+    return _S
+NYZ = ZoneInfo("America/New_York")
+TZS = {"UTC": timezone.utc, "EDT (America/New_York, Oct)": NYZ, "EST (fixed -05:00)": timezone(timedelta(hours=-5)), "Hanoi (fixed +07:00)": timezone(timedelta(hours=7))}
+GOOD = stamp(research_lines()) + stamp(KIM, 20)
+for name, tz in TZS.items():
+    inv_post(f"UTC window: repaired code passes under process TZ {name}", store=GOOD, sim=tsim(tz))
+    if tz is timezone.utc: inv_post(f"UTC window: legacy code also passes under {name} (control: simulator is not rigged)", store=GOOD, sim=tsim(tz, legacy=True))
+    else:
+        c, s, res = inv_post(f"UTC window: LEGACY code false-stops under process TZ {name} (reproduces slot 07)", store=GOOD, sim=tsim(tz, legacy=True), want_ok=False)
+        d = [r["detail"] for r in res if r["name"] == G.INVOCATION_CHECK][0]
+        expect(f"UTC window: LEGACY stop under {name} is the EMPTY-WINDOW mismatch (not an exception)", d.startswith("ambiguous/mismatched research invocations in slot window: [] vs "), d)
+# direct function: true winter EST (America/New_York, Dec) and bound validation
+w = datetime(2026, 12, 15, 14, 0, 0, tzinfo=timezone.utc)
+E = [dict(jl_(G.RESEARCH_SERVICE, INV, "x"), ts=w + timedelta(seconds=5))]
+def direct(tz, a, b, legacy=False): 
+    s = tsim(tz, legacy)(E); return [e["inv"] for e in (G.Sys.journal_unit_window(s, G.RESEARCH_SERVICE, a, b) if not legacy else s.journal_unit_window(G.RESEARCH_SERVICE, a, b))]
+for tz in (timezone.utc, NYZ, timezone(timedelta(hours=7))): expect(f"UTC window direct: winter EST date finds the entry under TZ {tz}", direct(tz, w - timedelta(minutes=2), w + timedelta(minutes=2)) == [INV])
+expect("UTC window direct: legacy misses it under America/New_York (winter EST)", direct(NYZ, w - timedelta(minutes=2), w + timedelta(minutes=2), legacy=True) == [])
+ny = ZoneInfo("America/New_York")
+expect("UTC window direct: non-UTC aware bounds are converted (ET-aware input == UTC-aware input)", direct(timezone(timedelta(hours=7)), (w - timedelta(minutes=2)).astimezone(ny), (w + timedelta(minutes=2)).astimezone(ny)) == [INV])
+_s = tsim(timezone.utc)(E); G.Sys.journal_unit_window(_s, G.RESEARCH_SERVICE, w, w + timedelta(minutes=1)); _a = _s.calls[-1]
+expect("UTC window direct: argv carries explicit ' UTC' on both bounds", _a[_a.index("--since") + 1] == "2026-12-15 14:00:00 UTC" and _a[_a.index("--until") + 1] == "2026-12-15 14:01:00 UTC", _a)
+def raises(f):
+    try: f(); return False
+    except ValueError: return True
+expect("UTC window direct: naive 'since' rejected", raises(lambda: G.Sys.journal_unit_window(tsim(timezone.utc)(E), G.RESEARCH_SERVICE, datetime(2026, 12, 15, 14, 0, 0), w)))
+expect("UTC window direct: naive 'until' rejected", raises(lambda: G.Sys.journal_unit_window(tsim(timezone.utc)(E), G.RESEARCH_SERVICE, w, datetime(2026, 12, 15, 14, 0, 0))))
+expect("UTC window direct: reversed bounds rejected", raises(lambda: G.Sys.journal_unit_window(tsim(timezone.utc)(E), G.RESEARCH_SERVICE, w + timedelta(minutes=1), w)))
+# every existing stop condition must still stop V5 when the journal honors time and runs in the unit's real TZ
+NY_SIM = tsim(NYZ)
+for kw in ("POST https://paper-api.alpaca.markets/v2/orders", "broker handshake", "order submit client_order_id=x"):
+    inv_post(f"UTC window STOP: keyword {kw!r} in research invocation (TZ=America/New_York)", store=GOOD + stamp([jl_(G.RESEARCH_SERVICE, INV, kw)]), sim=NY_SIM, want_ok=False)
+inv_post("UTC window STOP: empty journal for the recorded invocation", store=stamp(KIM), sim=NY_SIM, want_ok=False)
+inv_post("UTC window STOP: duplicate research invocation in the slot window", store=GOOD + stamp(research_lines(INV_2), 30), sim=NY_SIM, want_ok=False)
+inv_post("UTC window STOP: window holds only a different research invocation", store=stamp(research_lines(INV_2)) + stamp([jl_(G.RESEARCH_SERVICE, INV, "x")]), sim=NY_SIM, want_ok=False)
+inv_post("UTC window STOP: journalctl failure/timeout (rc!=0)", store=GOOD, rc=1, sim=NY_SIM, want_ok=False)
+inv_post("UTC window STOP: hash drift", store=GOOD, sim=NY_SIM, mut=lambda c, s: (c.ff / "releases" / SHA / "research/synthetic_gym/gym/batch_v5.py").write_text("# drift\n"), want_ok=False, want="release_tree_matches_archive_manifest")
+inv_post("UTC window STOP: premature validation", store=GOOD, sim=NY_SIM, mut=lambda c, s: (c.state / "validation_result.json").write_text("{}"), want_ok=False, want="validation_sealed")
+for sr in ("timeout", "exit-code"): inv_post(f"UTC window STOP: SERVICE_RESULT={sr}", store=GOOD, sim=NY_SIM, env={"SERVICE_RESULT": sr, "INVOCATION_ID": INV}, want_ok=False, want="unit_result_success")
+
 print("\nTOTAL FAILS:", fails); sys.exit(1 if fails else 0)

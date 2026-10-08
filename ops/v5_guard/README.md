@@ -35,3 +35,6 @@ Keep the previous `guard.py` and `expected.json` before installing. To roll back
 ## Notes
 - `guard.py` contains literal `/home/ec2-user/...` paths: they are the credential locations its probe checks that the research user cannot read. They are behavior, not configuration of this repo.
 - Network-boundary, credential, import, hash and validation-policy checks run at preflight (hard stop + timer disable); result/ledger/validation/evidence checks run post-slot.
+
+## 2026-10-08 UTC journal-window repair
+`Sys.journal_unit_window` now requires timezone-aware bounds, converts both to UTC, rejects reversed bounds and passes `YYYY-MM-DD HH:MM:SS UTC` to journalctl. Cause: the research and guard-check units run with `TZ=America/New_York`; bare `--since/--until` were interpreted there, so the slot window was empty and the invocation check failed closed. The scheduler timezone and every other check are unchanged. See `PROVENANCE.json` (`utc_journal_window_repair_20261008`).
