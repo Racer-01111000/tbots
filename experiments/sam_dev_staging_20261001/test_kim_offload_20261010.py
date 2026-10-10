@@ -249,6 +249,9 @@ def test_archive_members_round_trip_to_the_original_snapshots(tmp_path):
 @pytest.mark.parametrize("fault", ["member_corrupt", "archive_corrupt_on_verify", "upload_fails", "missing_sidecar", "stage_cap", "archive_exists_different"])
 def test_any_verification_or_upload_fault_deletes_nothing(tmp_path, fault):
     store = ko.MemoryStore()
+    get_calls = []
+    real_get = store.get
+    store.get = lambda key, dest: (get_calls.append(key), real_get(key, dest))[1]          # record downloads without touching the shipped module
     names = put_daily(store, (2026, 10), [12, 13])
     k0 = f"daily/2026/10/{names[0]}"
     kw = {}
@@ -269,6 +272,10 @@ def test_any_verification_or_upload_fault_deletes_nothing(tmp_path, fault):
     assert rep["refused"] and rep["archives"] == [] and store.deleted == []
     assert {k: v for k, v in store.objects.items() if k.startswith("daily/")} == snapshot_before
     assert not list(tmp_path.glob("kimrec-consolidate-*"))
+    if fault == "missing_sidecar":                     # the pre-check's own contract: fail fast, with its own reason, before downloading anything
+        assert "no checksum sidecar" in rep["refused"][0]["reason"] and get_calls == []
+    if fault == "stage_cap":
+        assert "staging cap" in rep["refused"][0]["reason"] and get_calls == []
 
 
 def test_consolidate_mode_visible_failure_and_quiet_when_nothing_eligible(mig):
