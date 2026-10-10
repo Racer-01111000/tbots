@@ -55,8 +55,10 @@ def assert_trading_host_allowed(host: str) -> None:
 # strategy's config dict is never consulted here and cannot flip either one.
 # ---------------------------------------------------------------------------
 _SUBMISSION_ENABLED_CONST = True  # Rick GO TBOTS_KIM_PAPER_ACTIVATION_FIXED_DATES_20261006: inert unless the env flag, the sealed-config seal AND the paper-only scope below all hold
-SEALED_PILOT_CONFIG = Path(__file__).resolve().parent.parent / "kim_paper_pilot_config.json"
-SEALED_SCOPE = "alpaca_paper_only_sealed_kim_pilot"
+# GO TBOTS_KIM_UNATTENDED_RECURRING_PAPER_20261010: this release is sealed to the RECURRING config only. The archived four-session
+# pilot config stays in the tree as a historical record but can no longer satisfy the seal (its scope string differs).
+SEALED_PILOT_CONFIG = Path(__file__).resolve().parent.parent / "kim_recurring_config.json"
+SEALED_SCOPE = "alpaca_paper_only_sealed_kim_recurring"
 
 
 def _sealed_pilot_config_ok() -> bool:

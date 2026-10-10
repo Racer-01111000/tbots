@@ -1,0 +1,17 @@
+{
+ "_note": "Preserved identity of the archived four-session pilot state at hand-off (verified against the HOST copy ~/tbots_preserved_20261010 and the live files). migrate refuses to continue from anything that differs.",
+ "fills_after": "2026-10-01T00:00:00Z",
+ "ledger_rows_digest": "80de4278d66703a4eb9ad94c1a83f1a7796d19d61bfa3fa1f4ba23f74ea9ce50",
+ "source_sha256": {
+  "order_ledger.sqlite3": "7469ce44f9d8a37e3e6c184262642751b5ef018f6e8dddfe4c3bb9a626742eb7",
+  "cadence_state.json": "fb62489c8964db51323cd187adf3c14a7587ef59807e8e4ca859c271c27a052e",
+  "peak_equity_state.json": "cb73817ce55e79fdd30810442153ebcff9b124a287e0f14b67cc1f9ee249af8d",
+  "pilot_baseline.json": "ad82be73fb99b0c1cd429d131e6ed4c0953ece99aaa9c44a286a38ff95b065e1"
+ },
+ "archived_pilot_evidence_sha256": {
+  "HOLD": "10f0832561046c338fc9bc5c8daa55ef29a7ed083cd36df90cc3faa8d83c8442",
+  "EXPIRED": "dd09856e1b8022611312d690fd4e12d312738dcc9a41040897d918808b569776",
+  "campaign.json": "4af8850f6913b2f2c6a5de4a0fc9452f167da7ee4e1324bd57f0e9315d8520e8",
+  "receipts/20261009T201004430476Z_expiry.json": "4046d02cbc10faf995a7dea009d206cbfeccef980f87dd3252ee91b311f4544a"
+ }
+}
