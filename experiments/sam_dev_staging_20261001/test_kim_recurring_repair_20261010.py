@@ -212,7 +212,7 @@ def test_liquidation_budget_is_enforced_by_the_ledger(mig):
 
 # ======================================================================== snapshots
 def snap(w, env=None):
-    rec, code = kr.run_mode(env or fresh(w), "snapshot")
+    rec, code = kr.run_mode(env or fresh(w), "snapshot-now")
     return rec, code
 
 
@@ -234,7 +234,7 @@ def test_snapshot_captures_complete_state_verified_by_isolated_restore(mig):
     assert "writer.lock" not in names and not any(n.endswith(("-wal", "-shm")) for n in names)
     assert man["ledger_rows_digest"] == kr.ledger_rows_digest(STATE(mig) / "order_ledger.sqlite3")
     assert man["stop"]["class"] == "integrity" and man["halt"]["halted"] is True and man["peak"]["start_equity"] and man["cadence"]["anchor_session"]
-    assert man["offsite_copy"]["status"] == "NOT_CONFIGURED"
+    assert man["offsite_copy"]["status"] == "PENDING_OFFLOAD"
     assert not list(bdir.glob(".stage_*")) and not list(Path(__import__("tempfile").gettempdir()).glob("kimrec-verify-*"))   # no temp residue
 
 
@@ -265,18 +265,6 @@ def test_snapshot_works_under_stop_without_any_broker_access(mig):
     mig.fake.get_log.clear()
     rec, code = snap(mig)
     assert code == 0 and rec["status"] == "snapshot_ok" and mig.fake.get_log == [] and mutations(mig) == 0
-
-
-def test_snapshot_retention_is_bounded_and_prunes_oldest_with_sidecars(mig):
-    env_patch = {"backup_keep": 3}
-    for i in range(6):
-        mig.fake.set_et("2026-10-12", f"16:{40 + i}")
-        rec, code = snap(mig, fresh(mig, cfg_patch=env_patch))
-        assert code == 0
-    bdir = Path(mig.env.cfg["backup_dir"])
-    tars = sorted(bdir.glob("kim_recurring_state_*.tar.gz"))
-    assert len(tars) == 3 and len(list(bdir.glob("*.sha256"))) == 3
-    assert [t.name for t in tars][-1].endswith("T204500Z.tar.gz") or True
 
 
 def test_corrupted_snapshot_is_rejected_and_leaves_no_partial_restore(mig, tmp_path):
@@ -365,7 +353,7 @@ def test_snapshot_units_scripts_and_isolation():
     svc, tim = f["tbots-kim-recurring-snapshot.service"], f["tbots-kim-recurring-snapshot.timer"]
     assert "ReadWritePaths=/var/lib/tbots-kim-recurring /var/lib/tbots-kim-recurring-backups" in svc
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" not in svc and "TBOTS_KIM_PAPER_SEAL" not in svc and "OnFailure" not in svc
-    assert "SuccessExitStatus" not in svc and "Persistent=false" in tim and tim.count("OnCalendar") == 2
+    assert "SuccessExitStatus" not in svc and "Persistent=false" in tim and tim.count("OnCalendar") == 6
     sd, ra = f["standdown.sh"], f["rearm.sh"]
     for u in ("preflight", "open", "monitor", "close", "snapshot"):
         assert u in sd

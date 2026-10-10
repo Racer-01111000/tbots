@@ -46,8 +46,10 @@ from atomic_io import StateCorrupt, read_json_strict, write_json_atomic
 
 HERE = Path(__file__).resolve().parent
 SCHEMA = "kim-recurring-paper-v1"
-MODES = ("migrate", "preflight", "open", "monitor", "close", "plan-check", "snapshot", "reconcile", "restore", "verify-snapshot")
-ARG_MODES = ("restore", "verify-snapshot")                    # take positional args; need no broker/credentials
+MODES = ("migrate", "preflight", "open", "monitor", "close", "plan-check", "snapshot", "snapshot-now", "offload", "consolidate", "reconcile",
+         "restore", "verify-snapshot", "fetch-restore")
+ARG_MODES = ("restore", "verify-snapshot", "fetch-restore")
+OFFLINE_MODES = ("snapshot", "snapshot-now", "offload", "consolidate")      # no broker, no credentials                    # take positional args; need no broker/credentials
 RESTORE_MARKER = "RESTORED_UNRECONCILED"
 CONFIG_NAME = "kim_recurring_config.json"
 MANIFEST_NAME = "kim_recurring_ops/continuation_manifest.json"
@@ -61,6 +63,11 @@ UNEXPECTED_STREAK_LIMIT = 6                  # consecutive unexpected-exception 
 
 class MutationBlocked(RuntimeError):
     """A broker mutation was attempted while a persisted STOP (or an unreconciled restore) blocks all mutations."""
+
+
+def kim_offload_error():
+    import kim_offload
+    return kim_offload.OffloadError
 
 
 class Quiet(Exception):
@@ -81,7 +88,8 @@ def load_config(path: Path) -> tuple[dict, str]:
             "extended_hours", "kill_switch_file", "preflight_et", "open_window_et", "account_pin_file", "state_dir",
             "archived_pilot_state_dir", "frozen_champion_file", "frozen_champion_file_sha256", "decision_function_sha256",
             "forbidden_genome_ids", "close_reconcile_minutes_after_close", "monitor_grace_minutes_after_close",
-            "monitor_log_keep_days", "backup_dir", "backup_keep"}
+            "monitor_log_keep_days", "backup_dir", "offload_config_file", "s3_region", "backup_min_free_mb", "backup_max_pending",
+            "offload_max_attempts", "consolidate_stage_cap_mb", "consolidate_keep_months"}
     miss = need - set(cfg)
     if miss:
         raise HardStop(f"recurring config missing keys {sorted(miss)}")
@@ -743,11 +751,41 @@ def restore_snapshot(snapshot: Path, target: Path, live_state_dir: Path | None =
             "snapshot_created_utc": man.get("created_utc"), "restored_to": str(target)}
 
 
+FINAL_RECON_DEADLINE_MIN = 50          # minutes after the real close by which a missing final reconciliation is reported loudly
+
+
+def run_snapshot_scheduled(env: Env) -> dict:
+    """Post-close snapshot: only on a real session, only after the real close (early closes included) AND after the session's final
+    reconciliation (`close_done_<date>`), once per session. A missing reconciliation is reported, not silently skipped."""
+    today = _et(env.now_utc()).date().isoformat()
+    row = session_row(env, today)
+    sess = kp.session_times(row)
+    done = _done_marker(env, "snapshot", today)
+    if done.exists():
+        raise Quiet("the post-close snapshot for this session is already done")
+    close = _parse_ts(sess["close_utc"])
+    if env.now_utc() < close + timedelta(minutes=env.cfg["close_reconcile_minutes_after_close"]):
+        raise Quiet("the session has not closed long enough")
+    if not _done_marker(env, "close", today).exists():
+        if env.now_utc() >= close + timedelta(minutes=FINAL_RECON_DEADLINE_MIN):
+            raise Abstain("no final reconciliation for this session yet; snapshot not taken (close runs will keep retrying)")
+        raise Quiet("waiting for the session's final reconciliation")
+    rec = run_snapshot(env)
+    if rec.get("status") == "snapshot_ok":
+        write_json_atomic(done, {"snapshot": rec["snapshot"], "at_utc": _iso(env.now_utc())})
+    return rec
+
+
 def run_snapshot(env: Env) -> dict:
     """Runs under the writer lock (run_mode took it), so no writer can be mid-update. SQLite via the backup API, never a raw file copy."""
+    import kim_offload
     bdir = Path(env.cfg["backup_dir"])
     bdir.mkdir(parents=True, exist_ok=True)
     os.chmod(bdir, 0o700)
+    sc = kim_offload.storage_check(bdir, env.cfg["backup_min_free_mb"], env.cfg["backup_max_pending"])
+    if sc["pressure"]:                   # never delete an unoffloaded copy to make room: refuse, loudly
+        return {"status": "SNAPSHOT_REFUSED_STORAGE_PRESSURE", "storage": sc, "_exit": 1,
+                "note": "pending local snapshots are retained; offload must succeed (or a person must act) before new snapshots are staged"}
     ts = env.now_utc().strftime("%Y%m%dT%H%M%SZ")
     snap = bdir / f"{SNAP_PREFIX}{ts}.tar.gz"
     if snap.exists():
@@ -773,7 +811,7 @@ def run_snapshot(env: Env) -> dict:
             src.close()
             dstc.close()
         extra = {"created_utc": _iso(env.now_utc()), "release": Path(__file__).resolve().parents[2].name, "config_sha256": env.cfg_sha,
-                 "offsite_copy": {"status": "NOT_CONFIGURED", "note": "no authorized off-instance destination exists; see OPERATIONS.md"}}
+                 "offsite_copy": {"status": "PENDING_OFFLOAD", "destination": "s3://<private bucket>/daily/"}}
         man = _manifest_for(stage, env, extra)
         write_json_atomic(stage / "SNAPSHOT_MANIFEST.json", man)
         with tarfile.open(snap, "w:gz") as tf:
@@ -797,14 +835,59 @@ def run_snapshot(env: Env) -> dict:
             shutil.rmtree(vroot, ignore_errors=True)
     finally:
         shutil.rmtree(stage, ignore_errors=True)
-    keep = int(env.cfg["backup_keep"])
-    old = sorted(bdir.glob(f"{SNAP_PREFIX}*.tar.gz"))[:-keep] if keep > 0 else []
-    for f in old:
-        f.unlink()
-        f.with_name(f.name + ".sha256").unlink(missing_ok=True)
     return {"status": "snapshot_ok", "snapshot": snap.name, "sha256": digest, "files": v["verified_files"], "ledger_rows_digest": v["ledger_rows_digest"],
-            "unresolved_orders": v["unresolved_orders"], "verified_by_isolated_restore": True, "pruned": len(old),
-            "kept": min(keep, len(list(bdir.glob(f"{SNAP_PREFIX}*.tar.gz")))), "offsite_copy": "NOT_CONFIGURED"}
+            "unresolved_orders": v["unresolved_orders"], "verified_by_isolated_restore": True, "local_copy": "temporary staging until offloaded"}
+
+
+def offload_target(cfg: dict) -> tuple[str, str]:
+    """(bucket, region). The bucket name lives in a root-owned file on the instance, not in the published config (it embeds an account id)."""
+    f = Path(cfg["offload_config_file"])
+    if f.exists():
+        d = json.loads(f.read_text())
+        return d["bucket"], d.get("region", cfg["s3_region"])
+    if cfg.get("s3_bucket"):                                   # tests / explicit override
+        return cfg["s3_bucket"], cfg["s3_region"]
+    raise HardStop("offload destination is not configured")
+
+
+def get_store(env: Env):
+    st = getattr(env, "store", None)
+    if st is not None:
+        return st
+    import kim_offload
+    return kim_offload.AwsCliStore(*offload_target(env.cfg))
+
+
+def run_offload(env: Env) -> dict:
+    """Upload every pending snapshot, verify the remote bytes against the local checksum, then (and only then) delete the local copy. A no-op
+    when nothing is pending. Failures keep the local copy, count attempts, and make the run (and its systemd unit) fail visibly."""
+    import kim_offload
+    bdir = Path(env.cfg["backup_dir"])
+    pend = kim_offload.pending_snapshots(bdir) if bdir.exists() else []
+    if not pend:
+        raise Quiet("nothing pending")
+    rep = kim_offload.offload_pending(bdir, get_store(env), int(env.cfg["offload_max_attempts"]), env.now_utc())
+    sc = kim_offload.storage_check(bdir, env.cfg["backup_min_free_mb"], env.cfg["backup_max_pending"])
+    bad = bool(rep["failed"] or rep["stuck"] or rep["skipped_no_sidecar"])
+    rec = {"status": "OFFLOAD_FAILED" if bad else "offloaded", **rep, "storage": sc, "remaining_local": len(kim_offload.pending_snapshots(bdir))}
+    if sc["pressure"] and rec["remaining_local"]:
+        rec["status"] = "OFFLOAD_FAILED"
+        rec["storage_pressure"] = "unoffloaded snapshots remain and storage is under pressure; nothing was deleted; new snapshots are refused until resolved"
+    if rec["status"] == "OFFLOAD_FAILED":
+        rec["_exit"] = 1
+    return rec
+
+
+def run_consolidate(env: Env) -> dict:
+    import kim_offload
+    rep = kim_offload.consolidate(Path(env.cfg["backup_dir"]), get_store(env), env.now_utc(), int(env.cfg["consolidate_keep_months"]),
+                                  int(env.cfg["consolidate_stage_cap_mb"]))
+    if not rep["archives"] and not rep["refused"]:
+        raise Quiet("no month is eligible for consolidation")
+    rec = {"status": "consolidation_refused" if rep["refused"] else "consolidated", **rep}
+    if rep["refused"]:
+        rec["_exit"] = 1
+    return rec
 
 
 def run_reconcile(env: Env) -> dict:
@@ -844,7 +927,8 @@ def run_reconcile(env: Env) -> dict:
 
 # --------------------------------------------------------------------------- entry
 DISPATCH = {"preflight": run_preflight, "open": run_open, "monitor": run_monitor, "close": run_close, "plan-check": run_plan_check,
-            "snapshot": run_snapshot, "reconcile": run_reconcile}
+            "snapshot": run_snapshot_scheduled, "snapshot-now": run_snapshot, "offload": run_offload, "consolidate": run_consolidate,
+            "reconcile": run_reconcile}
 
 
 def _streak_path(env: Env) -> Path:
@@ -884,9 +968,10 @@ def write_monitor_line(env: Env, rec: dict) -> None:
 
 
 def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
-    wait = {"open": 60.0, "snapshot": float(env.cfg.get("snapshot_lock_wait_s", 120.0))}.get(mode, 0.0)
-    fd = kp.acquire_lock(env, wait)
-    if fd is None:
+    wait = {"open": 60.0, "snapshot": float(env.cfg.get("snapshot_lock_wait_s", 120.0)),
+            "snapshot-now": float(env.cfg.get("snapshot_lock_wait_s", 120.0))}.get(mode, 0.0)
+    fd = None if mode in ("offload", "consolidate") else kp.acquire_lock(env, wait)     # they only touch the backup staging dir (own lock)
+    if fd is None and mode not in ("offload", "consolidate"):
         return {"status": "busy_another_writer_holds_the_lock", "mode": mode}, EXIT_BUSY
     quiet = False
     if not isinstance(env.broker, GuardedBroker):
@@ -895,13 +980,16 @@ def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
         try:
             rec = run_migrate(env) if mode == "migrate" else DISPATCH[mode](env)
             code = rec.pop("_exit", EXIT_OK)
-            if mode not in ("plan-check", "snapshot", "reconcile"):
+            if mode not in ("plan-check", "reconcile", *OFFLINE_MODES):
                 _clear_streak(env)
         except Quiet as e:
             rec, code, quiet = {"status": "quiet", "reason": str(e)}, EXIT_OK, True
             if isinstance(e, NotSession) and mode in ("preflight", "open", "close"):
                 quiet = False                      # rare, informative: record why a weekday firing did nothing
                 rec["status"] = "not_a_session"
+        except kim_offload_error() as e:
+            rec, code = {"status": "OFFLOAD_FAILED", "reason": str(e), "_unused": None}, 1
+            rec.pop("_unused")
         except MutationBlocked as e:               # backstop fired: nothing was sent; not an "unexpected" error
             rec, code = {"status": "mutation_blocked", "reason": str(e)}, EXIT_OK
         except Abstain as e:
@@ -909,7 +997,7 @@ def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
         except OSError as e:
             rec, code = {"status": "abstained", "reason": f"transient transport error: {e!r}"}, EXIT_OK
         except (HardStop, HostNotAllowedError, CredentialTrustError) as e:
-            if mode not in ("plan-check", "snapshot", "reconcile"):
+            if mode not in ("plan-check", "reconcile", *OFFLINE_MODES):
                 try:
                     klass = "credential" if isinstance(e, CredentialTrustError) or "credential" in str(e) else "integrity"
                     write_stop(env, str(e), klass)
@@ -917,7 +1005,7 @@ def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
                     pass
             rec, code = {"status": "HARD_STOP", "reason": str(e), "new_exposure_blocked": True}, EXIT_HARD_STOP
         except Exception as e:  # noqa: BLE001  unexpected: abstain with a bounded streak, then latch
-            n = _bump_streak(env, repr(e)) if mode not in ("plan-check", "snapshot", "reconcile") else 0
+            n = _bump_streak(env, repr(e)) if mode not in ("plan-check", "reconcile", *OFFLINE_MODES) else 0
             if n >= UNEXPECTED_STREAK_LIMIT:
                 try:
                     write_stop(env, f"{n} consecutive unexpected errors; last: {e!r}", "unexpected_error_streak")
@@ -938,8 +1026,18 @@ def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
         return rec, code
     finally:
         kp.close_ledgers(env)
-        fcntl.flock(fd, fcntl.LOCK_UN)
-        os.close(fd)
+        if fd is not None:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+            os.close(fd)
+
+
+def run_cli_mode(env: Env, mode: str) -> tuple[dict, int]:
+    """run_mode plus the post-snapshot offload (writer lock already released: upload, verify, delete the staged copy)."""
+    rec, code = run_mode(env, mode)
+    if mode in ("snapshot", "snapshot-now") and rec.get("status") == "snapshot_ok":
+        r2, c2 = run_mode(env, "offload")
+        rec["offload"], code = r2, max(code, c2)
+    return rec, code
 
 
 def build_real_env() -> Env:
@@ -975,7 +1073,17 @@ def main(argv: list[str]) -> int:
         try:
             cfg, _ = load_config(HERE / CONFIG_NAME)
             live = Path(os.environ.get("TBOTS_KIM_RECURRING_STATE_DIR", cfg["state_dir"]))
-            if mode == "restore":
+            if mode == "fetch-restore":
+                if len(argv) != 3:
+                    print("usage: kim_recurring.py fetch-restore KEY|latest NEW_EMPTY_TARGET_DIR", file=sys.stderr)
+                    return 2
+                import kim_offload
+                import tempfile
+                with tempfile.TemporaryDirectory(prefix="kimrec-fetch-") as td:
+                    snap = kim_offload.fetch_snapshot(kim_offload.AwsCliStore(*offload_target(cfg)), argv[1], Path(td))
+                    out = restore_snapshot(snap, Path(argv[2]), live, Path(cfg["backup_dir"]))
+                    out["downloaded_from_s3"] = snap.name
+            elif mode == "restore":
                 if len(argv) != 3:
                     print("usage: kim_recurring.py restore SNAPSHOT NEW_EMPTY_TARGET_DIR", file=sys.stderr)
                     return 2
@@ -988,15 +1096,18 @@ def main(argv: list[str]) -> int:
         except HardStop as e:
             print(json.dumps({"status": "REFUSED", "reason": str(e)}))
             return EXIT_HARD_STOP
+        except Exception as e:  # noqa: BLE001  fetch/verify failures are reported, never half-applied
+            print(json.dumps({"status": "FAILED", "reason": repr(e)[:300]}))
+            return 1
         print(json.dumps({"status": "restore_verified", **out}, indent=2, default=str))
         return EXIT_OK
     try:
-        env = build_offline_env() if mode == "snapshot" else build_real_env()
+        env = build_offline_env() if mode in OFFLINE_MODES else build_real_env()
     except Exception as e:  # noqa: BLE001  config/credential/pin failures are integrity failures
         try:
             cfg, _ = load_config(HERE / CONFIG_NAME)
             sd = Path(os.environ.get("TBOTS_KIM_RECURRING_STATE_DIR", cfg["state_dir"]))
-            if mode not in ("plan-check", "snapshot", "reconcile") and sd.exists() and not (sd / "STOP").exists():
+            if mode not in ("plan-check", "reconcile", *OFFLINE_MODES) and sd.exists() and not (sd / "STOP").exists():
                 write_json_atomic(sd / "STOP", {"schema": "kim-stop-v2", "class": "startup_integrity",
                                                 "stopped_at_utc": datetime.now(timezone.utc).isoformat(),
                                                 "reason": f"startup integrity failure: {e!r}",
@@ -1005,7 +1116,7 @@ def main(argv: list[str]) -> int:
             pass
         print(json.dumps({"status": "HARD_STOP", "reason": f"startup integrity failure: {e!r}"}))
         return EXIT_HARD_STOP
-    rec, code = run_mode(env, mode)
+    rec, code = run_cli_mode(env, mode)
     print(json.dumps(rec, indent=2, default=str))
     return code
 

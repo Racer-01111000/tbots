@@ -3,9 +3,12 @@
  "account_pin_file": "/etc/tbots-kim-recurring/account_pin.json",
  "archived_pilot_state_dir": "/var/lib/tbots-kim-paper",
  "backup_dir": "/var/lib/tbots-kim-recurring-backups",
- "backup_keep": 60,
+ "backup_max_pending": 14,
+ "backup_min_free_mb": 512,
  "campaign_expiry": null,
  "close_reconcile_minutes_after_close": 5,
+ "consolidate_keep_months": 3,
+ "consolidate_stage_cap_mb": 256,
  "decision_function_provenance": "control_agent/indicators/risk unchanged since commit e00af4a (2026-09-01, before the champion freeze); execution.py last changed f38da91 (2026-09-25, dividend repair)",
  "decision_function_sha256": {
   "scripts/control_agent.py": "898e5403c445133feb44c0c9aad88ad631c8b8e2c3ef2d3552f651f86ec65b1b",
@@ -33,6 +36,8 @@
  "min_cash_reserve_pct": 0.1,
  "monitor_grace_minutes_after_close": 30,
  "monitor_log_keep_days": 30,
+ "offload_config_file": "/etc/tbots-kim-recurring/offload.json",
+ "offload_max_attempts": 48,
  "open_window_et": [
   "09:30",
   "09:35"
@@ -40,6 +45,7 @@
  "paper_host": "https://paper-api.alpaca.markets",
  "preflight_et": "09:15",
  "rebalance_every_n_sessions": 50,
+ "s3_region": "ap-southeast-1",
  "schema": "kim-recurring-paper-v1",
  "state_dir": "/var/lib/tbots-kim-recurring",
  "strategy": "kim",

@@ -81,7 +81,8 @@ class World:
 def make_env(tmp, fake, arch, gate=True, cfg_patch=None, pin_patch=None, budget=None):
     cfg, csha = kr.load_config(HERE / "kim_recurring_config.json")
     cfg = {**cfg, "state_dir": str(tmp / "recurring"), "archived_pilot_state_dir": str(arch), "backup_dir": str(tmp / "backups"),
-           "snapshot_lock_wait_s": 0.4, **(cfg_patch or {})}
+           "snapshot_lock_wait_s": 0.4, "s3_bucket": "test-bucket", "offload_config_file": str(tmp / "no-such-offload.json"),
+           "backup_min_free_mb": 1, "backup_max_pending": 14, **(cfg_patch or {})}
     box = {"open": gate}
     broker = AlpacaPaperBroker({"APCA-API-KEY-ID": "k", "APCA-API-SECRET-KEY": "s"}, http=kr.safe_http(fake.http), submission_gate=lambda: box["open"])
     env = kp.Env(cfg=cfg, cfg_sha=csha, get_json=kr.resilient_get_json(fake.get_json, fake.sleep, budget), headers={}, broker=broker,
@@ -682,14 +683,16 @@ def test_plan_check_forces_decision_path_without_writes_or_orders(mig):
 def test_rendered_units_are_isolated_recurring_and_never_replay_missed_slots():
     from kim_recurring_ops import render_units as ru
     files = ru.render("a" * 64, "/opt/tbots-kim-recurring/releases/abc")
-    assert {n for n in files if n.endswith(".timer")} == {f"tbots-kim-recurring-{m}.timer" for m in ("preflight", "open", "monitor", "close", "snapshot")}
+    assert {n for n in files if n.endswith(".timer")} == {f"tbots-kim-recurring-{m}.timer" for m in ("preflight", "open", "monitor", "close", "snapshot", "offload", "consolidate")}
     for n, t in files.items():
         assert "tbots-kim-paper" not in t and "/var/lib/tbots-kim-paper" not in t
         if n.endswith(".timer"):
-            assert "Persistent=false" in t and "America/New_York" in t and "Mon..Fri" in t
+            assert "Persistent=false" in t
+            if not any(x in n for x in ("offload", "consolidate")):
+                assert "America/New_York" in t and "Mon..Fri" in t
         if n.endswith(".service") and "hardstop" not in n:
             assert "Restart=no" in t and "ReadWritePaths=/var/lib/tbots-kim-recurring" in t
-            assert ("OnFailure=tbots-kim-recurring-hardstop.service" in t) == ("snapshot" not in n)
+            assert ("OnFailure=tbots-kim-recurring-hardstop.service" in t) == (not any(x in n for x in ("snapshot", "offload", "consolidate")))
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" not in files["tbots-kim-recurring-preflight.service"]
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" not in files["tbots-kim-recurring-close.service"]
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" in files["tbots-kim-recurring-open.service"]

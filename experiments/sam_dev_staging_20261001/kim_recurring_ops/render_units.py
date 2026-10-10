@@ -21,15 +21,21 @@ SCHEDULE = {
     "open": ["09:30:00", "09:32:00", "09:34:00"],          # three firings of ONE 09:30-09:35 window; done-marker makes repeats no-ops
     "monitor": ["09:35,40,45,50,55:00", "10..15:00/5:00", "16:00,05,10,15,20,25,30:00"],
     "close": ["13:10:00", "13:20:00", "16:10:00", "16:20:00"],   # early-close day uses the 13:xx slots; full day the 16:xx slots
-    "snapshot": ["09:10:00", "16:40:00"],                        # consistent state backup before the open and after the close
+    "snapshot": ["13:25:00", "13:40:00", "13:55:00", "16:25:00", "16:40:00", "16:55:00"],   # post-close, after the session's final reconciliation
+    "offload": ["*:20:00"],                                       # hourly retry of pending uploads (a no-op when nothing is pending)
+    "consolidate": ["14:00:00"],                                  # weekly (Sundays); only months older than three calendar months are touched
 }
+DAYS_FOR = {"offload": ("*-*-*", "UTC"), "consolidate": ("Sun *-*-*", "UTC")}
 SUBMITTING = {"open", "monitor"}                              # preflight/close can never send (no submission env)
-TIMEOUT = {"preflight": 240, "open": 420, "monitor": 180, "close": 240, "snapshot": 300}
+TIMEOUT = {"preflight": 240, "open": 420, "monitor": 180, "close": 240, "snapshot": 900, "offload": 900, "consolidate": 1800}
 DESC = {"preflight": "validate-only preflight (cannot submit)",
         "open": "opening window 09:30-09:35 ET (DAY orders, paper only)",
         "monitor": "reconcile + risk monitor (regular hours only)",
         "close": "post-close final reconciliation + daily summary",
-        "snapshot": "consistent hash-verified state backup (no broker access)"}
+        "snapshot": "post-close consistent state backup, then verified off-instance upload (no broker access)",
+        "offload": "upload pending snapshots to private S3, verify, delete the staged copy (no broker access)",
+        "consolidate": "monthly consolidation of daily snapshots older than three months into verified archives (no broker access)"}
+OFFLINE = ("snapshot", "offload", "consolidate")
 
 HARDENING = f"""NoNewPrivileges=true
 ProtectSystem=strict
@@ -52,7 +58,7 @@ STANDDOWN = f"""#!/bin/sh
 # writer lock is free, then prints a read-only broker<->ledger reconciliation so outstanding broker orders are reviewed by a person.
 # Holdings and state are never touched; nothing is sold, cancelled or rolled back.
 STATE=/var/lib/tbots-kim-recurring
-for u in preflight open monitor close snapshot; do systemctl disable --now tbots-kim-recurring-$u.timer; done
+for u in preflight open monitor close snapshot offload consolidate; do systemctl disable --now tbots-kim-recurring-$u.timer; done
 i=0
 while :; do
   act=$(systemctl list-units --state=activating,active,deactivating --no-legend 'tbots-kim-recurring-*.service' | grep -v hardstop)
@@ -67,7 +73,7 @@ echo "--- read-only reconciliation (review outstanding broker orders below; this
 """
 
 REARM = f"""#!/bin/sh
-# root. usage: rearm.sh contained|full   (contained = monitor+close+snapshot; full = also preflight+open)
+# root. usage: rearm.sh contained|full   (contained = monitor+close+snapshot+offload+consolidate; full = also preflight+open)
 # Refuses while a STOP or an unreconciled restore exists, while a writer is active, or unless a fresh reconcile is clean.
 STATE=/var/lib/tbots-kim-recurring
 MODE="${{1:-}}"
@@ -77,7 +83,7 @@ MODE="${{1:-}}"
 flock -n $STATE/writer.lock true || {{ echo "REFUSED: a writer is active"; exit 12; }}
 OUT=$({RUN} reconcile)
 echo "$OUT" | grep -q '"status": "reconciled_clean"' || {{ echo "REFUSED: reconcile is not clean:"; echo "$OUT"; exit 13; }}
-UNITS="monitor close snapshot"; [ "$MODE" = full ] && UNITS="preflight open monitor close snapshot"
+UNITS="monitor close snapshot offload consolidate"; [ "$MODE" = full ] && UNITS="preflight open monitor close snapshot offload consolidate"
 for u in $UNITS; do systemctl enable --now tbots-kim-recurring-$u.timer; done
 systemctl list-timers 'tbots-kim-recurring-*' --no-pager
 """
@@ -89,16 +95,19 @@ def render(seal: str, release: str, interp: str = INTERP) -> dict:
     files = {}
     for mode in SCHEDULE:
         env = [f"Environment=TBOTS_KIM_RECURRING_STATE_DIR={STATE}", "Environment=PYTHONDONTWRITEBYTECODE=1"]
+        if mode in OFFLINE:
+            env.append("Environment=HOME=/tmp")
         if mode in SUBMITTING:
             env += ["Environment=TBOTS_ALPACA_SUBMISSION_ENABLED=true-i-understand-the-risk", f"Environment=TBOTS_KIM_PAPER_SEAL={seal}"]
         hard = (HARDENING.replace(f"ReadWritePaths={STATE}", f"ReadWritePaths={STATE} {BACKUPS}").replace("\nSuccessExitStatus=75", "")
-                if mode == "snapshot" else HARDENING)
-        onfail = "" if mode == "snapshot" else "OnFailure=tbots-kim-recurring-hardstop.service\n"
+                if mode in OFFLINE else HARDENING)
+        onfail = "" if mode in OFFLINE else "OnFailure=tbots-kim-recurring-hardstop.service\n"          # a failed upload must be visible, but must not stop trading timers
         files[f"tbots-kim-recurring-{mode}.service"] = (
             f"[Unit]\nDescription=Kim recurring paper {DESC[mode]}\n{onfail}\n"
             f"[Service]\nType=oneshot\nUser=ec2-user\nExecStart={interp} {runner} {mode}\nTimeoutStartSec={TIMEOUT[mode]}\n"
             + "\n".join(env) + "\n" + hard + "\n")
-        cal = "\n".join(f"OnCalendar={DAYS} *-*-* {t} {NYTZ}" for t in SCHEDULE[mode])
+        days_expr, tz = DAYS_FOR.get(mode, (f"{DAYS} *-*-*", NYTZ))
+        cal = "\n".join(f"OnCalendar={days_expr} {t} {tz}" for t in SCHEDULE[mode])
         files[f"tbots-kim-recurring-{mode}.timer"] = (
             f"[Unit]\nDescription=Kim recurring paper {mode} slots (candidates only; the runner gates on Alpaca's calendar/clock)\n\n"
             f"[Timer]\n{cal}\nAccuracySec=1s\nRandomizedDelaySec=0\nPersistent=false\nUnit=tbots-kim-recurring-{mode}.service\n\n"

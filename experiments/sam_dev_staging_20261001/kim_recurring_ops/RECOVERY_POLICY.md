@@ -63,12 +63,14 @@ decided-no-orders result is likewise consumed. Nothing is ever traded later to c
 
 ## Backups and recovery (see OPERATIONS.md for commands)
 A consistent `snapshot` of the complete state directory (SQLite ledger via the backup API under the writer lock, ownership, cadence, session budgets/markers, peak and drawdown
-history, STOP/halt state, unresolved order identities, receipts) is taken 09:10 and 16:40 ET on session weekdays, hash-recorded, verified by an isolated restore on every run, kept
-in a private 0700 directory (newest 60). Restoration never writes over live state: it goes to a new empty directory carrying `RESTORED_UNRECONCILED`, which blocks every mode
-and every broker mutation until `reconcile` proves broker and ledger agree. A stale snapshot is never trusted blindly: holdings, fills or orders newer than the snapshot show up
-as findings and the marker stays.
-**Limitation:** all snapshots are still on the instance. No authorized off-instance destination exists (the instance role has no storage rights and no backup service is configured);
-adding one requires a separate authorization. Until then, loss of the whole instance is recoverable from broker truth and the HOST copies, not from automated backups.
+history, STOP/halt state, unresolved order identities, receipts) is taken after each real session closes and its final reconciliation completes (early closes included), verified by an
+isolated restore, **uploaded to a private S3 bucket and verified byte-for-byte against the local checksum before the local staging copy is deleted**. A failed upload keeps the pending copy,
+is retried hourly (48 attempts), and is visible as a failed unit plus a failure receipt; under storage pressure new snapshots are refused rather than deleting an unoffloaded copy.
+Daily objects are consolidated into verified monthly tar archives after three calendar months; automation can delete neither final archives nor anything outside `daily/`.
+Restoration never writes over live state: it goes to a new empty directory carrying `RESTORED_UNRECONCILED`, which blocks every mode and every broker mutation until `reconcile` proves
+broker and ledger agree. A stale snapshot is never trusted blindly.
+**Residual risks:** the instance role can delete `daily/` objects (an instance compromise or bug could remove recent daily snapshots, never archives); there is no bucket versioning (it would keep
+deleted snapshots as billable noncurrent copies, defeating the cleanup); S3 and the instance share an AWS account, so account-level loss is not covered.
 
 ## What a human does after a STOP or halt
 Read `STOP` / `halt_state.json` and the latest receipts. Fix the cause. Run the stand-down procedure if the situation is unclear. Remove the sentinel deliberately (`rm STOP`) only when satisfied,
