@@ -699,3 +699,54 @@ def test_rendered_units_are_isolated_recurring_and_never_replay_missed_slots():
     assert "OnCalendar" in files["tbots-kim-recurring-open.timer"] and files["tbots-kim-recurring-open.timer"].count("OnCalendar") == 3
     assert "expir" not in " ".join(files).lower() and "hold" not in " ".join(files).lower().replace("hold.sh", "")
     assert "tbots-kim-recurring-hardstop" in files["hardstop.sh"] or "disable --now tbots-kim-recurring-open.timer" in files["hardstop.sh"]
+
+
+# =============================================================================================== DST fixtures (real UTC instants)
+def _fake_at(mig, d, hhmm):
+    from fake_alpaca_pilot import weekdays
+    from fake_alpaca_recurring import FakeRecurringAlpaca
+    fake = FakeRecurringAlpaca(now_et=(d, hhmm + ":00"))
+    fake.sessions = weekdays("2025-01-01", "2027-12-31")
+    fake.positions, fake.cash, fake.orders = mig.fake.positions, mig.fake.cash, mig.fake.orders
+    mig.fake = fake
+    return fake
+
+
+@pytest.mark.parametrize("day,open_z,close_z", [("2026-10-30", "13:30", "20:00"), ("2026-11-02", "14:30", "21:00"),
+                                                ("2027-03-12", "14:30", "21:00"), ("2027-03-15", "13:30", "20:00")])
+def test_session_times_follow_new_york_wall_clock_across_both_dst_transitions(day, open_z, close_z):
+    st = kp.session_times({"date": day, "open": "09:30", "close": "16:00"})
+    assert st["open_utc"][11:16] == open_z and st["close_utc"][11:16] == close_z
+
+
+@pytest.mark.parametrize("day,open_z", [("2026-11-02", "14:30"), ("2027-03-15", "13:30")])
+def test_an_early_start_waits_for_0930_new_york_not_a_fixed_utc_hour(mig, day, open_z):
+    fake = _fake_at(mig, day, "09:27")                                  # 3 minutes early, in New York wall-clock terms
+    if day == "2027-03-15":                                             # the continuation cadence is anchored in 2026; move the anchor so the session counts
+        p = STATE_FILE(mig)
+        c = json.loads(p.read_text())
+        c.update(anchor_session="2027-03-01", session_zero_date="2027-03-01", last_rebalanced_step=0)
+        p.write_text(json.dumps(c))
+    rec, code = run(mig, "open")
+    assert code == 0 and rec["status"] in ("hold_not_due", "missed_rebalance_not_caught_up"), rec
+    assert rec["clock_confirmed_open_at_utc"][11:16] >= open_z and rec["clock_confirmed_open_at_utc"][11:16] < open_z[:3] + "36"
+    assert fake.post_log == []
+
+
+def STATE_FILE(w):
+    return Path(w.env.cfg["state_dir"]) / "cadence_state.json"
+
+
+def test_monitor_hours_use_the_local_close_across_dst(mig):
+    # the same UTC clock time is inside the session after fall-back and outside before it
+    _fake_at(mig, "2026-11-02", "15:50")                                # 20:50Z, still open (close 16:00 ET = 21:00Z)
+    assert run(mig, "monitor")[0]["status"] == "monitored"
+    _fake_at(mig, "2026-10-30", "16:50")                                # 20:50Z, an hour after the 20:00Z close, beyond the 30 min grace
+    assert run(mig, "monitor")[0]["status"] == "quiet"
+
+
+def test_close_slot_waits_for_the_local_close_across_dst(mig):
+    fake = _fake_at(mig, "2026-11-02", "16:02")                         # 21:02Z: closed 2 minutes ago
+    assert run(mig, "close")[0]["status"] == "quiet"
+    fake.set_et("2026-11-02", "16:10")
+    assert run(mig, "close")[0]["status"] == "closed_reconciled"
