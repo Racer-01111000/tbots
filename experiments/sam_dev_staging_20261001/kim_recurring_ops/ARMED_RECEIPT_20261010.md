@@ -1,3 +1,5 @@
+> **SUPERSEDED by `REPAIR_RECEIPT_20261010.md`.** This first receipt described a monitor that could liquidate under a persisted STOP and had no state backups; both are corrected there.
+
 # Kim unattended recurring PAPER lifecycle - ARMED (sanitized)
 
 GO `TBOTS_KIM_UNATTENDED_RECURRING_PAPER_20261010`. Alpaca **paper** only. No broker/account identifiers, balances, raw market data, private state or detailed broker receipts are published here.
