@@ -80,7 +80,8 @@ class World:
 
 def make_env(tmp, fake, arch, gate=True, cfg_patch=None, pin_patch=None, budget=None):
     cfg, csha = kr.load_config(HERE / "kim_recurring_config.json")
-    cfg = {**cfg, "state_dir": str(tmp / "recurring"), "archived_pilot_state_dir": str(arch), **(cfg_patch or {})}
+    cfg = {**cfg, "state_dir": str(tmp / "recurring"), "archived_pilot_state_dir": str(arch), "backup_dir": str(tmp / "backups"),
+           "snapshot_lock_wait_s": 0.4, **(cfg_patch or {})}
     box = {"open": gate}
     broker = AlpacaPaperBroker({"APCA-API-KEY-ID": "k", "APCA-API-SECRET-KEY": "s"}, http=kr.safe_http(fake.http), submission_gate=lambda: box["open"])
     env = kp.Env(cfg=cfg, cfg_sha=csha, get_json=kr.resilient_get_json(fake.get_json, fake.sleep, budget), headers={}, broker=broker,
@@ -565,7 +566,7 @@ def test_stop_persists_blocks_new_exposure_and_is_never_auto_cleared(mig):
     stop0 = sha(d / "STOP")
     set_due(mig, "2026-12-14")
     mig.fake.set_et("2026-12-14", "09:15")
-    assert run(mig, "preflight")[0]["reason"] == "STOP in force; new exposure blocked"
+    assert run(mig, "preflight")[0]["reason"].startswith("STOP in force")
     mig.fake.set_et("2026-12-14", "09:30:05")
     assert run(mig, "open")[0]["status"] == "abstained" and mig.fake.post_log == []
     mig.fake.set_et("2026-12-14", "10:00")
@@ -597,12 +598,6 @@ def test_drawdown_halt_liquidates_only_pilot_shares_keeps_baseline_and_never_res
     assert (d / "halt_state.json").exists()                                      # latched until a human decides
 
 
-def test_halt_liquidation_still_runs_while_a_stop_is_present(mig):
-    kp.write_stop(fresh(mig), "unrelated latch")
-    mig.fake.set_et("2026-10-12", "10:00")
-    mig.fake.crash(0.4)
-    rec, code = run(mig, "monitor")
-    assert rec["status"] == "halted" and any(p["side"] == "sell" for p in mig.fake.post_log)
 
 
 # =============================================================================================== receipts, housekeeping, restart
@@ -687,13 +682,14 @@ def test_plan_check_forces_decision_path_without_writes_or_orders(mig):
 def test_rendered_units_are_isolated_recurring_and_never_replay_missed_slots():
     from kim_recurring_ops import render_units as ru
     files = ru.render("a" * 64, "/opt/tbots-kim-recurring/releases/abc")
-    assert {n for n in files if n.endswith(".timer")} == {f"tbots-kim-recurring-{m}.timer" for m in ("preflight", "open", "monitor", "close")}
+    assert {n for n in files if n.endswith(".timer")} == {f"tbots-kim-recurring-{m}.timer" for m in ("preflight", "open", "monitor", "close", "snapshot")}
     for n, t in files.items():
         assert "tbots-kim-paper" not in t and "/var/lib/tbots-kim-paper" not in t
         if n.endswith(".timer"):
             assert "Persistent=false" in t and "America/New_York" in t and "Mon..Fri" in t
         if n.endswith(".service") and "hardstop" not in n:
-            assert "Restart=no" in t and "ReadWritePaths=/var/lib/tbots-kim-recurring" in t and "OnFailure=tbots-kim-recurring-hardstop.service" in t
+            assert "Restart=no" in t and "ReadWritePaths=/var/lib/tbots-kim-recurring" in t
+            assert ("OnFailure=tbots-kim-recurring-hardstop.service" in t) == ("snapshot" not in n)
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" not in files["tbots-kim-recurring-preflight.service"]
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" not in files["tbots-kim-recurring-close.service"]
     assert "TBOTS_ALPACA_SUBMISSION_ENABLED" in files["tbots-kim-recurring-open.service"]

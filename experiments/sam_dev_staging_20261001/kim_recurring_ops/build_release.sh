@@ -13,7 +13,7 @@ git archive --format=tar "$COMMIT" \
   $D/kim_once_per_session_v2.py $D/pilot_config.json $D/pilot_config.py $D/selected_development_bot.json \
   $D/alpaca_adapter/alpaca_adapter.py $D/alpaca_adapter/alpaca_paper_broker.py $D/alpaca_adapter/runtime_credential_loader.py \
   $D/kim_order_simulation_tests/kim_order_logic.py $D/kim_order_simulation_tests/broker_reconciliation.py $D/kim_order_simulation_tests/order_limits.py \
-  $D/SAM_MANIFEST_20261001.json $D/test_kim_recurring_20261010.py $D/fake_alpaca_recurring.py $D/fake_alpaca_pilot.py \
+  $D/SAM_MANIFEST_20261001.json $D/test_kim_recurring_20261010.py $D/test_kim_recurring_repair_20261010.py $D/fake_alpaca_recurring.py $D/fake_alpaca_pilot.py \
   | gzip -n -9 > "$OUT"
 sha256sum "$OUT"
 if [ -n "$SUITE" ]; then

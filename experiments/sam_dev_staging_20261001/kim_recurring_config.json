@@ -2,6 +2,8 @@
  "_status": "SEALED RECURRING PAPER-ONLY CONFIG (GO TBOTS_KIM_UNATTENDED_RECURRING_PAPER_20261010). Paper account only; its sha256 is the seal checked by alpaca_adapter.submission_enabled(). Risk terms are identical to the archived four-session pilot; no expiry.",
  "account_pin_file": "/etc/tbots-kim-recurring/account_pin.json",
  "archived_pilot_state_dir": "/var/lib/tbots-kim-paper",
+ "backup_dir": "/var/lib/tbots-kim-recurring-backups",
+ "backup_keep": 60,
  "campaign_expiry": null,
  "close_reconcile_minutes_after_close": 5,
  "decision_function_provenance": "control_agent/indicators/risk unchanged since commit e00af4a (2026-09-01, before the champion freeze); execution.py last changed f38da91 (2026-09-25, dividend repair)",
