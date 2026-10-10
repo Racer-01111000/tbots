@@ -235,7 +235,7 @@ def test_snapshot_captures_complete_state_verified_by_isolated_restore(mig):
     assert man["ledger_rows_digest"] == kr.ledger_rows_digest(STATE(mig) / "order_ledger.sqlite3")
     assert man["stop"]["class"] == "integrity" and man["halt"]["halted"] is True and man["peak"]["start_equity"] and man["cadence"]["anchor_session"]
     assert man["offsite_copy"]["status"] == "NOT_CONFIGURED"
-    assert not list(bdir.glob(".stage_*")) and not list(Path(os.environ["TMPDIR"]).glob("kimrec-verify-*"))   # no temp residue
+    assert not list(bdir.glob(".stage_*")) and not list(Path(__import__("tempfile").gettempdir()).glob("kimrec-verify-*"))   # no temp residue
 
 
 def test_snapshot_is_sqlite_safe_with_unmerged_wal_pages(mig):
