@@ -395,3 +395,41 @@ def test_member_content_must_match_the_manifest_before_any_daily_object_is_delet
     monkeypatch.setattr(ko, "sha_file", lying_manifest)
     rep = ko.consolidate(tmp_path, store, datetime(2027, 2, 2, tzinfo=timezone.utc))
     assert rep["refused"] and store.deleted == [] and "do not match the manifest" in rep["refused"][0]["reason"]
+
+
+def test_main_gives_scheduled_snapshot_a_calendar_capable_env_and_the_others_a_broker_free_one(mig, monkeypatch, capsys):
+    store = ko.MemoryStore()
+    mig.fake.set_et("2026-10-12", "16:10")
+    assert run(mig, "close")[0]["status"] == "closed_reconciled"
+    mig.fake.set_et("2026-10-12", "16:25")
+    used = []
+
+    def real():
+        used.append("real")
+        return env_with(mig, store)
+
+    def offline():
+        used.append("offline")
+        e = kr.build_offline_env.__wrapped__() if False else None
+        raise AssertionError("scheduled snapshot must not get the broker-free env")
+    monkeypatch.setattr(kr, "build_real_env", real)
+    monkeypatch.setattr(kr, "build_offline_env", offline)
+    assert kr.main(["snapshot"]) == 0 and used == ["real"]
+    assert any(k.startswith("daily/2026/10/") for k in store.objects)
+
+    def offline_ok():
+        used.append("offline")
+        return env_with(mig, store)
+    monkeypatch.setattr(kr, "build_offline_env", offline_ok)
+    monkeypatch.setattr(kr, "build_real_env", lambda: (_ for _ in ()).throw(AssertionError("offload must not get the real env")))
+    kr.main(["offload"])
+    assert used[-1] == "offline"
+
+
+def test_offline_modes_never_fail_silently_and_never_latch(mig, monkeypatch):
+    store = ko.MemoryStore()
+    monkeypatch.setitem(kr.DISPATCH, "offload", lambda e: (_ for _ in ()).throw(KeyError("never seen")))
+    rec, code = kr.run_mode(env_with(mig, store), "offload")
+    assert code == 1 and rec["status"] == "OFFLINE_MODE_FAILED" and not (STATE(mig) / "STOP").exists()
+    assert sorted((STATE(mig) / "receipts").glob("*_offload.json"))                  # visible receipt
+    assert not (STATE(mig) / "unexpected_error_streak.json").exists()                # and it cannot feed the trading error counter

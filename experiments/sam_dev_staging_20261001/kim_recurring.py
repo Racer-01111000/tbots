@@ -49,7 +49,12 @@ SCHEMA = "kim-recurring-paper-v1"
 MODES = ("migrate", "preflight", "open", "monitor", "close", "plan-check", "snapshot", "snapshot-now", "offload", "consolidate", "reconcile",
          "restore", "verify-snapshot", "fetch-restore")
 ARG_MODES = ("restore", "verify-snapshot", "fetch-restore")
-OFFLINE_MODES = ("snapshot", "snapshot-now", "offload", "consolidate")      # no broker, no credentials                    # take positional args; need no broker/credentials
+OFFLINE_MODES = ("snapshot", "snapshot-now", "offload", "consolidate")      # never mutate the broker, never latch a STOP
+BROKER_FREE_ENV_MODES = ("snapshot-now", "offload", "consolidate")          # scheduled `snapshot` also reads Alpaca's calendar (GET only)
+
+
+def env_kind(mode: str) -> str:
+    return "offline" if mode in BROKER_FREE_ENV_MODES else "real"                    # take positional args; need no broker/credentials
 RESTORE_MARKER = "RESTORED_UNRECONCILED"
 CONFIG_NAME = "kim_recurring_config.json"
 MANIFEST_NAME = "kim_recurring_ops/continuation_manifest.json"
@@ -1005,6 +1010,14 @@ def run_mode(env: Env, mode: str, arg: str | None = None) -> tuple[dict, int]:
                     pass
             rec, code = {"status": "HARD_STOP", "reason": str(e), "new_exposure_blocked": True}, EXIT_HARD_STOP
         except Exception as e:  # noqa: BLE001  unexpected: abstain with a bounded streak, then latch
+            if mode in OFFLINE_MODES:              # backup modes: never silent, never a trading latch
+                rec, code = {"status": "OFFLINE_MODE_FAILED", "reason": f"unexpected error {e!r}"}, 1
+                rec["mode"] = mode
+                try:
+                    kp.write_receipt(env, mode, rec)
+                except OSError:
+                    pass
+                return rec, code
             n = _bump_streak(env, repr(e)) if mode not in ("plan-check", "reconcile", *OFFLINE_MODES) else 0
             if n >= UNEXPECTED_STREAK_LIMIT:
                 try:
@@ -1102,7 +1115,7 @@ def main(argv: list[str]) -> int:
         print(json.dumps({"status": "restore_verified", **out}, indent=2, default=str))
         return EXIT_OK
     try:
-        env = build_offline_env() if mode in OFFLINE_MODES else build_real_env()
+        env = build_offline_env() if env_kind(mode) == "offline" else build_real_env()
     except Exception as e:  # noqa: BLE001  config/credential/pin failures are integrity failures
         try:
             cfg, _ = load_config(HERE / CONFIG_NAME)
