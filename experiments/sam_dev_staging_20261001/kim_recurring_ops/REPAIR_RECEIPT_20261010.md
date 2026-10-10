@@ -1,3 +1,5 @@
+> **SUPERSEDED by `FINAL_RECEIPT_20261010.md`.** The blocker described here (no off-instance backup destination) is resolved there. The sentence below saying no opportunity was lost was inaccurate and is corrected in the final receipt.
+
 # Kim recurring PAPER lifecycle - repair receipt (sanitized): **BLOCKED on one dependency, system CONTAINED**
 
 GO `TBOTS_KIM_RECURRING_REPAIR_TO_RESOLUTION_20261010`. Alpaca **paper** only. No broker/account identifiers, balances, raw market data, private state or detailed broker receipts appear here.
@@ -6,7 +8,7 @@ GO `TBOTS_KIM_RECURRING_REPAIR_TO_RESOLUTION_20261010`. Alpaca **paper** only. N
 | | |
 |---|---|
 | Status | **BLOCKED** (not ARMED): the required automated off-instance durable backup copy cannot be created within this GO's limits. Everything else is implemented, tested, deployed and verified. |
-| Containment | monitor (reconciliation + risk-halt protection), close and snapshot timers **enabled**; preflight and open timers **disabled** (no new exposure). Nothing is due before the step-50 rebalance on 2026-12-16, so no opportunity is lost. |
+| Containment | monitor (reconciliation + risk-halt protection), close and snapshot timers **enabled**; preflight and open timers **disabled** (no new exposure). (Inaccurate wording, corrected in the final receipt: monitoring and risk-only liquidation continued during containment, but preflight and opening runs were disabled; the complete lifecycle required rearming.) |
 | Deployed SHA | `0fb0dcaeee161a17f47f6ca2ccc3889549349244` (immutable release, tree hash `97b01457...`; previous release `beeee1fe...` recorded as `ROLLBACK_TO`) |
 | Submission seal | sha256 of the repaired `kim_recurring_config.json` = `8350379473bb290baadcdf969addd97a9f4feaf19de96323ddac7c9dee8b879e` (risk terms unchanged; two backup keys added) |
 | State continuity | migrated-state identity unchanged (`8fdd6651...`); ledger rows digest identical before and after the repair (`80de4278...`); peak, cadence, baseline, halt and STOP files untouched; archived pilot tree hash identical (`3c55d9c5...`); V5 still HOLD. |
